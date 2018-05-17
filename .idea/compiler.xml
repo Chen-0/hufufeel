@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="hufu-logistics" />
+        <module name="rubick-common" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="hufu-logistics" target="1.8" />
+      <module name="hufufeel" target="1.5" />
+      <module name="rubick-boot-parent" target="1.8" />
+      <module name="rubick-common" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
