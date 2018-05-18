@@ -9,5 +9,6 @@
             <module>hufu-logistics</module>  
             <module>rubick-boot-parent</module>  
             <module>rubick-common</module>
+            <module>transport</module>
         </modules>  
     </project>  

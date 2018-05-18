@@ -8,8 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>rubick-boot-parent</name>
-    <url>http://maven.apache.org</url>
+    <name>${artifactId}</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -111,18 +110,18 @@
             </plugin>
 
             <!--<plugin>-->
-                <!--&lt;!&ndash;用于声明编译的相关配置，若不声明，则maven采用默认的相关配置 本来处理，可能会出现问题&ndash;&gt;-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                <!--<version>3.1</version>-->
-                <!--<configuration>-->
-                    <!--&lt;!&ndash;声明源代码的jdk版本&ndash;&gt;-->
-                    <!--<source>1.8</source>-->
-                    <!--&lt;!&ndash;声明生成目标的jdk版本&ndash;&gt;-->
-                    <!--<target>1.8</target>-->
-                    <!--&lt;!&ndash;声明编译文件的编码&ndash;&gt;-->
-                    <!--<encoding>UTF-8</encoding>-->
-                <!--</configuration>-->
+            <!--&lt;!&ndash;用于声明编译的相关配置，若不声明，则maven采用默认的相关配置 本来处理，可能会出现问题&ndash;&gt;-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-compiler-plugin</artifactId>-->
+            <!--<version>3.1</version>-->
+            <!--<configuration>-->
+            <!--&lt;!&ndash;声明源代码的jdk版本&ndash;&gt;-->
+            <!--<source>1.8</source>-->
+            <!--&lt;!&ndash;声明生成目标的jdk版本&ndash;&gt;-->
+            <!--<target>1.8</target>-->
+            <!--&lt;!&ndash;声明编译文件的编码&ndash;&gt;-->
+            <!--<encoding>UTF-8</encoding>-->
+            <!--</configuration>-->
             <!--</plugin>-->
         </plugins>
 
