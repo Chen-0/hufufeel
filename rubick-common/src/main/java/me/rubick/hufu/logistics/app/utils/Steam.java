@@ -1,6 +1,5 @@
 package me.rubick.hufu.logistics.app.utils;
 
-import org.springframework.util.ObjectUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -41,10 +40,10 @@ public class Steam {
 
         do {
             line = bufferedReader.readLine();
-            if (!ObjectUtils.isEmpty(line)) {
+            if (!isEmpty(line)) {
                 strings.add(line);
             }
-        } while (!ObjectUtils.isEmpty(line));
+        } while (!isEmpty(line));
 
         return strings;
     }
@@ -58,6 +57,14 @@ public class Steam {
             outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static boolean isEmpty(String s) {
+        if (s != null && !s.isEmpty()) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

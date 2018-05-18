@@ -9,10 +9,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "me.rubick.hufu.logistics.app" })
-@EntityScan("me.rubick.hufu.logistics.app.model")
-@EnableJpaRepositories("me.rubick.hufu.logistics.app.repository")
 @Configuration("me.rubick.hufu.logistics.app.config")
+@EnableJpaRepositories("me.rubick.hufu.logistics.app.repository")
+@EntityScan("me.rubick.hufu.logistics.app.model")
+@ComponentScan(basePackages = { "me.rubick.hufu.logistics.app" })
 @EnableSpringDataWebSupport
 public class ApplicationProvider {
 	public static void main(String[] args) {

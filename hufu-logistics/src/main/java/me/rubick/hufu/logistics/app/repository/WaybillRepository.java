@@ -14,7 +14,7 @@ public interface WaybillRepository extends JpaRepository<Waybill, Integer> {
     @Query("select w from Waybill w where w.arrive=?1 and (w.trackingnumber like  %?2% or w.expressnum like %?2%) order by w.id desc")
     Page<Waybill> getWaybill(Integer arrive, String keyword, Pageable pageable);
 
-    @Query("SELECT count(*) from Waybill w where MONTH(w.outtime) = ?1")
+    @Query("SELECT count(w) from Waybill w where MONTH(w.outtime) = ?1")
     Double getTotalAtMonth(Integer mouth);
 
     List<Waybill> findByTrackingnumberIn(String[] trackingNumber);
