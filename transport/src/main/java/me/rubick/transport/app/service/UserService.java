@@ -47,8 +47,6 @@ public class UserService {
     public void createUser(User user) {
         List<Role> roles = new ArrayList<>();
         roles.add(roleRepository.getOne(1L));
-
-        user.setAuthorities(roles);
         saveUser(user);
     }
 
@@ -56,8 +54,6 @@ public class UserService {
         List<Role> roles = new ArrayList<>();
         roles.add(roleRepository.getOne(1L));
         roles.add(roleRepository.getOne(2L));
-
-        user.setAuthorities(roles);
         saveUser(user);
     }
 

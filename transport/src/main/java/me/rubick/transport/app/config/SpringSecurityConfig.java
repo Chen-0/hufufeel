@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -30,9 +32,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/static/**", "/file/**").permitAll()
                 .antMatchers("/login", "/register").anonymous()
 
-                .antMatchers("/").permitAll()
-                .antMatchers("/**").permitAll()
-//                .hasAnyAuthority("ROLE_ADMIN", "ROLE_USERS")
+//                .antMatchers("/").permitAll()
+                .antMatchers("/**")
+                .hasAnyAuthority("ROLE_ADMIN", "ROLE_USERS", "ROLE_DEFAULT")
 
                 .and().formLogin()
                 .loginPage("/login")
@@ -41,7 +43,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordParameter("password")
                 .and().logout().logoutSuccessUrl("/")
                 .and().csrf().disable()
-                .rememberMe().rememberMeParameter("remember_me").key("chenjz_remember");
+                .rememberMe().rememberMeParameter("qwvsevqs").key("chenjz_remember");
     }
 
     @Override
@@ -77,7 +79,19 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public PasswordEncoder passwordEncoder() {
+        return new PasswordEncoder() {
+            @Override
+            public String encode(CharSequence rawPassword) {
+                MessageDigestPasswordEncoder messageDigestPasswordEncoder = new Md5PasswordEncoder();
+                return messageDigestPasswordEncoder.encodePassword(rawPassword.toString(), null);
+            }
+
+            @Override
+            public boolean matches(CharSequence rawPassword, String encodedPassword) {
+                MessageDigestPasswordEncoder messageDigestPasswordEncoder = new Md5PasswordEncoder();
+                return messageDigestPasswordEncoder.isPasswordValid(encodedPassword, rawPassword.toString(), null);
+            }
+        };
     }
 }
