@@ -1,20 +1,26 @@
 package me.rubick.transport.app.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import me.rubick.hufu.logistics.app.utils.BeanMapperUtils;
+import me.rubick.hufu.logistics.app.utils.FormUtils;
+import me.rubick.hufu.logistics.app.utils.JSONMapper;
 import me.rubick.transport.app.model.Product;
 import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.vo.ProductFormVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.BindingResultUtils;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
+@Slf4j
 public class ProductController {
 
     @Resource
@@ -28,13 +34,9 @@ public class ProductController {
     @RequestMapping(value = "/product/postCreate")
     @ResponseBody
     public String postCreateProduct(@Valid ProductFormVo productFormVo, BindingResult bindingResult) {
-
-        bindingResult.getFieldErrors();
-
-
-        BindingResultUtils.getBindingResult()
-        Product product = BeanMapperUtils.map(productFormVo, Product.class);
-        productService.createProduct(product);
+        System.out.println(JSONMapper.toJSON(FormUtils.toMap(bindingResult)));
+//        Product product = BeanMapperUtils.map(productFormVo, Product.class);
+//        productService.createProduct(product);
         return "Success";
     }
 }
