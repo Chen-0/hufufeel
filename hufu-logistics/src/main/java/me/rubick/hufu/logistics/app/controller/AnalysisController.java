@@ -1,5 +1,7 @@
 package me.rubick.hufu.logistics.app.controller;
 
+import me.rubick.hufu.logistics.app.model.UserStatistics;
+import me.rubick.hufu.logistics.app.service.AnalysisService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import me.rubick.hufu.logistics.app.model.Finance;
 import me.rubick.hufu.logistics.app.model.Paymoney;
-import me.rubick.hufu.logistics.app.model.UserStatistics;
-import me.rubick.hufu.logistics.app.service.AnalysisService;
 import me.rubick.hufu.logistics.app.service.UserService;
 
 import javax.annotation.Resource;

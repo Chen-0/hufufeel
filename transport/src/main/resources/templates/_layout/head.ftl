@@ -1,14 +1,16 @@
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AdminLTE 2 | Blank Page</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>${title!} - 汽车信息采集系统管理后台</title>
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet"
-          type="text/css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
-    <link href="/static/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="/static/plugins/node-waves/waves.css" rel="stylesheet"/>
-    <link href="/static/plugins/animate-css/animate.css" rel="stylesheet"/>
-    <link href="/static/css/style.css" rel="stylesheet">
-    <link href="/static/css/themes/all-themes.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/static/LTE/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/LTE/bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/LTE/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/static/LTE/bower_components/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/LTE/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/static/LTE/dist/css/skins/skin-black-light.min.css">
+    <link rel="stylesheet" href="/static/LTE/dist/css/bkb.css">
+    <#--<link rel="stylesheet" href="/static/LTE/dist/css/skins/_all-skins.min.css">-->
+
+    <#--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">-->
 </head>

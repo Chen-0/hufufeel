@@ -1,13 +1,13 @@
 package me.rubick.hufu.logistics.app.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import me.rubick.hufu.logistics.app.model.Address;
 import me.rubick.hufu.logistics.app.model.User;
 import me.rubick.hufu.logistics.app.repository.AddressRepository;
 import me.rubick.hufu.logistics.app.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;

@@ -1,12 +1,12 @@
 package me.rubick.hufu.logistics.app.service;
 
+import me.rubick.hufu.logistics.app.model.Brand;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import me.rubick.hufu.logistics.app.exception.BaseException;
-import me.rubick.hufu.logistics.app.model.Brand;
 import me.rubick.hufu.logistics.app.model.Goods;
 import me.rubick.hufu.logistics.app.model.Waybill;
 import me.rubick.hufu.logistics.app.repository.BrandRepository;

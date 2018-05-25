@@ -1,11 +1,11 @@
 package me.rubick.hufu.logistics.app.controller;
 
+import me.rubick.hufu.logistics.app.service.CompanyOrderService;
+import me.rubick.hufu.logistics.app.service.WaybillService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import me.rubick.hufu.logistics.app.service.CompanyOrderService;
 import me.rubick.hufu.logistics.app.service.CompanyService;
-import me.rubick.hufu.logistics.app.service.WaybillService;
 
 import javax.annotation.Resource;
 

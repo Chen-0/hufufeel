@@ -1,5 +1,8 @@
 package me.rubick.hufu.logistics.app.controller;
 
+import me.rubick.hufu.logistics.app.library.Common;
+import me.rubick.hufu.logistics.app.model.User;
+import me.rubick.hufu.logistics.app.service.WaybillService;
 import me.rubick.hufu.logistics.app.utils.JSONMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import me.rubick.hufu.logistics.app.library.Common;
 import me.rubick.hufu.logistics.app.model.Address;
-import me.rubick.hufu.logistics.app.model.User;
 import me.rubick.hufu.logistics.app.model.Waybill;
 import me.rubick.hufu.logistics.app.service.UserService;
-import me.rubick.hufu.logistics.app.service.WaybillService;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;

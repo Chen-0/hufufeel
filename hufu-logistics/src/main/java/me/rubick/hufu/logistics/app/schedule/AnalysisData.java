@@ -1,10 +1,10 @@
 package me.rubick.hufu.logistics.app.schedule;
 
 
+import me.rubick.hufu.logistics.app.service.AnalysisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
-import me.rubick.hufu.logistics.app.service.AnalysisService;
 
 import javax.annotation.Resource;
 import java.util.Calendar;

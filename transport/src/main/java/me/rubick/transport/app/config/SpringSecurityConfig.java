@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.util.ObjectUtils;
 
 
@@ -27,6 +29,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        //启用 csrf
+        http.csrf().csrfTokenRepository(new HttpSessionCsrfTokenRepository());
+
 //        http.authorizeRequests().anyRequest().permitAll();
         http.authorizeRequests()
                 .antMatchers("/static/**", "/file/**").permitAll()
@@ -43,8 +48,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .and().logout().logoutSuccessUrl("/")
-                .and().csrf().disable()
-                .rememberMe().rememberMeParameter("qwvsevqs").key("chenjz_remember");
+                .and()
+                .rememberMe().rememberMeParameter("remember_me").key("F_enjsmyrh").rememberMeCookieName("F_werbuzemcihrn");
     }
 
     @Override

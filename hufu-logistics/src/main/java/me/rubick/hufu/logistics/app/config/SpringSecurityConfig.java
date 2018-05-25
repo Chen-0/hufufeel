@@ -1,11 +1,9 @@
 package me.rubick.hufu.logistics.app.config;
 
 import javax.annotation.Resource;
-import javax.swing.*;
 
 import me.rubick.hufu.logistics.app.model.Company;
 import me.rubick.hufu.logistics.app.service.CompanyService;
-import me.rubick.hufu.logistics.app.utils.JSONMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -19,11 +17,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ObjectUtils;
 
-import me.rubick.hufu.logistics.app.model.User;
 import me.rubick.hufu.logistics.app.service.UserService;
 
 /**

@@ -1,8 +1,8 @@
 package me.rubick.hufu.logistics.app.repository;
 
+import me.rubick.hufu.logistics.app.model.CompanyOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import me.rubick.hufu.logistics.app.model.CompanyOrder;
 
 import java.util.List;
 

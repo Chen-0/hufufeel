@@ -1,33 +1,15 @@
-<!-- Jquery Core Js -->
-<script src="/static/plugins/jquery/jquery.min.js"></script>
 
-<!-- Bootstrap Core Js -->
-<script src="/static/plugins/bootstrap/js/bootstrap.js"></script>
+<!-- jQuery 3 -->
+<script src="/static/LTE/bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="/static/LTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- SlimScroll -->
+<script src="/static/LTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="/static/LTE/bower_components/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/LTE/dist/js/adminlte.min.js"></script>
 
-<!-- Select Plugin Js -->
-<script src="/static/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+<script src="/static/LTE/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 
-<!-- Slimscroll Plugin Js -->
-<script src="/static/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
-
-<!-- Waves Effect Plugin Js -->
-<script src="/static/plugins/node-waves/waves.js"></script>
-
-<!-- Custom Js -->
-<script src="/static/js/admin.js"></script>
-
-<!-- Demo Js -->
-<script src="/static/js/demo.js"></script>
-<script>
-    $(function () {
-        $(".remove").click(function (e) {
-            e.preventDefault();
-
-            var url = $(this).attr("href");
-
-            if (confirm("确认删除该标签")) {
-                window.location.href = url;
-            }
-        });
-    })
-</script>
+<script src="/static/LTE/dist/js/bkb.js"></script>

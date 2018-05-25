@@ -1,5 +1,14 @@
 package me.rubick.hufu.logistics.app.controller;
 
+import me.rubick.hufu.logistics.app.exception.BaseException;
+import me.rubick.hufu.logistics.app.exception.NotFoundException;
+import me.rubick.hufu.logistics.app.library.Common;
+import me.rubick.hufu.logistics.app.library.MessageHelper;
+import me.rubick.hufu.logistics.app.model.Brand;
+import me.rubick.hufu.logistics.app.model.Goods;
+import me.rubick.hufu.logistics.app.model.User;
+import me.rubick.hufu.logistics.app.model.Waybill;
+import me.rubick.hufu.logistics.app.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -10,14 +19,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import me.rubick.hufu.logistics.app.exception.BaseException;
-import me.rubick.hufu.logistics.app.exception.NotFoundException;
-import me.rubick.hufu.logistics.app.library.Common;
-import me.rubick.hufu.logistics.app.library.MessageHelper;
-import me.rubick.hufu.logistics.app.model.Brand;
-import me.rubick.hufu.logistics.app.model.Goods;
-import me.rubick.hufu.logistics.app.model.User;
-import me.rubick.hufu.logistics.app.model.Waybill;
 import me.rubick.hufu.logistics.app.service.*;
 
 import javax.annotation.Resource;

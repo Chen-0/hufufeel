@@ -1,138 +1,81 @@
 package me.rubick.transport.app.vo;
 
+import lombok.Data;
+import org.dozer.Mapping;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.*;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
+@Data
 public class ProductFormVo implements Serializable {
 
     @NotEmpty(message = "商品名称不能为空")
+    @Size(min = 0, max = 16, message = "不能超过16个字符")
     private String productName;
+
+    @NotEmpty(message = "商品SKU不能为空")
+    @Size(min = 0, max = 32, message = "不能超过32个字符")
     private String productSku;
-    private boolean isBattery;
+
+    @NotNull(message = "电池类型不能为空")
+    private boolean isBattery = false;
+
+    @NotEmpty(message = "原产地不能为空")
+    @Size(min = 0, max = 16, message = "不能超过16个字符")
     private String origin;
-    private BigDecimal weight;
-    private BigDecimal length;
-    private BigDecimal width;
-    private BigDecimal height;
+
+    @NotEmpty(message = "重量不能为空")
+    @Digits(integer = 5, fraction = 2, message = "请输入数字")
+    private String weight;
+
+    @NotEmpty(message = "长不能为空")
+    @Digits(integer = 5, fraction = 2, message = "请输入数字")
+    private String length;
+
+    @NotEmpty(message = "宽不能为空")
+    @Digits(integer = 5, fraction = 2, message = "请输入数字")
+    private String width;
+
+    @NotEmpty(message = "高不能为空")
+    @Digits(integer = 5, fraction = 2, message = "请输入数字")
+    private String height;
+
     private String productUrl;
-    private Date deadline;
-    private boolean isDanger;
-    private BigDecimal quotedPrice;
+
+    @NotEmpty(message = "有效时间不能为空")
+    @Mapping("this")
+    private String deadline;
+
+    @NotNull(message = "是否危险不能为空")
+    private boolean isDanger = false;
+
+    @NotEmpty(message = "申报价格不能为空")
+    @Digits(integer = 5, fraction = 2, message = "请输入数字")
+    private String quotedPrice;
+
+    @NotEmpty(message = "申报商品名称不能为空")
+    @Size(min = 1, max = 16, message = "不能超过16个字符")
     private String quotedName;
+
+    @Size(min = 1, max = 100, message = "不能超过100个字符")
     private String comment;
 
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public String getProductSku() {
-        return productSku;
-    }
-
-    public void setProductSku(String productSku) {
-        this.productSku = productSku;
-    }
-
-    public boolean isBattery() {
+    public boolean getIsBattery() {
         return isBattery;
     }
 
-    public void setBattery(boolean battery) {
+    public void setIsBattery(boolean battery) {
         isBattery = battery;
     }
 
-    public String getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(String origin) {
-        this.origin = origin;
-    }
-
-    public BigDecimal getWeight() {
-        return weight;
-    }
-
-    public void setWeight(BigDecimal weight) {
-        this.weight = weight;
-    }
-
-    public BigDecimal getLength() {
-        return length;
-    }
-
-    public void setLength(BigDecimal length) {
-        this.length = length;
-    }
-
-    public BigDecimal getWidth() {
-        return width;
-    }
-
-    public void setWidth(BigDecimal width) {
-        this.width = width;
-    }
-
-    public BigDecimal getHeight() {
-        return height;
-    }
-
-    public void setHeight(BigDecimal height) {
-        this.height = height;
-    }
-
-    public String getProductUrl() {
-        return productUrl;
-    }
-
-    public void setProductUrl(String productUrl) {
-        this.productUrl = productUrl;
-    }
-
-    public Date getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(Date deadline) {
-        this.deadline = deadline;
-    }
-
-    public boolean isDanger() {
+    public boolean getIsDanger() {
         return isDanger;
     }
 
-    public void setDanger(boolean danger) {
+    public void setIsDanger(boolean danger) {
         isDanger = danger;
-    }
-
-    public BigDecimal getQuotedPrice() {
-        return quotedPrice;
-    }
-
-    public void setQuotedPrice(BigDecimal quotedPrice) {
-        this.quotedPrice = quotedPrice;
-    }
-
-    public String getQuotedName() {
-        return quotedName;
-    }
-
-    public void setQuotedName(String quotedName) {
-        this.quotedName = quotedName;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 }

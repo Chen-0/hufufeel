@@ -1,8 +1,8 @@
 package me.rubick.hufu.logistics.app.service;
 
+import me.rubick.hufu.logistics.app.model.Umsg;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import me.rubick.hufu.logistics.app.model.Umsg;
 import me.rubick.hufu.logistics.app.repository.UmsgRepository;
 
 import javax.annotation.Resource;

@@ -4,7 +4,7 @@ import me.rubick.hufu.logistics.app.model.CompanyOrder;
 
 import java.util.List;
 
-public class EExcelWriter extends me.rubick.hufu.logistics.app.library.helper.AbstractExcelWriter {
+public class EExcelWriter extends AbstractExcelWriter {
     @Override
     Object[][] getData(List<CompanyOrder> orders) {
         int rowNo = 2;

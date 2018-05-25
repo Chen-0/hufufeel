@@ -1,17 +1,17 @@
 package me.rubick.hufu.logistics.app.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 import me.rubick.hufu.logistics.app.model.Company;
-import me.rubick.hufu.logistics.app.model.CompanyExpress;
 import me.rubick.hufu.logistics.app.model.CompanyRExpress;
 import me.rubick.hufu.logistics.app.repository.AuthorityRepository;
 import me.rubick.hufu.logistics.app.repository.CompanyExpressRepository;
 import me.rubick.hufu.logistics.app.repository.CompanyRExpressRepository;
 import me.rubick.hufu.logistics.app.repository.CompanyRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import me.rubick.hufu.logistics.app.model.CompanyExpress;
 
 import javax.annotation.Resource;
 import java.util.List;

@@ -15,6 +15,7 @@
         <h1>欢迎，登陆虎芙货运管家</h1>
         <form method="post" action="/perform_login">
             <input name="remember_me" value="true" type="hidden">
+            <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
 
             <div class="element-group">
                 <label class="label-element" for=""><i class="fa fa-user fa-2x"></i></label>

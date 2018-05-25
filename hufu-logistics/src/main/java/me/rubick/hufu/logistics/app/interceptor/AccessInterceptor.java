@@ -1,13 +1,12 @@
 package me.rubick.hufu.logistics.app.interceptor;
 
+import me.rubick.hufu.logistics.app.model.Company;
 import me.rubick.hufu.logistics.app.utils.JSONMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import me.rubick.hufu.logistics.app.model.Company;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

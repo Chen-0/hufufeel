@@ -16,15 +16,15 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-         <start-class>me.rubick.hufu.logistics.app.ApplicationProvider</start-class>
+         <start-class>me.rubick.common.app.ApplicationProvider</start-class>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>me.rubick</groupId>
-            <artifactId>rubick-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>me.rubick</groupId>-->
+            <!--<artifactId>rubick-common</artifactId>-->
+            <!--<version>0.0.1-SNAPSHOT</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>net.sf.barcode4j</groupId>
             <artifactId>barcode4j-light</artifactId>

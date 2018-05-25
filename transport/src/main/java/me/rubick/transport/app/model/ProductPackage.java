@@ -9,9 +9,12 @@ public class ProductPackage {
     private long id;
     private long userId;
     private int status;
-    private String productSnapshot;
     private Date createdAt;
     private Date updatedAt;
+    private long productId;
+    private int qty;
+    private int box;
+    private int total;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -45,16 +48,6 @@ public class ProductPackage {
     }
 
     @Basic
-    @Column(name = "product_snapshot", nullable = false, length = -1)
-    public String getProductSnapshot() {
-        return productSnapshot;
-    }
-
-    public void setProductSnapshot(String productSnapshot) {
-        this.productSnapshot = productSnapshot;
-    }
-
-    @Basic
     @Column(name = "created_at", nullable = false)
     public Date getCreatedAt() {
         return createdAt;
@@ -74,32 +67,39 @@ public class ProductPackage {
         this.updatedAt = updatedAt;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ProductPackage that = (ProductPackage) o;
-
-        if (id != that.id) return false;
-        if (userId != that.userId) return false;
-        if (status != that.status) return false;
-        if (productSnapshot != null ? !productSnapshot.equals(that.productSnapshot) : that.productSnapshot != null)
-            return false;
-        if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
-        if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
-
-        return true;
+    @Column(name = "product_id")
+    public long getProductId() {
+        return productId;
     }
 
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (userId ^ (userId >>> 32));
-        result = 31 * result + status;
-        result = 31 * result + (productSnapshot != null ? productSnapshot.hashCode() : 0);
-        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
-        return result;
+    public void setProductId(long productId) {
+        this.productId = productId;
+    }
+
+    @Column(name = "qty")
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
+    }
+
+    @Column(name = "box")
+    public int getBox() {
+        return box;
+    }
+
+    public void setBox(int box) {
+        this.box = box;
+    }
+
+    @Column(name = "total")
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 }

@@ -1,10 +1,10 @@
 package me.rubick.hufu.logistics.app.repository;
 
+import me.rubick.hufu.logistics.app.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import me.rubick.hufu.logistics.app.model.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
     User findByCustomer(String customer);

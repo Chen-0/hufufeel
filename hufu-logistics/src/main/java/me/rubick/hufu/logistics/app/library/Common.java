@@ -5,7 +5,6 @@ import me.rubick.hufu.logistics.app.exception.BaseException;
 import me.rubick.hufu.logistics.app.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;

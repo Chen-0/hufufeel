@@ -1,7 +1,7 @@
 package me.rubick.hufu.logistics.app.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import me.rubick.hufu.logistics.app.model.Brand;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 

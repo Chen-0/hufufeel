@@ -29,6 +29,7 @@ public class Product {
     private String comment;
     private Date createdAt;
     private Date updatedAt;
+    private boolean isDeleted;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -277,5 +278,14 @@ public class Product {
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
+    }
+
+    @Column(name = "is_deleted")
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

@@ -1,11 +1,11 @@
 package me.rubick.hufu.logistics.app.library.helper;
 
+import me.rubick.hufu.logistics.app.library.Common;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import me.rubick.hufu.logistics.app.exception.BaseException;
-import me.rubick.hufu.logistics.app.library.Common;
 import me.rubick.hufu.logistics.app.model.Waybill;
 
 import java.io.IOException;
