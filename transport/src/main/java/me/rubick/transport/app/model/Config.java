@@ -1,0 +1,63 @@
+package me.rubick.transport.app.model;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "rubick_config")
+public class Config {
+    private long id;
+    private String key;
+    private String value;
+
+    @Id
+    @Column(name = "id", nullable = false)
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    @Basic
+    @Column(name = "key", nullable = false, length = 32)
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    @Basic
+    @Column(name = "value", nullable = false, length = 64)
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Config that = (Config) o;
+
+        if (id != that.id) return false;
+        if (key != null ? !key.equals(that.key) : that.key != null) return false;
+        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (key != null ? key.hashCode() : 0);
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        return result;
+    }
+}

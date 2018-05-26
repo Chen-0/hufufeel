@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="/static/LTE/bower_components/Ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="/static/LTE/dist/css/AdminLTE.min.css">
     <link rel="stylesheet" href="/static/LTE/dist/css/skins/skin-black-light.min.css">
+    <link rel="stylesheet" href="/static/LTE/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/LTE/dist/css/bkb.css">
-    <#--<link rel="stylesheet" href="/static/LTE/dist/css/skins/_all-skins.min.css">-->
-
-    <#--<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">-->
 </head>

@@ -17,3 +17,4 @@ $(document).ready(function () {
         msgContainer.fadeOut(3000);
     }
 });
+

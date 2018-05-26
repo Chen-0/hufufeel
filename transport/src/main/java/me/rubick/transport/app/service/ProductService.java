@@ -18,6 +18,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.List;
 
 @Transactional
 @Service
@@ -76,5 +78,9 @@ public class ProductService {
 
         product.setIsDeleted(true);
         productRepository.save(product);
+    }
+
+    public List<Product> findProducts(Collection<Long> collection) {
+        return productRepository.findByIdIn(collection);
     }
 }

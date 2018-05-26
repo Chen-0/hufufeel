@@ -1,10 +1,15 @@
 .message-container {
     position: fixed;
     right: 5px;
-    top: 28%;
+    top: 13%;
 
     width: 280px;
     height: 200px;
 
     z-index: 99999;
+}
+
+.select-label {
+    margin-right: 15px;
+    margin-bottom: 15px;
 }
