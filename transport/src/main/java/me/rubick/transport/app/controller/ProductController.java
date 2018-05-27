@@ -146,7 +146,7 @@ public class ProductController {
 
         productContainer.getProducts().addAll(trackingNumbers);
         redirectAttributes.addFlashAttribute("SUCCESS", "商品已经成功添加至发货清单");
-        return "redirect:/product/index";
+        return "redirect:/product/ready_to_send";
     }
 
     /**

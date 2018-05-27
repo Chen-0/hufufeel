@@ -73,7 +73,7 @@
 
                 <div class="box-footer clearfix">
                     <button id="addToSend" class="btn btn-primary">添加到发货清单</button>
-                    <a href="/product/ready_to_send" class="btn btn-success">去发货</a>
+                    <#--<a href="/product/ready_to_send" class="btn btn-success">去发货</a>-->
                 <#assign BASEURL="/product/index?keyword=${keyword}&status=${_STATUS}&page="/>
                 <#include "*/_layout/v2.0/components/pages.ftl">
                 </div>
