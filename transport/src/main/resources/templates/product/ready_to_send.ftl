@@ -55,6 +55,7 @@
 
                 <div class="box-footer clearfix">
                     <a href="/product/index" class="btn btn-primary">添加货品</a>
+                    <a href="/product/package/remove_all" class="btn btn-danger">移除全部</a>
                 </div>
             </div>
 
@@ -68,7 +69,7 @@
                     <div class="form-group">
                         <#list warehouses as w>
                             <label class="select-label">
-                                <input type="radio" name="w" class="flat-red" value="${w.id}" <#if w_index==0>checked</#if>>
+                                <input type="radio" name="w" class="x-radio flat-red" value="${w.id}" <#if w_index==0>checked</#if>>
                                 ${w.name}
                             </label>
                         </#list>
@@ -82,14 +83,16 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <!-- radio -->
-                    <div class="form-group">
-                    <#list warehouses as w>
-                        <label class="select-label">
-                            <input type="radio" name="w" class="flat-red" value="${w.id}" >
-                        ${w.name}
-                        </label>
-                    </#list>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label>选择派送方式：</label>
+                                <select class="form-control" id="channels">
+                                    <option value="">1</option>
+                                    <option>2</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -126,7 +129,57 @@
         $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
             checkboxClass: 'icheckbox_flat-green',
             radioClass   : 'iradio_flat-green'
-        })
+        });
+
+
+        var channels = $('#channels');
+        $('input[type="radio"].flat-red').on('ifChecked', function(event){ //ifCreated 事件应该在插件初始化之前绑定
+            console.log($(this).prop('checked'));
+            console.log($(this).val());
+
+            var id = $(this).val();
+
+            $.ajax({
+                url: '/channel/select',
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    var values = data.data;
+
+                    channels.empty();
+
+                    for(var i = 0; i < values.length; i ++) {
+                        var item = values[i];
+                        channels.append("<option value='"+item.id+"'>"+item.name+"</option>");
+                    }
+                }
+            });
+        });
+
+        (function () {
+            var radio = $('input[type="radio"]:checked');
+            var id = radio.val();
+
+            $.ajax({
+                url: '/channel/select',
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    var values = data.data;
+
+                    channels.empty();
+
+                    for(var i = 0; i < values.length; i ++) {
+                        var item = values[i];
+                        channels.append("<option value='"+item.id+"'>"+item.name+"</option>");
+                    }
+                }
+            })
+        })();
+
+
     })
 </script>
 </body>

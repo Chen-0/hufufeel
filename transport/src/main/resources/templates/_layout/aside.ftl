@@ -11,6 +11,14 @@
 
         <ul class="nav navbar-nav">
             <li><a href="#">货品管理</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">货品管理 <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/product/index">查看货品</a></li>
+                    <li><a href="/product/create">添加货品</a></li>
+                </ul>
+            </li>
         <#--货品管理-->
         <#--新建货品-->
             <li><a href="#">库存管理</a></li>

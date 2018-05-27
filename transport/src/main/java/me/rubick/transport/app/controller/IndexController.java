@@ -35,7 +35,7 @@ public class IndexController {
      * 关于我们
      * @return
      */
-    @RequestMapping("about_us")
+    @RequestMapping("/about_us")
     public String aboutUs() {
         return "/index/about_us";
     }
@@ -44,7 +44,7 @@ public class IndexController {
      * 费用说明
      * @return
      */
-    @RequestMapping("cost")
+    @RequestMapping("/cost")
     public String cost() {
         return "index/cost";
     }
@@ -53,17 +53,17 @@ public class IndexController {
      * 常见问题
      * @return
      */
-    @RequestMapping("qa")
+    @RequestMapping("/qa")
     public String qa() {
         return "index/qa";
     }
 
-    @RequestMapping("strategy")
+    @RequestMapping("/strategy")
     public String strategy() {
         return "index/strategy";
     }
 
-    @RequestMapping("contact_us")
+    @RequestMapping("/contact_us")
     public String contactUs() {
         return "index/contact_us";
     }

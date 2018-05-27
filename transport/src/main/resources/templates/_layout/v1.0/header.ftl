@@ -10,27 +10,28 @@
                 </div>
             </div>
 
-            <div id="menu-container" class="col col-md-offset-2 col-md-4 hide">
+            <#if USER??>
+            <div id="menu-container" class="col col-md-offset-2 col-md-4">
                 <div class="row">
                     <div class="col-md-12 white-text margin-bottom" style="margin-top: 1rem;">
-                        <span style="position:relative;">您好，<span id="username"></span>
+                        <span style="position:relative;">您好，<span id="username">${USER.userna!}</span>
                              <a class="new hide" href="/Logistics/index.php/UserService/uMessage">NEWS</a>
                         </span>
                     </div>
                 </div>
                 <div style="display: inline-block; position: relative;">
                     <img src="/static/assets/images/user-center.png" style="width: 2.5rem;">
-                    <a class="white-text brand-anchor" href="#">用户中心</a>
+                    <a class="white-text brand-anchor" href="/product/index">用户中心</a>
                 </div>
                 <div style="display: inline-block;margin-left: 2em;">
                     <img src="/static/assets/images/money.png" style="width: 2.5rem;">
                     <a class="white-text brand-anchor" href="#" >余额充值</a>
                 </div>
             </div>
-
+            <#else>
             <div id="login-container" class="col col-md-offset-3 col-md-3" style="padding-top: 25px;">
                 <div style="display: inline-block;">
-                    <a class="white-text brand-anchor" href="javascript:void(0)">登录</a>
+                    <a class="white-text brand-anchor" href="/login">登录</a>
                 </div>
                 <div style="display: inline-block;margin-left: 2em;">
                     <a class="white-text brand-anchor" href="javascript:void(0);">注册</a>
@@ -39,6 +40,7 @@
                     <a class="white-text brand-anchor company_login" href="http://admin.hufufeel.com/">大客户进入通道</a>
                 </div>
             </div>
+            </#if>
         </div>
     </div>
 </div>

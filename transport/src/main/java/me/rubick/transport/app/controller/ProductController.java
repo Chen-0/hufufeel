@@ -129,6 +129,8 @@ public class ProductController {
         }
     }
 
+
+
     /**
      * 添加商品至发货清单中
      * @param trackingNumbers
@@ -180,6 +182,15 @@ public class ProductController {
         }
 
         return new RestResponse<>();
+    }
+
+    @RequestMapping("/product/package/remove_all")
+    public String removeAllProductFromPackage(
+            @ModelAttribute("productContainer") ProductContainer productContainer
+    ) {
+        productContainer.getProducts().clear();
+
+        return "redirect:/product/ready_to_send";
     }
 
     /**
