@@ -17,6 +17,7 @@ import me.rubick.transport.app.vo.ProductContainer;
 import me.rubick.transport.app.vo.ProductFormVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,7 +50,7 @@ public class ProductController {
     @RequestMapping(value = "/product/index")
     public String indexProduct(
             Model model,
-            @PageableDefault(size = 10) Pageable pageable,
+            @PageableDefault(size = 10, sort = {"updatedAt"}, direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0") int status) {
         Page<Product> products = productService.findProduct(keyword, status, pageable);
@@ -93,7 +94,8 @@ public class ProductController {
         Product product = BeanMapperUtils.map(productFormVo, Product.class);
         product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
         productService.createProduct(product);
-        return "Success";
+        redirectAttributes.addFlashAttribute("SUCCESS", "添加货品成功！");
+        return "redirect:/product/index";
     }
 
     @RequestMapping("/product/{id}/update")
