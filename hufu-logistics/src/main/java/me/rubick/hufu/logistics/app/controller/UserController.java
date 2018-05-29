@@ -1,9 +1,9 @@
 package me.rubick.hufu.logistics.app.controller;
 
+import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.hufu.logistics.app.library.Common;
 import me.rubick.hufu.logistics.app.model.User;
 import me.rubick.hufu.logistics.app.service.WaybillService;
-import me.rubick.hufu.logistics.app.utils.JSONMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
