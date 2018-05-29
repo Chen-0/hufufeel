@@ -10,9 +10,11 @@ import me.rubick.common.app.utils.FormUtils;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.model.DistributionChannel;
 import me.rubick.transport.app.model.Product;
+import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.model.Warehouse;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.ProductService;
+import me.rubick.transport.app.service.UserService;
 import me.rubick.transport.app.vo.ProductContainer;
 import me.rubick.transport.app.vo.ProductFormVo;
 import org.springframework.data.domain.Page;
@@ -41,6 +43,9 @@ public class ProductController {
     @Resource
     private WarehouseRepository warehouseRepository;
 
+    @Resource
+    private UserService userService;
+
     @ModelAttribute("productContainer")
     public ProductContainer productController() {
         return new ProductContainer();
@@ -51,8 +56,12 @@ public class ProductController {
             Model model,
             @PageableDefault(size = 10) Pageable pageable,
             @RequestParam(required = false, defaultValue = "") String keyword,
-            @RequestParam(defaultValue = "0") int status) {
-        Page<Product> products = productService.findProduct(keyword, status, pageable);
+            @RequestParam(defaultValue = "0") int status) throws BusinessException {
+        User user = userService.getByLogin();
+        if (ObjectUtils.isEmpty(user)) {
+            throw new BusinessException("");
+        }
+        Page<Product> products = productService.findProduct(user, keyword, status, pageable);
 
         model.addAttribute("elements", products);
         model.addAttribute("keyword", keyword);

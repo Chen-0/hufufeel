@@ -18,6 +18,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,22 +38,31 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public Page<Product> findProduct(String keyword, int status, Pageable pageable) {
-        User user = userService.getByLogin();
+    public Page<Product> findProduct(User user, String keyword, Integer status, Pageable pageable) {
         Page<Product> products = productRepository.findAll(new Specification<Product>() {
             @Override
             public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 String _keyword = getKeyword(keyword);
-                return criteriaBuilder.and(
-                        criteriaBuilder.equal(root.get("userId"), user.getId()),
-                        criteriaBuilder.equal(root.get("status"), status),
-                        criteriaBuilder.equal(root.get("isDeleted"), 0),
-                        criteriaBuilder.or(
-                                criteriaBuilder.like(root.get("productName"), _keyword),
-                                criteriaBuilder.like(root.get("productSku"), _keyword),
-                                criteriaBuilder.like(criteriaBuilder.concat(root.get("id"), ""), _keyword)
-                        )
-                );
+
+                ArrayList<Predicate> predicates = new ArrayList<>(10);
+
+                if (!ObjectUtils.isEmpty(user)) {
+                    predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("userId"), user.getId())));
+                }
+
+                if (!ObjectUtils.isEmpty(status)) {
+                    predicates.add(criteriaBuilder.equal(root.get("status"), status));
+                }
+
+                predicates.add(criteriaBuilder.equal(root.get("isDeleted"), 0));
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.like(root.get("productName"), _keyword),
+                        criteriaBuilder.like(root.get("productSku"), _keyword),
+                        criteriaBuilder.like(criteriaBuilder.concat(root.get("id"), ""), _keyword)
+                ));
+
+
+                return criteriaBuilder.and(predicates.toArray(new Predicate[] {}));
             }
         }, pageable);
 
