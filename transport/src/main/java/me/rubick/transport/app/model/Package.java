@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "rubick_package")
@@ -12,11 +13,16 @@ public class Package {
     private long id;
     private String referenceNumber;
     private long userId;
+    private String nickname;
     private PackageStatus status;
     private long warehouseId;
     private long distributionChannelId;
     private Date createdAt;
     private Date updatedAt;
+    private String warehouseName;
+    private String distributionChannelName;
+
+    private List<PackageProduct> packageProducts;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -134,5 +140,41 @@ public class Package {
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
+    }
+
+    @Column(name = "warehouse_name")
+    public String getWarehouseName() {
+        return warehouseName;
+    }
+
+    public void setWarehouseName(String warehouseName) {
+        this.warehouseName = warehouseName;
+    }
+
+    @Column(name = "distribution_channel_name")
+    public String getDistributionChannelName() {
+        return distributionChannelName;
+    }
+
+    public void setDistributionChannelName(String distributionChannelName) {
+        this.distributionChannelName = distributionChannelName;
+    }
+
+    @OneToMany
+    @JoinColumn(name = "package_id", insertable = false, updatable = false)
+    public List<PackageProduct> getPackageProducts() {
+        return packageProducts;
+    }
+
+    public void setPackageProducts(List<PackageProduct> packageProducts) {
+        this.packageProducts = packageProducts;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

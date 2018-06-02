@@ -1,9 +1,12 @@
 package me.rubick.transport.app.controller;
 
+import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.utils.HashUtils;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
+import me.rubick.transport.app.repository.DistributionChannelRepository;
 import me.rubick.transport.app.repository.PackageRepository;
+import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.PackageService;
 import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.service.UserService;
@@ -12,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +43,12 @@ public class PackageController {
     @Resource
     private ProductService productService;
 
+    @Resource
+    private WarehouseRepository warehouseRepository;
+
+    @Resource
+    private DistributionChannelRepository distributionChannelRepository;
+
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String packageIndex(
             @PageableDefault(size = 10) Pageable pageable,
@@ -52,6 +62,16 @@ public class PackageController {
         return "/package/index";
     }
 
+    /**
+     * 提交发货清单
+     * @param wId
+     * @param dcId
+     * @param weights
+     * @param qtys
+     * @param pids
+     * @param redirectAttributes
+     * @return
+     */
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
     public String createPackage(
@@ -61,13 +81,31 @@ public class PackageController {
             @RequestParam("qty[]") List<Integer> qtys,
             @RequestParam("p[]") List<Long> pids,
             RedirectAttributes redirectAttributes
-    ) {
+    ) throws BusinessException {
+        //check out
+        DistributionChannel distributionChannel = distributionChannelRepository.findOne(dcId);
+
+        if (ObjectUtils.isEmpty(distributionChannel)) {
+            throw  new BusinessException("[A001] 禁止访问");
+        }
+
+        Warehouse warehouse = warehouseRepository.findOne(wId);
+
+        if (ObjectUtils.isEmpty(warehouse)) {
+            throw  new BusinessException("[A001] 禁止访问");
+        }
+
+        User user = userService.getByLogin();
+
         Package p = new Package();
-        p.setUserId(userService.getByLogin().getId());
+        p.setUserId(user.getId());
         p.setWarehouseId(wId);
         p.setDistributionChannelId(dcId);
         p.setStatus(PackageStatus.READY);
         p.setReferenceNumber(HashUtils.generateString());
+        p.setWarehouseName(warehouse.getName());
+        p.setDistributionChannelName(distributionChannel.getName());
+        p.setNickname(user.getName());
 
         // TODO validate
         List<Product> products = productService.findProducts(pids);

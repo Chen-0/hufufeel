@@ -20,6 +20,8 @@ public class PackageProduct {
     private Date createdAt;
     private Date updatedAt;
 
+    private Product product;
+
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -147,5 +149,15 @@ public class PackageProduct {
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "product_id", insertable = false, updatable = false)
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

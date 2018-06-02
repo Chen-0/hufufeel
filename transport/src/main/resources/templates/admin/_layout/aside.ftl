@@ -34,53 +34,12 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">
-                        大客户运单管理<span class="caret"></span>
+                        入库管理<span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="/order/index?status=1">待入库运单</a></li>
-                        <li><a href="/order/index?status=2">待出库运单</a></li>
-                        <li><a href="/order/index?status=3">已出库运单</a></li>
-                        <li><a href="/order/index?status=99">含有错误的运单</a></li>
-                        <li><a href="/order/index?status=100">待审核的运单</a></li>
-                    </ul>
-                </li>
-            </ul>
-
-
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">
-                        海淘客用户管理<span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/user/index">会员中心</a></li>
-                        <li><a href="/user/address/index">待审核的地址</a></li>
-                    </ul>
-                </li>
-            </ul>
-
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">
-                        大客户管理<span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/company/index">用户管理</a></li>
-                        <li><a href="/company/express/index">大客户发货渠道</a></li>
-                    </ul>
-                </li>
-            </ul>
-
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">
-                        海淘客数据统计<span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/analysis/user/paymoney">本月累计充值</a></li>
+                        <li><a href="/admin/package/index">查看所有</a></li>
+                        <li><a href="/admin/package/index?status=0">待入库</a></li>
+                        <li><a href="/admin/package/index?status=1">待上架</a></li>
                     </ul>
                 </li>
             </ul>
@@ -89,18 +48,7 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
 
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">${USER.username} <span class="caret"></span></a>
-                    <#--<ul class="dropdown-menu">-->
-                    <#--<li><a href="#">Action</a></li>-->
-                    <#--<li><a href="#">Another action</a></li>-->
-                    <#--<li><a href="#">Something else here</a></li>-->
-                    <#--<li role="separator" class="divider"></li>-->
-                    <#--<li><a href="#">Separated link</a></li>-->
-                    <#--</ul>-->
-                    </li>
-
+                    <li><a class="active" href="javascript:void(0);">管理员：${USER.username}</a></li>
                     <li><a id="logout" href="javascript:void(0);">退出登录</a></li>
                 </ul>
             </form>

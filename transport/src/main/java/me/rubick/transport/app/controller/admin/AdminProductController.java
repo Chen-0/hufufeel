@@ -31,7 +31,7 @@ public class AdminProductController {
 
     @ModelAttribute("productStatus")
     public Integer productStatus() {
-        return new Integer(0);
+        return -1;
     }
 
     @RequestMapping("/product/index")
@@ -85,7 +85,7 @@ public class AdminProductController {
 
         productRepository.save(product);
         redirectAttributes.addFlashAttribute("success", "更新货品审核状态！");
-        if (ObjectUtils.isEmpty(status)) {
+        if (ObjectUtils.isEmpty(status) || status == -1) {
             return "redirect:/admin/product/index";
         } else {
             return "redirect:/admin/product/index?status=" + status;

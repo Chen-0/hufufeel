@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -17,6 +19,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,23 +37,31 @@ public class PackageService {
     public Page<Package> searchPackage(
             final String keyword,
             final User user,
-            final int status,
+            final Integer status,
             final Pageable pageable
     ) {
         return packageRepository.findAll(new Specification<Package>() {
             @Override
             public Predicate toPredicate(Root<Package> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                String _keyword = getKeyword(keyword);
 
-                Predicate predicate = criteriaBuilder.and(
-                        criteriaBuilder.equal(root.get("userId"), user.getId()),
-                        criteriaBuilder.equal(root.get("status"), status),
-                        criteriaBuilder.or(
-                                criteriaBuilder.like(root.get("referenceNumber"), _keyword)
-                        )
-                );
+                List<Predicate> predicates = new ArrayList<>();
 
-                return predicate;
+                if (StringUtils.hasText(keyword)) {
+                    String _keyword = getKeyword(keyword);
+                    predicates.add(criteriaBuilder.or(
+                            criteriaBuilder.like(root.get("referenceNumber"), _keyword)
+                    ));
+                }
+
+                if (!ObjectUtils.isEmpty(user)) {
+                    predicates.add(criteriaBuilder.equal(root.get("userId"), user.getId()));
+                }
+
+                if (!ObjectUtils.isEmpty(status)) {
+                    predicates.add(criteriaBuilder.equal(root.get("status"), status));
+                }
+
+                return criteriaBuilder.and(predicates.toArray(new Predicate[] {}));
             }
         }, pageable);
     }
@@ -66,5 +78,16 @@ public class PackageService {
         }
 
         packageProductRepository.save(products);
+    }
+
+    public void inbound(long packageId, List<Long> pIds, List<BigDecimal> weight, List<Integer> qty) {
+        Package p = packageRepository.findOne(packageId);
+        p.setStatus(PackageStatus.RECEIVED);
+        packageRepository.save(p);
+
+        int count = pIds.size();
+        for (int i = 0; i < count; i ++) {
+            packageProductRepository.inbound(packageId, pIds.get(i), weight.get(i), qty.get(i));
+        }
     }
 }

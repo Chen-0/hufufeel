@@ -19,6 +19,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -91,6 +92,6 @@ public class ProductService {
     }
 
     public List<Product> findProducts(Collection<Long> collection) {
-        return productRepository.findByIdIn(collection);
+        return productRepository.findByIdInAndStatusIn(collection, Arrays.asList(ProductStatus.READY_CHECK));
     }
 }

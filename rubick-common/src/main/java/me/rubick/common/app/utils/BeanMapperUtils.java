@@ -23,4 +23,8 @@ public class BeanMapperUtils {
 
         return arr;
     }
+
+    public static void copy(Object src, Object dest) {
+        mapper.map(src, dest);
+    }
 }

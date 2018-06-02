@@ -12,6 +12,7 @@ import me.rubick.transport.app.model.DistributionChannel;
 import me.rubick.transport.app.model.Product;
 import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.model.Warehouse;
+import me.rubick.transport.app.repository.ProductRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.service.UserService;
@@ -19,6 +20,7 @@ import me.rubick.transport.app.vo.ProductContainer;
 import me.rubick.transport.app.vo.ProductFormVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,8 +31,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -46,6 +51,9 @@ public class ProductController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private ProductRepository productRepository;
+
     @ModelAttribute("productContainer")
     public ProductContainer productController() {
         return new ProductContainer();
@@ -54,9 +62,9 @@ public class ProductController {
     @RequestMapping(value = "/product/index")
     public String indexProduct(
             Model model,
-            @PageableDefault(size = 10) Pageable pageable,
+            @PageableDefault(size = 10, direction = Sort.Direction.DESC, sort = {"updatedAt", "id"}) Pageable pageable,
             @RequestParam(required = false, defaultValue = "") String keyword,
-            @RequestParam(defaultValue = "0") int status) throws BusinessException {
+            @RequestParam(required = false) Integer status) throws BusinessException {
         User user = userService.getByLogin();
         if (ObjectUtils.isEmpty(user)) {
             throw new BusinessException("");
@@ -102,17 +110,70 @@ public class ProductController {
         Product product = BeanMapperUtils.map(productFormVo, Product.class);
         product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
         productService.createProduct(product);
-        return "Success";
+        redirectAttributes.addFlashAttribute("SUCCESS", "创建货品成功！");
+        return "redirect:/product/index";
     }
 
-    @RequestMapping("/product/{id}/update")
-    public String updateProduct(@PathVariable("id") long id, Model model) {
-        return "product/update";
+    /**
+     * 更新
+     * @param model
+     * @param id
+     * @return
+     * @throws BusinessException
+     */
+    @RequestMapping(value = "/product/{id}/update", method = RequestMethod.GET)
+    public String getUpdateProduct(
+            Model model,
+            @PathVariable("id") long id) throws BusinessException {
+        Product product = productRepository.findOne(id);
+
+        if (ObjectUtils.isEmpty(product)) {
+            // TODO 错误提示
+            throw new BusinessException("");
+        }
+
+        model.addAttribute("felements", product);
+
+        return "/product/update";
     }
 
-    @RequestMapping(value = "/product/{id}/post_update", method = RequestMethod.POST)
-    public String postUpdateProduct(@Valid ProductFormVo productFormVo, RedirectAttributes redirectAttributes) {
-        return "";
+
+    @RequestMapping(value = "/product/{id}/update", method = RequestMethod.POST)
+    public String postUpdateProduct(
+            @Valid ProductFormVo productFormVo,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            @PathVariable("id") long id
+    ) throws BusinessException {
+        Product product = productRepository.findOne(id);
+
+        if (ObjectUtils.isEmpty(product)) {
+            // TODO 错误提示
+            throw new BusinessException("");
+        }
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("felements", productFormVo);
+            redirectAttributes.addFlashAttribute("errors", FormUtils.toMap(bindingResult));
+
+            return MessageFormat.format("redirect:/product/{0}/update", id);
+        }
+
+        BeanMapperUtils.copy(productFormVo, product);
+        //设置时间
+        try {
+            product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
+        } catch (CommonException e) {
+            redirectAttributes.addFlashAttribute("felements", productFormVo);
+            Map<String, String> map = new HashMap<>();
+            map.put("deadline", "时间格式错误");
+            redirectAttributes.addFlashAttribute("errors", map);
+        }
+
+        productService.createProduct(product);
+
+        redirectAttributes.addFlashAttribute("SUCCESS", "修改货品成功！");
+        return "redirect:/product/index";
     }
 
     /**

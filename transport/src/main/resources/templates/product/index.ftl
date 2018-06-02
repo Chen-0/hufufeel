@@ -62,6 +62,7 @@
                                 <td>${e.productSku}</td>
                                 <td>
                                     <a class="x-remove" href="/product/${e.id}/remove">删除</a>
+                                    <a href="/product/${e.id}/update">更新</a>
                                 </td>
                             </tr>
                             </#list>
@@ -72,9 +73,10 @@
                 <!-- /.box-body -->
 
                 <div class="box-footer clearfix">
+                    <#if _STATUS?exists && ( _STATUS == 1) >
                     <button id="addToSend" class="btn btn-primary">添加到发货清单</button>
-                    <#--<a href="/product/ready_to_send" class="btn btn-success">去发货</a>-->
-                <#assign BASEURL="/product/index?keyword=${keyword}&status=${_STATUS}&page="/>
+                    </#if>
+                <#assign BASEURL="/product/index?keyword=${keyword}&status=${_STATUS!}&page="/>
                 <#include "*/_layout/v2.0/components/pages.ftl">
                 </div>
             </div>
