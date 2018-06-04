@@ -8,10 +8,7 @@ import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.DateUtils;
 import me.rubick.common.app.utils.FormUtils;
 import me.rubick.common.app.utils.JSONMapper;
-import me.rubick.transport.app.model.DistributionChannel;
-import me.rubick.transport.app.model.Product;
-import me.rubick.transport.app.model.User;
-import me.rubick.transport.app.model.Warehouse;
+import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.ProductRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.ProductService;
@@ -74,6 +71,7 @@ public class ProductController {
         model.addAttribute("elements", products);
         model.addAttribute("keyword", keyword);
         model.addAttribute("_STATUS", status);
+        model.addAttribute("MENU", "HUOPINGUANLI");
 
         log.info("{}", products.getNumberOfElements());
 

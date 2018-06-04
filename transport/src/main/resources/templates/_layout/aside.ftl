@@ -18,6 +18,15 @@
                     <li><a href="/product/create">添加货品</a></li>
                 </ul>
             </li>
+
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">入库管理<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/product/ready_to_send">新建入库单</a></li>
+                    <li><a href="/package/index">入库单管理</a></li>
+                </ul>
+            </li>
         <#--货品管理-->
         <#--新建货品-->
             <li><a href="#">库存管理</a></li>
@@ -45,66 +54,44 @@
 
 
                 <li class="dropdown notifications-menu">
+                    <#if MSG_COUNT?exists && MSG_COUNT gt 0>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-bell-o"></i>
-                        <span class="label label-warning">10</span>
+                        <span class="label label-warning">${MSG_COUNT}</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="header">You have 10 notifications</li>
+                        <li class="header">有 ${MSG_COUNT} 条未读信息</li>
                         <li>
                             <!-- inner menu: contains the actual data -->
                             <ul class="menu">
+                                <#list MSG_ELEMENTS as e>
                                 <li>
-                                    <a href="#">
-                                        <i class="fa fa-users text-aqua"></i> 5 new members joined today
-                                    </a>
+                                    <a href="/m/r?id=${e.id}"><i class="fa fa-users text-aqua"></i> ${e.context}</a>
                                 </li>
+                                </#list>
                             </ul>
                         </li>
                         <li class="footer"><a href="#">View all</a></li>
                     </ul>
+                    <#else>
+                        <a href="/message/index">
+                            <i class="fa fa-bell-o"></i>
+                        </a>
+                    </#if>
+
                 </li>
 
-                <li class="dropdown user user-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <li class="user user-menu">
+                    <a href="javascript:void(0)">
                         <img src="/static/LTE/user.jpg" class="user-image" alt="User Image">
-                        <span class="hidden-xs">Alexander Pierce</span>
+                        <span class="hidden-xs">${USER.name}</span>
                     </a>
-                    <ul class="dropdown-menu">
-                        <!-- User image -->
-                        <li class="user-header">
-                            <img src="/static/LTE/user.jpg" class="img-circle" alt="User Image">
-
-                            <p>
-                                Alexander Pierce - Web Developer
-                                <small>Member since Nov. 2012</small>
-                            </p>
-                        </li>
-                        <!-- Menu Body -->
-                        <li class="user-body">
-                            <div class="row">
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">Followers</a>
-                                </div>
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">Sales</a>
-                                </div>
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">Friends</a>
-                                </div>
-                            </div>
-                            <!-- /.row -->
-                        </li>
-                        <!-- Menu Footer-->
-                        <li class="user-footer">
-                            <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
-                            </div>
-                            <div class="pull-right">
-                                <a href="#" class="btn btn-default btn-flat">Sign out</a>
-                            </div>
-                        </li>
-                    </ul>
+                </li>
+                <li>
+                    <a id="logoutBtn" href="javascript:void(0)">注销</a>
+                    <form id="logoutForm" action="/logout" method="post">
+                        <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
+                    </form>
                 </li>
             </ul>
         </div>
@@ -119,8 +106,8 @@
                 <img src="/static/LTE/user.jpg" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
-                <p>Alexander Pierce</p>
-                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                <p>${USER.name}</p>
+                <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
             </div>
         </div>
 
@@ -135,11 +122,12 @@
         </form>
 
         <ul class="sidebar-menu" data-widget="tree">
+        <#if MENU??>
             <li class="header">LABELS</li>
-            <li><a href="/product/index"><i class="fa fa-circle-o text-red"></i> <span>查看全部</span></a></li>
-            <li><a href="/product/index?status=0"><i class="fa fa-circle-o text-yellow"></i> <span>待审核货品</span></a></li>
-            <li><a href="/product/index?status=1"><i class="fa fa-circle-o text-aqua"></i> <span>已审核货品</span></a></li>
-            <li><a href="/product/index?status=2"><i class="fa fa-circle-o text-aqua"></i> <span>审核失败</span></a></li>
+            <#list MENU as m>
+                <li><a href="${m.url}"><i class="fa fa-circle-o text-red"></i> <span>${m.name}</span></a></li>
+            </#list>
+        </#if>
         </ul>
     </section>
 </aside>

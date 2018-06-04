@@ -30,6 +30,7 @@ public class Product {
     private Date createdAt;
     private Date updatedAt;
     private boolean isDeleted;
+    private String reason;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -287,5 +288,14 @@ public class Product {
 
     public void setIsDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    @Column
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

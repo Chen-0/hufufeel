@@ -14,7 +14,7 @@
             <div id="menu-container" class="col col-md-offset-2 col-md-4">
                 <div class="row">
                     <div class="col-md-12 white-text margin-bottom" style="margin-top: 1rem;">
-                        <span style="position:relative;">您好，<span id="username">${USER.userna!}</span>
+                        <span style="position:relative;">您好，<span id="username">${USER.name!}</span>
                              <a class="new hide" href="/Logistics/index.php/UserService/uMessage">NEWS</a>
                         </span>
                     </div>

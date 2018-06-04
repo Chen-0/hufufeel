@@ -80,14 +80,22 @@ public class PackageService {
         packageProductRepository.save(products);
     }
 
-    public void inbound(long packageId, List<Long> pIds, List<BigDecimal> weight, List<Integer> qty) {
-        Package p = packageRepository.findOne(packageId);
-        p.setStatus(PackageStatus.RECEIVED);
-        packageRepository.save(p);
-
+    public Package inbound(long packageId, List<Long> pIds, List<BigDecimal> weight, List<Integer> qty) {
         int count = pIds.size();
+        int _qty = 0;
+        BigDecimal _weight = new BigDecimal(0);
+
         for (int i = 0; i < count; i ++) {
             packageProductRepository.inbound(packageId, pIds.get(i), weight.get(i), qty.get(i));
+
+            _qty += qty.get(i);
+            _weight = _weight.add(weight.get(i));
         }
+
+        Package p = packageRepository.findOne(packageId);
+        p.setStatus(PackageStatus.RECEIVED);
+        p.setRealQty(_qty);
+        p.setRealWeight(_weight);
+        return packageRepository.save(p);
     }
 }

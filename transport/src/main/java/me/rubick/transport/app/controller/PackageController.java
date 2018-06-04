@@ -12,14 +12,12 @@ import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -28,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/package")
 public class PackageController {
 
     @Resource
@@ -49,16 +46,19 @@ public class PackageController {
     @Resource
     private DistributionChannelRepository distributionChannelRepository;
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    @RequestMapping(value = "/package/index", method = RequestMethod.GET)
     public String packageIndex(
-            @PageableDefault(size = 10) Pageable pageable,
+            @PageableDefault(size = 10, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
             Model model,
-            @RequestParam String keyword,
-            @RequestParam int status
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(required = false) Integer status
     ) {
         User user = userService.getByLogin();
         Page<Package> packages = packageService.searchPackage(keyword, user, status, pageable);
         model.addAttribute("elements", packages);
+        model.addAttribute("_STATUS", status);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("MENU", "RUKUGUANLI");
         return "/package/index";
     }
 
@@ -72,8 +72,7 @@ public class PackageController {
      * @param redirectAttributes
      * @return
      */
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    @ResponseBody
+    @RequestMapping(value = "/package/create", method = RequestMethod.POST)
     public String createPackage(
             @RequestParam("w") long wId,
             @RequestParam("dc") long dcId,
@@ -116,6 +115,9 @@ public class PackageController {
 
         List<PackageProduct> packageProducts = new ArrayList<>(weights.size());
 
+        int _qty = 0;
+        BigDecimal _weight = new BigDecimal(0);
+
         for (int i = 0; i < pids.size(); i++) {
             PackageProduct packageProduct = new PackageProduct();
             packageProduct.setProductId(pids.get(i));
@@ -125,15 +127,44 @@ public class PackageController {
             packageProduct.setRealWeight(new BigDecimal(0));
 
             packageProducts.add(packageProduct);
+
+            _qty += packageProduct.getQty();
+            _weight = _weight.add(packageProduct.getWeight());
         }
 
+        p.setQty(_qty);
+        p.setWeight(_weight);
         packageService.store(p, packageProducts);
 
-        return "SUCCESS";
+        redirectAttributes.addFlashAttribute("SUCCESS", "入库单创建成功！");
+        return "redirect:/package/index";
     }
 
-//    @RequestMapping(value = "/create", method = RequestMethod.POST)
-//    public String postCreatePackage() {
-//        return "redirect:/package/index";
-//    }
+    @RequestMapping(value = "/package/{id}/cancel")
+    public String cancelPackage(
+            @PathVariable("id") long id,
+            RedirectAttributes redirectAttributes
+    ) throws BusinessException {
+        User user = userService.getByLogin();
+
+        Package p = packageRepository.getOne(id);
+
+        if (ObjectUtils.isEmpty(p)) {
+            throw new BusinessException("");
+        }
+
+        if (user.getId() != p.getUserId()) {
+            throw new BusinessException("");
+        }
+
+        if (! p.getStatus().equals(PackageStatus.READY)) {
+            throw new BusinessException("");
+        }
+
+        p.setStatus(PackageStatus.CANCEL);
+        packageRepository.save(p);
+
+        redirectAttributes.addFlashAttribute("SUCCESS", "取消入库单成功！");
+        return "redirect:/package/index";
+    }
 }

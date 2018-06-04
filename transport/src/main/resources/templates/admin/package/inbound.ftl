@@ -23,7 +23,7 @@
 </#if>
 
     <div class="row">
-        <div class="col-xs-6 col-xs-offset-3">
+        <div class="col-xs-10 col-xs-offset-1">
             <form action="/admin/package/${o.id}/inbound" method="post">
                 <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
             <div class="table-responsive">

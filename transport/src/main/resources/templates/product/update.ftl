@@ -9,16 +9,18 @@
 
     <div class="content-wrapper">
         <section class="content-header">
-            <h1>添加商品</h1>
+            <h1>修改货品</h1>
         </section>
-
 
         <section class="content">
             <div class="row">
-                <div class="col-xs-8 col-xs-offset-2">
+                <div class="col-xs-12 col-md-8 col-md-offset-2">
+                    <div class="callout callout-info">
+                        <h4>温馨提示</h4>
+                        <p>修改货品后要重新审核</p>
+                    </div>
                     <div class="box box-primary">
                         <div class="box-header with-border">
-                        <#--<h3 class="box-title">Quick Example</h3>-->
                         </div>
                         <form role="form" method="post" action="/product/${felements.id}/update" enctype="multipart/form-data">
                             <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>

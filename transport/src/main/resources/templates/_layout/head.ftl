@@ -12,4 +12,7 @@
     <link rel="stylesheet" href="/static/LTE/dist/css/AdminLTE.min.css">
     <link rel="stylesheet" href="/static/LTE/dist/css/skins/skin-black-light.min.css">
     <link rel="stylesheet" href="/static/LTE/dist/css/bkb.css">
+
+    <link rel="shortcut icon" href="/static/assets/favicon.ico" type="image/vnd.microsoft.icon">
+    <link rel="icon" href="/static/assets/favicon.ico" type="image/vnd.microsoft.icon">
 </head>

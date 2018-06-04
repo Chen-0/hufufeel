@@ -29,7 +29,7 @@
                             <b>2260 S Archibald Ave #D 91761</b></h3>
                     </div>
                     <div class="panel-body" style="padding: 0; position: relative;">
-                        <img src="/static/assets/images/contact_us.jpg" style="width: 100%">
+                        <img src="/static/assets/images/contact_us.png" style="width: 100%">
                         <span style="position: absolute; bottom: 1em; left: 1em;"><i class="fa fa-phone"></i> 9513148768</span>
                     </div>
                 </div>

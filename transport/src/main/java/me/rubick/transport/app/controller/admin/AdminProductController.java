@@ -1,6 +1,8 @@
 package me.rubick.transport.app.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.utils.TextUtils;
+import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.Product;
 import me.rubick.transport.app.model.ProductStatus;
 import me.rubick.transport.app.repository.ProductRepository;
@@ -16,12 +18,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import java.text.MessageFormat;
 
 @Controller
 @RequestMapping("/admin/")
 @Slf4j
 @SessionAttributes("productStatus")
-public class AdminProductController {
+public class AdminProductController extends AbstractController {
 
     @Resource
     private ProductService productService;
@@ -51,7 +54,6 @@ public class AdminProductController {
         if (!ObjectUtils.isEmpty(status)) {
             model.addAttribute("productStatus", status);
         }
-//        productStatus = status;
 
         log.info("productStatus - {}", productStatus);
 
@@ -78,13 +80,19 @@ public class AdminProductController {
             product.setStatus(ProductStatus.READY_CHECK);
         } else if (name.equals("fail")) {
             product.setStatus(ProductStatus.FAIL_CHECK);
-            product.setComment(comment);
+            product.setReason(comment);
         } else {
             return "redirect:/admin/product/index";
         }
 
         productRepository.save(product);
         redirectAttributes.addFlashAttribute("success", "更新货品审核状态！");
+        messageService.send(
+                product.getUserId(),
+                "/product/index?status=1",
+                MessageFormat.format("货品：{0} 审核成功！{1}", product.getProductName())
+        );
+
         if (ObjectUtils.isEmpty(status) || status == -1) {
             return "redirect:/admin/product/index";
         } else {

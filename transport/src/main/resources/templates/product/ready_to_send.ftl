@@ -22,7 +22,7 @@
 
         <!-- Main content -->
         <section class="content">
-            <form action="/package/create" method="post">
+            <form id="mainForm" action="/package/create" method="post">
                 <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
             <div class="box">
                 <div class="box-header with-border">
@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="box-footer clearfix">
-                    <a href="/product/index" class="btn btn-primary">添加货品</a>
+                    <a href="/product/index?status=1" class="btn btn-primary">添加货品</a>
                     <a href="/product/package/remove_all" class="btn btn-danger">移除全部</a>
                 </div>
             </div>
@@ -109,7 +109,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">提交</button>
+                    <button id="submit" type="submit" class="btn btn-primary">提交</button>
                 </div>
             </div>
             </form>
@@ -124,6 +124,55 @@
 <#include "*/_layout/script.ftl" />
 <script>
     $(function () {
+        $('#mainForm').submit(function () {
+
+            //check
+            var weightInput = $('input[name="weight[]"]');
+            var qtyInput = $('input[name="qty[]"]');
+
+            if (weightInput.length === 0 || qtyInput.length === 0 || weightInput.length !== qtyInput.length) {
+                sweetAlert("哎呦……", "请添加货品至入库清单","error");
+                return false;
+            }
+
+            for (var i = 0; i < weightInput.length; i ++) {
+                var witem = $(weightInput[i]).val();
+                var qitem = $(qtyInput[i]).val();
+
+                if (isEmpty(witem)) {
+                    sweetAlert("哎呦……", "大约重量 不能为空","error");
+                    return false;
+                }
+
+                if (isEmpty(qitem)) {
+                    sweetAlert("哎呦……", "数量 不能为空","error");
+                    return false;
+                }
+
+                var _w = parseFloat(witem);
+
+                if (isNaN(_w) || _w.toString() !== witem) {
+                    sweetAlert("哎呦……", "大约重量 请填写数字","error");
+                    return false;
+                }
+
+                var _q = parseInt(qitem);
+                if (isNaN(_q) || _q.toString() !== qitem) {
+                    sweetAlert("哎呦……", "数量 请填写整数","error");
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        function isEmpty(A) {
+            if (A === null || A === undefined || A === "") {
+                return true;
+            }
+            return false;
+        }
+
         $('.u-remove').click(function (e) {
             e.preventDefault();
 

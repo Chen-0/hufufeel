@@ -57,43 +57,15 @@ $('#register-btn').click(function () {
     })
 });
 
-$(document).ready(function () {
-    $.ajax({
-        type: "POST",
-        url: "/Logistics/index.php/Index/isLogin",
-        dataType: "json",
-        success: function (result) {
-            console.log(result);
-            if (result.data.res == 1) {
-                //login
-                $('#username').html(result.data['username']);
-                showMenu();
-
-                $.ajax({
-                    type: "POST",
-                    url: "/Logistics/index.php/Index/get_msg",
-                    dataType: "json",
-                    success: function (result) {
-                        if (result.data != null) {
-                            $('.new').removeClass('hide');
-                        }
-                    }
-                });
-            } else {
-                //not login
-                showLogin();
-            }
-        }
-    });
-
-    function showLogin() {
-        $('#login-container').removeClass('hide');
-    }
-
-    function showMenu() {
-        $('#menu-container').removeClass('hide');
-    }
-});
+// $(document).ready(function () {
+//     function showLogin() {
+//         $('#login-container').removeClass('hide');
+//     }
+//
+//     function showMenu() {
+//         $('#menu-container').removeClass('hide');
+//     }
+// });
 
 $('#login').click(function () {
     $('#login-con').removeClass('hide');

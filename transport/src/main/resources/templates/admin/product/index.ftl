@@ -59,7 +59,7 @@
                                 <th width="40">失败原因</th>
                             </#if>
                         </#if>
-
+                        <th width="40">备注</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -83,10 +83,10 @@
                         <td>${o.status.getValue()}</td>
                         <#if status??>
                             <#if status == 2>
-                                <td>${o.comment!}</td>
+                                <td>${o.reason!}</td>
                             </#if>
                         </#if>
-
+                        <td>${o.comment!}</td>
                         <td>
                             <a href="/admin/product/${o.id}/change_status?name=success">通过</a>
                             <a class="x-fail-check" href="javascript:void(0);" data-id="${o.id}" data-toggle="modal"

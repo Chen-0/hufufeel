@@ -15,6 +15,8 @@
         <mapping class="me.rubick.transport.app.model.Warehouse"/>
         <mapping class="me.rubick.transport.app.model.Package"/>
         <mapping class="me.rubick.transport.app.model.PackageProduct"/>
+        <mapping class="me.rubick.transport.app.model.Menu"/>
+        <mapping class="me.rubick.transport.app.model.Message"/>
         <!-- <property name="connection.username"/> -->
         <!-- <property name="connection.password"/> -->
 

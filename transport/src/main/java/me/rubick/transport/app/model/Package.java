@@ -1,9 +1,12 @@
 package me.rubick.transport.app.model;
 
+import lombok.Cleanup;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +24,10 @@ public class Package {
     private Date updatedAt;
     private String warehouseName;
     private String distributionChannelName;
+    private BigDecimal weight;
+    private BigDecimal realWeight = BigDecimal.ZERO;
+    private int qty;
+    private int realQty;
 
     private List<PackageProduct> packageProducts;
 
@@ -170,11 +177,48 @@ public class Package {
         this.packageProducts = packageProducts;
     }
 
+    @Column(name = "nickname")
     public String getNickname() {
         return nickname;
     }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    @Column(name = "weight")
+    public BigDecimal getWeight() {
+        return weight;
+    }
+
+    public void setWeight(BigDecimal weight) {
+        this.weight = weight;
+    }
+
+    @Column(name = "real_weight")
+    public BigDecimal getRealWeight() {
+        return realWeight;
+    }
+
+    public void setRealWeight(BigDecimal realWeight) {
+        this.realWeight = realWeight;
+    }
+
+    @Column(name = "qty")
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
+    }
+
+    @Column(name = "real_qty")
+    public int getRealQty() {
+        return realQty;
+    }
+
+    public void setRealQty(int realQty) {
+        this.realQty = realQty;
     }
 }

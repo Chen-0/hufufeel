@@ -25,7 +25,7 @@
     <#assign _end=elements.totalPages-1>
 </#if>
 
-<#if (_end != elements.number) >
+<#if (_end != elements.number) && _start <= _end >
     <#list _start.._end as n>
         <li><a href="${BASEURL}${n}">${n+1}</a></li>
     </#list>

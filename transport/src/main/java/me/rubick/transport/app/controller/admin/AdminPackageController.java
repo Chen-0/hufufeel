@@ -2,6 +2,8 @@ package me.rubick.transport.app.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.common.app.utils.TextUtils;
+import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.model.Product;
 import me.rubick.transport.app.repository.PackageRepository;
@@ -21,12 +23,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 @Slf4j
-public class AdminPackageController {
+public class AdminPackageController extends AbstractController {
 
     @Resource
     private PackageService packageService;
@@ -50,7 +53,13 @@ public class AdminPackageController {
         return "/admin/package/index";
     }
 
-
+    /**
+     * 入库
+     *
+     * @param model
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/package/{id}/inbound", method = RequestMethod.GET)
     public String getPackageInbound(
             Model model,
@@ -70,14 +79,21 @@ public class AdminPackageController {
             @RequestParam("p[]") List<Long> pIds,
             RedirectAttributes redirectAttributes
     ) {
-        log.info("{}", JSONMapper.toJSON(pIds));
         List<Product> products = productService.findProducts(pIds);
 
         int count = products.size();
         if (count != 0 && count == pIds.size() && qty.size() == count && weight.size() == count) {
             log.info("{}", JSONMapper.toJSON(weight));
-            packageService.inbound(id, pIds, weight, qty);
+            Package p = packageService.inbound(id, pIds, weight, qty);
+
+            redirectAttributes.addFlashAttribute("SUCCESS", "操作成功！");
+            messageService.send(
+                    p.getUserId(),
+                    "/package/index?status=1",
+                    MessageFormat.format("入库单：{0}在{1}入库成功！{2}", p.getReferenceNumber(), p.getWarehouseName())
+            );
         }
+
 
         return "redirect:/admin/package/index";
     }

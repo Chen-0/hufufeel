@@ -1,5 +1,6 @@
 package me.rubick.transport.app.service;
 
+import lombok.extern.slf4j.Slf4j;
 import me.rubick.transport.app.model.Role;
 import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.repository.RoleRepository;
@@ -23,6 +24,7 @@ import java.util.List;
  */
 @Service
 @Transactional
+@Slf4j
 public class UserService {
 
     @Resource
@@ -33,8 +35,6 @@ public class UserService {
 
     @Resource
     private PasswordEncoder passwordEncoder;
-
-    private Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public User get(long id) {
         return userRepository.getOne(id);
@@ -74,8 +74,7 @@ public class UserService {
             Object object = auth.getPrincipal();
             if (!ObjectUtils.isEmpty(object) && object instanceof User) {
                 User user = (User) object;
-                logger.info("Login User: {}", user.getUsername());
-                return userRepository.findOne(user.getId());
+                return user;
             }
         }
 

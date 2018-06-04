@@ -4,6 +4,7 @@
 <script src="https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
 <script src="https://cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
+<script src="https://cdn.bootcss.com/sweetalert/2.1.0/sweetalert.min.js"></script>
 
 <script src="/static/LTE/dist/js/adminlte.min.js"></script>
 <script src="/static/LTE/dist/js/bkb.js"></script>
@@ -16,5 +17,11 @@
             method: 'post',
             dataType: 'json'
         });
+
+        $('#logoutBtn').click(function (e) {
+            e.preventDefault();
+
+            $('#logoutForm').submit();
+        })
     });
 </script>

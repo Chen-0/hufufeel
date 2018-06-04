@@ -122,8 +122,9 @@
     </div>
 </footer>
 
-<script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
-<script src="/static/bower_components/bootstrap/dist/js/bootstrap.js"></script>
-<script src="/static/assets/js/common.js"></script>
-<script src="/static/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
-<script src="/static/bower_components/sweetalert-master/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+<#--<script src="/static/bower_components/sweetalert-master/dist/sweetalert.min.js"></script>-->
+    <script src="https://cdn.bootcss.com/sweetalert/2.1.0/sweetalert.min.js"></script>
+    <script src="/static/assets/js/common.js"></script>

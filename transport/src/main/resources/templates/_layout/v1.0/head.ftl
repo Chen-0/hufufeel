@@ -8,11 +8,10 @@
 <#else>
     <title>虎芙，惟客惟尊</title>
 </#if>
-    <link rel="stylesheet" href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/bower_components/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet"
-          href="/static/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css">
-    <link rel="stylesheet" href="/static/bower_components/sweetalert-master/dist/sweetalert.css">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+    <#--<link rel="stylesheet" href="/static/bower_components/sweetalert-master/dist/sweetalert.css">-->
     <link rel="stylesheet" href="/static/assets/css/style.css">
 
     <link rel="shortcut icon" href="/static/assets/favicon.ico" type="image/vnd.microsoft.icon">
