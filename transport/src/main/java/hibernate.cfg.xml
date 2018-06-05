@@ -10,13 +10,16 @@
         <mapping class="me.rubick.transport.app.model.ProductPackage"/>
         <mapping class="me.rubick.transport.app.model.Config"/>
         <mapping class="me.rubick.transport.app.model.DistributionChannel"/>
-        <mapping class="me.rubick.transport.app.model.RubickProductWarehourse"/>
+        <mapping class="me.rubick.transport.app.model.ProductWarehourse"/>
         <mapping class="me.rubick.transport.app.model.Warehourse"/>
         <mapping class="me.rubick.transport.app.model.Warehouse"/>
         <mapping class="me.rubick.transport.app.model.Package"/>
         <mapping class="me.rubick.transport.app.model.PackageProduct"/>
         <mapping class="me.rubick.transport.app.model.Menu"/>
         <mapping class="me.rubick.transport.app.model.Message"/>
+        <mapping class="me.rubick.transport.app.model.ProductWarehourse"/>
+        <mapping class="me.rubick.transport.app.model.ProductWarehouse"/>
+        <mapping class="me.rubick.transport.app.model.Payment"/>
         <!-- <property name="connection.username"/> -->
         <!-- <property name="connection.password"/> -->
 

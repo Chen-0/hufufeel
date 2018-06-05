@@ -1,29 +1,31 @@
 package me.rubick.transport.app.model;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "document")
+@Table(name = "rubick_document")
 public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
-    @Column(name = "display_name")
-    private String displayName;
+    @Column
+    private String name;
 
     @Column(name = "path_name")
     private String pathName;
 
-    @Column(name = "file_name")
-    private String fileName;
-
     @Column(name = "file_type")
     private String fileType;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Generated(GenerationTime.INSERT)
     private Date createdAt;
 
     public Long getId() {
@@ -34,28 +36,12 @@ public class Document {
         this.id = id;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
     public String getPathName() {
         return pathName;
     }
 
     public void setPathName(String pathName) {
         this.pathName = pathName;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     public String getFileType() {
@@ -72,5 +58,13 @@ public class Document {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

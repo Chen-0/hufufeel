@@ -40,7 +40,7 @@ public class FileController {
             Document document = documentService.findByPathName(pathName);
 
             response.setContentType(document.getFileType());
-            File file = new File(directory + "\\" + document.getFileName());
+            File file = new File(directory + "\\" + document.getPathName());
 
             FileInputStream fileInputStream = new FileInputStream(file);
 

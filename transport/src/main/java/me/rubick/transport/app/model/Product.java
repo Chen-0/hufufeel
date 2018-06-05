@@ -21,16 +21,18 @@ public class Product {
     private BigDecimal width;
     private BigDecimal height;
     private ProductStatus status;
-    private String productUrl;
+    private long imageId;
     private Date deadline;
     private boolean isDanger;
     private BigDecimal quotedPrice;
     private String quotedName;
-    private String comment;
+    private String comment = "";
+    private String reason = "";
+    private boolean isDeleted;
     private Date createdAt;
     private Date updatedAt;
-    private boolean isDeleted;
-    private String reason;
+
+    private Document image;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -144,16 +146,6 @@ public class Product {
     }
 
     @Basic
-    @Column(name = "product_url", nullable = false, length = 255)
-    public String getProductUrl() {
-        return productUrl;
-    }
-
-    public void setProductUrl(String productUrl) {
-        this.productUrl = productUrl;
-    }
-
-    @Basic
     @Column(name = "deadline", nullable = true)
     public Date getDeadline() {
         return deadline;
@@ -227,60 +219,6 @@ public class Product {
         this.updatedAt = updatedAt;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Product that = (Product) o;
-
-        if (id != that.id) return false;
-        if (userId != that.userId) return false;
-        if (isBattery != that.isBattery) return false;
-        if (status != that.status) return false;
-        if (isDanger != that.isDanger) return false;
-        if (productName != null ? !productName.equals(that.productName) : that.productName != null) return false;
-        if (productSku != null ? !productSku.equals(that.productSku) : that.productSku != null) return false;
-        if (origin != null ? !origin.equals(that.origin) : that.origin != null) return false;
-        if (weight != null ? !weight.equals(that.weight) : that.weight != null) return false;
-        if (length != null ? !length.equals(that.length) : that.length != null) return false;
-        if (width != null ? !width.equals(that.width) : that.width != null) return false;
-        if (height != null ? !height.equals(that.height) : that.height != null) return false;
-        if (productUrl != null ? !productUrl.equals(that.productUrl) : that.productUrl != null) return false;
-        if (deadline != null ? !deadline.equals(that.deadline) : that.deadline != null) return false;
-        if (quotedPrice != null ? !quotedPrice.equals(that.quotedPrice) : that.quotedPrice != null) return false;
-        if (quotedName != null ? !quotedName.equals(that.quotedName) : that.quotedName != null) return false;
-        if (comment != null ? !comment.equals(that.comment) : that.comment != null) return false;
-        if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
-        if (updatedAt != null ? !updatedAt.equals(that.updatedAt) : that.updatedAt != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (userId ^ (userId >>> 32));
-        result = 31 * result + (productName != null ? productName.hashCode() : 0);
-        result = 31 * result + (productSku != null ? productSku.hashCode() : 0);
-        result = 31 * result + (isBattery ? 1 : 0);
-        result = 31 * result + (origin != null ? origin.hashCode() : 0);
-        result = 31 * result + (weight != null ? weight.hashCode() : 0);
-        result = 31 * result + (length != null ? length.hashCode() : 0);
-        result = 31 * result + (width != null ? width.hashCode() : 0);
-        result = 31 * result + (height != null ? height.hashCode() : 0);
-        result = 31 * result + status.ordinal();
-        result = 31 * result + (productUrl != null ? productUrl.hashCode() : 0);
-        result = 31 * result + (deadline != null ? deadline.hashCode() : 0);
-        result = 31 * result + (isDanger ? 1 : 0);
-        result = 31 * result + (quotedPrice != null ? quotedPrice.hashCode() : 0);
-        result = 31 * result + (quotedName != null ? quotedName.hashCode() : 0);
-        result = 31 * result + (comment != null ? comment.hashCode() : 0);
-        result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
-        result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
-        return result;
-    }
-
     @Column(name = "is_deleted")
     public boolean getIsDeleted() {
         return isDeleted;
@@ -297,5 +235,24 @@ public class Product {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    @Column(name = "image_id")
+    public long getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(long imageId) {
+        this.imageId = imageId;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "image_id", insertable = false, updatable = false)
+    public Document getImage() {
+        return image;
+    }
+
+    public void setImage(Document image) {
+        this.image = image;
     }
 }

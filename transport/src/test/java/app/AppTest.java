@@ -10,9 +10,9 @@ import java.io.File;
 
 public class AppTest extends TestCase {
 
-    public void test1 () {
-        DocumentService.Action action = new DocumentService.Action(new File("D:\\uploads\\2222.jpg"));
-
-        action.resize(200, 200).save();
-    }
+//    public void test1 () {
+//        DocumentService.Action action = new DocumentService.Action(new File("D:\\uploads\\2222.jpg"));
+//
+//        action.resize(200, 200).save();
+//    }
 }

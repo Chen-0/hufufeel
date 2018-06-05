@@ -160,7 +160,7 @@
 
 
                                 <div class="form-group">
-                                    <label for="p_file">货品图片</label>
+                                    <label for="p_file">货品图片：</label>
                                     <input type="file" id="p_file" name="p_file">
 
                                     <p class="help-block">请上传少于100KB的图片</p>

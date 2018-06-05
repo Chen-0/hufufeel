@@ -12,7 +12,6 @@ import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.ProductRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.ProductService;
-import me.rubick.transport.app.service.UserService;
 import me.rubick.transport.app.vo.ProductContainer;
 import me.rubick.transport.app.vo.ProductFormVo;
 import org.springframework.data.domain.Page;
@@ -24,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -37,16 +37,13 @@ import java.util.Map;
 @Controller
 @Slf4j
 @SessionAttributes("productContainer")
-public class ProductController {
+public class ProductController extends AbstractController {
 
     @Resource
     private ProductService productService;
 
     @Resource
     private WarehouseRepository warehouseRepository;
-
-    @Resource
-    private UserService userService;
 
     @Resource
     private ProductRepository productRepository;
@@ -78,6 +75,23 @@ public class ProductController {
         return "product/index";
     }
 
+    @RequestMapping(value = "/product/{id}/show", method = RequestMethod.GET)
+    public String showProduct(
+            @PathVariable("id") long id,
+            Model model
+    ) throws BusinessException {
+        Product product = productRepository.findOne(id);
+
+        if (ObjectUtils.isEmpty(product)) {
+            //TODO no found
+            throw new BusinessException("");
+        }
+
+        model.addAttribute("ele", product);
+        model.addAttribute("MENU", "HUOPINGUANLI");
+        return "/product/show";
+    }
+
     @RequestMapping(value = "/product/create", method = RequestMethod.GET)
     public String getCreateProduct(Model model) {
 
@@ -92,8 +106,9 @@ public class ProductController {
     public String postCreateProduct(
             @Valid ProductFormVo productFormVo,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) throws CommonException {
-
+            RedirectAttributes redirectAttributes,
+            @RequestParam(name = "p_file", required = false) MultipartFile image
+    ) throws CommonException {
         if (bindingResult.hasErrors()) {
 
             log.info("-------------------- form has error ----------------");
@@ -106,6 +121,14 @@ public class ProductController {
 
         //store the product
         Product product = BeanMapperUtils.map(productFormVo, Product.class);
+
+        //更新图片
+        if (!ObjectUtils.isEmpty(image) && !image.isEmpty()) {
+            Document document = documentService.uploadProductImage(image);
+            if (!ObjectUtils.isEmpty(document)) {
+                product.setImageId(document.getId());
+            }
+        }
         product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
         productService.createProduct(product);
         redirectAttributes.addFlashAttribute("SUCCESS", "创建货品成功！");
@@ -114,6 +137,7 @@ public class ProductController {
 
     /**
      * 更新
+     *
      * @param model
      * @param id
      * @return
@@ -141,7 +165,8 @@ public class ProductController {
             @Valid ProductFormVo productFormVo,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
-            @PathVariable("id") long id
+            @PathVariable("id") long id,
+            @RequestParam(name = "p_file", required = false) MultipartFile image
     ) throws BusinessException {
         Product product = productRepository.findOne(id);
 
@@ -166,6 +191,14 @@ public class ProductController {
             Map<String, String> map = new HashMap<>();
             map.put("deadline", "时间格式错误");
             redirectAttributes.addFlashAttribute("errors", map);
+        }
+
+        //更新图片
+        if (!image.isEmpty()) {
+            Document document = documentService.uploadProductImage(image);
+            if (!ObjectUtils.isEmpty(document)) {
+                product.setImageId(document.getId());
+            }
         }
 
         productService.createProduct(product);
@@ -198,9 +231,9 @@ public class ProductController {
     }
 
 
-
     /**
      * 添加商品至发货清单中
+     *
      * @param trackingNumbers
      * @param productContainer
      * @param redirectAttributes
@@ -221,6 +254,7 @@ public class ProductController {
 
     /**
      * 发货清单
+     *
      * @param productContainer
      * @return
      */
@@ -263,6 +297,7 @@ public class ProductController {
 
     /**
      * 根据仓库筛选渠道
+     *
      * @param id
      * @return
      */

@@ -12,6 +12,7 @@ import net.coobird.thumbnailator.util.ThumbnailatorUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -75,6 +76,19 @@ public class DocumentService {
     @Resource
     private DocumentRepository documentRepository;
 
+    public Document uploadProductImage(MultipartFile multipartFile) {
+        try {
+            Action action = new Action(multipartFile);
+            action.resize(200, 200);
+
+            return saveAction(action);
+        } catch (Exception e) {
+            log.error("", e);
+        }
+
+        return null;
+    }
+
     /**
      * 上传图片
      *
@@ -94,10 +108,9 @@ public class DocumentService {
 
             log.info("文件保存成功！正在将信息写入数据库！");
             Document document = new Document();
-            document.setFileName(filename);
+            document.setName(filename);
             document.setFileType(multipartFile.getContentType());
-            document.setDisplayName(filename);
-            document.setPathName(HashUtils.base64Encode(filename + new Date()));
+            document.setPathName(filename);
             document.setCreatedAt(new Date());
 
             log.info("{} 写入数据库成功！", JSONMapper.toJSON(documentRepository.save(document)));
@@ -117,8 +130,7 @@ public class DocumentService {
         action.getInstance().toFile(directory + File.separator + filename + "." + filetype);
 
         Document document = new Document();
-        document.setDisplayName(filename);
-        document.setFileName(filename);
+        document.setName(filename);
         document.setPathName(filename);
         document.setFileType(filetype);
         document.setCreatedAt(new Date());
