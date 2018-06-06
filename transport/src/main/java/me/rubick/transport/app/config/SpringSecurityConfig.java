@@ -36,6 +36,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/static/**", "/file/**").permitAll()
                 .antMatchers("/login", "/register").anonymous()
+
+                //支付回调
+                .antMatchers("/pay/alipay/notify").permitAll()
                 .antMatchers("/", "/index", "/contact_us","/strategy", "/qa", "/cost", "/about_us").permitAll()
 
                 .antMatchers("/**")

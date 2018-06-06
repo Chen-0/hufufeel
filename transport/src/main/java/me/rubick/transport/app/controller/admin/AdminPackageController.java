@@ -6,9 +6,11 @@ import me.rubick.common.app.utils.TextUtils;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.model.Product;
+import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.service.PackageService;
 import me.rubick.transport.app.service.ProductService;
+import me.rubick.transport.app.service.StockService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -39,6 +41,9 @@ public class AdminPackageController extends AbstractController {
 
     @Resource
     private ProductService productService;
+
+    @Resource
+    private StockService stockService;
 
 
     @RequestMapping("/package/index")
@@ -88,10 +93,14 @@ public class AdminPackageController extends AbstractController {
 
             redirectAttributes.addFlashAttribute("SUCCESS", "操作成功！");
             messageService.send(
-                    p.getUserId(),
+                    p.getId(),
                     "/package/index?status=1",
                     MessageFormat.format("入库单：{0}在{1}入库成功！{2}", p.getReferenceNumber(), p.getWarehouseName())
             );
+
+
+            //////////////////////  增加库存  /////////////////////////////////
+            stockService.addStock(p);
         }
 
 

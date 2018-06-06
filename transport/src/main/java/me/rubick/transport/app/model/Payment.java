@@ -1,24 +1,28 @@
 package me.rubick.transport.app.model;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
-@Table(name = "rubick_payment", schema = "hufufeel", catalog = "")
+@Table(name = "rubick_payment")
 public class Payment {
     private long id;
     private long userId;
     private String outTradeNo;
     private String extendsInfo;
-    private String type;
-    private int status;
+    private PaymentType type;
+    private PaymentStatus status;
     private BigDecimal totalFee;
-    private Timestamp createdAt;
-    private Timestamp successAt;
+    private Date createdAt;
+    private Date successAt;
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long getId() {
         return id;
     }
@@ -59,21 +63,22 @@ public class Payment {
 
     @Basic
     @Column(name = "type", nullable = false, length = 255)
-    public String getType() {
+    @Enumerated(EnumType.STRING)
+    public PaymentType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(PaymentType type) {
         this.type = type;
     }
 
     @Basic
     @Column(name = "status", nullable = false)
-    public int getStatus() {
+    public PaymentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(PaymentStatus status) {
         this.status = status;
     }
 
@@ -89,21 +94,23 @@ public class Payment {
 
     @Basic
     @Column(name = "created_at", nullable = false)
-    public Timestamp getCreatedAt() {
+    @Temporal(TemporalType.TIMESTAMP)
+    @Generated(GenerationTime.INSERT)
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
     @Basic
     @Column(name = "success_at", nullable = true)
-    public Timestamp getSuccessAt() {
+    public Date getSuccessAt() {
         return successAt;
     }
 
-    public void setSuccessAt(Timestamp successAt) {
+    public void setSuccessAt(Date successAt) {
         this.successAt = successAt;
     }
 
@@ -134,7 +141,7 @@ public class Payment {
         result = 31 * result + (outTradeNo != null ? outTradeNo.hashCode() : 0);
         result = 31 * result + (extendsInfo != null ? extendsInfo.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + status;
+        result = 31 * result + status.hashCode();
         result = 31 * result + (totalFee != null ? totalFee.hashCode() : 0);
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (successAt != null ? successAt.hashCode() : 0);

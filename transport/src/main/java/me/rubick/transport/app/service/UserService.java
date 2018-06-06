@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -23,7 +24,7 @@ import java.util.List;
  * Created by chenjiazhuo on 2017/9/14.
  */
 @Service
-@Transactional
+@Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
 @Slf4j
 public class UserService {
 

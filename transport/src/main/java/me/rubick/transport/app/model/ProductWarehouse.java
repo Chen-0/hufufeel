@@ -19,6 +19,9 @@ public class ProductWarehouse {
     private Date createdAt;
     private Date updatedAt;
 
+    private Product product;
+    private Warehouse warehouse;
+
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -134,5 +137,25 @@ public class ProductWarehouse {
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "product_id", insertable = false, updatable = false)
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "warehouse_id", insertable = false, updatable = false)
+    public Warehouse getWarehouse() {
+        return warehouse;
+    }
+
+    public void setWarehouse(Warehouse warehouse) {
+        this.warehouse = warehouse;
     }
 }

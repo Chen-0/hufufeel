@@ -4,6 +4,9 @@ import me.rubick.transport.app.model.Menu;
 import me.rubick.transport.app.repository.MenuRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -12,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED, isolation = Isolation.READ_UNCOMMITTED)
 public class MenuService {
 
     @Resource

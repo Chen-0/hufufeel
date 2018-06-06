@@ -1,5 +1,6 @@
 package me.rubick.transport.app.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.utils.HashUtils;
 import me.rubick.transport.app.model.*;
@@ -9,6 +10,7 @@ import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.PackageService;
 import me.rubick.transport.app.service.ProductService;
+import me.rubick.transport.app.service.StockService;
 import me.rubick.transport.app.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@Slf4j
 public class PackageController {
 
     @Resource
@@ -39,9 +42,6 @@ public class PackageController {
 
     @Resource
     private ProductService productService;
-
-    @Resource
-    private WarehouseRepository warehouseRepository;
 
     @Resource
     private DistributionChannelRepository distributionChannelRepository;
@@ -166,5 +166,40 @@ public class PackageController {
 
         redirectAttributes.addFlashAttribute("SUCCESS", "取消入库单成功！");
         return "redirect:/package/index";
+    }
+
+
+    /* ------------------------------------------------------------------------------ */
+    @Resource
+    private StockService stockService;
+
+    @Resource
+    private WarehouseRepository warehouseRepository;
+
+    /**
+     * 库存管理
+     * @param model
+     * @param pageable
+     * @param keyword
+     * @param wIds
+     * @return
+     */
+    @RequestMapping("/stock/index")
+    public String index(
+            Model model,
+            @PageableDefault(size = 15, direction = Sort.Direction.DESC, sort = {"updatedAt", "id"}) Pageable pageable,
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(value = "w[]", required = false) List<Long> wIds
+    ) {
+        User user = userService.getByLogin();
+
+        List<Warehouse> warehouses = warehouseRepository.findAll();
+        Page<ProductWarehouse> productWarehouses = stockService.findAvailableStockByUser(user, pageable, keyword, wIds);
+
+        model.addAttribute("elements", productWarehouses);
+        model.addAttribute("warehouses", warehouses);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("ws", wIds);
+        return "/package/stock";
     }
 }

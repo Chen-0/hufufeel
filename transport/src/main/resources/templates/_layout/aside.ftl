@@ -29,7 +29,14 @@
             </li>
         <#--货品管理-->
         <#--新建货品-->
-            <li><a href="#">库存管理</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">库存管理<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/stock/index">查询库存</a></li>
+                    <#--<li><a href="/package/index">入库单管理</a></li>-->
+                </ul>
+            </li>
         <#--查看库存-->
             <li><a href="#">订单管理</a></li>
         <#--创建出库单-->
