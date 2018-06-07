@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -76,7 +77,11 @@ public class PayController extends AbstractController {
         if (AlipayNotify.verify(params)) {
             log.info("PayController::alipayNotify::verify::success");
             try {
-                payService.successForPayment(params.get("out_trade_no"));
+                Payment payment = payService.successForPayment(params.get("out_trade_no"));
+                messageService.send(
+                        payment.getUserId(),
+                        "/user/center",
+                        MessageFormat.format("{0}元充值成功！", payment.getTotalFee()));
             } catch (Exception e) {
                 log.info("", e);
             }
@@ -84,7 +89,7 @@ public class PayController extends AbstractController {
             log.info("PayController::alipayNotify::verify::fail");
         }
 
-        return "SUCCESS";
+        return "success";
     }
 
     @RequestMapping("/pay/alipay/success")

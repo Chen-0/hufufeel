@@ -74,7 +74,7 @@
 
                 <div class="box-footer clearfix">
                     <#if _STATUS?exists && ( _STATUS == 1) >
-                    <button id="addToSend" class="btn btn-primary">添加到发货清单</button>
+                    <button id="addToSend" class="btn btn-primary">添加到入库单</button>
                     </#if>
                 <#assign BASEURL="/product/index?keyword=${keyword}&status=${_STATUS!}&page="/>
                 <#include "*/_layout/v2.0/components/pages.ftl">

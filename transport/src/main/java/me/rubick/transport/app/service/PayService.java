@@ -40,6 +40,10 @@ public class PayService {
             throw new BusinessException("支付金额必须大于0.01元");
         }
 
+        if (ObjectUtils.isEmpty(user)) {
+            throw new BusinessException("[A001] 禁止访问！");
+        }
+
         Payment payment = new Payment();
         payment.setUserId(user.getId());
         payment.setExtendsInfo("");
@@ -60,7 +64,7 @@ public class PayService {
      *
      * @param outTradeNo
      */
-    public void successForPayment(String outTradeNo) throws BusinessException {
+    public Payment successForPayment(String outTradeNo) throws BusinessException {
         Payment payment = paymentRepository.findTopByOutTradeNo(outTradeNo);
 
         if (ObjectUtils.isEmpty(payment)) {
@@ -81,6 +85,8 @@ public class PayService {
             default:
                 ;
         }
+
+        return payment;
     }
 
     private void successForAccount(Payment payment) {

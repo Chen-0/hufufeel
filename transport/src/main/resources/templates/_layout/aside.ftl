@@ -34,25 +34,11 @@
                    aria-expanded="false">库存管理<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a href="/stock/index">查询库存</a></li>
-                    <#--<li><a href="/package/index">入库单管理</a></li>-->
                 </ul>
             </li>
         <#--查看库存-->
             <li><a href="#">订单管理</a></li>
-        <#--创建出库单-->
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                   aria-expanded="false">Dropdown <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">Action</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="#">One more separated link</a></li>
-                </ul>
-            </li>
+            <li><a href="/user/charge_account">充值中心</a></li>
         </ul>
 
 

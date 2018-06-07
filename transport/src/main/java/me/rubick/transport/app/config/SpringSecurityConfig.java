@@ -30,7 +30,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //启用 csrf
-        http.csrf().csrfTokenRepository(new HttpSessionCsrfTokenRepository());
+        http.csrf().csrfTokenRepository(new HttpSessionCsrfTokenRepository()).ignoringAntMatchers("/pay/alipay/notify");
 
 //        http.authorizeRequests().anyRequest().permitAll();
         http.authorizeRequests()

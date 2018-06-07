@@ -39,13 +39,17 @@ public class MessageService {
     }
 
     public void send(long userId, String url, String context) {
-        Message message = new Message();
-        message.setUserId(userId);
-        message.setContext(context);
-        message.setIsRead(false);
-        message.setTarget(url);
+        try {
+            Message message = new Message();
+            message.setUserId(userId);
+            message.setContext(context);
+            message.setIsRead(false);
+            message.setTarget(url);
 
-        messageRepository.save(message);
+            messageRepository.save(message);
+        } catch (Exception e) {
+            log.error("", e);
+        }
     }
 
     /**

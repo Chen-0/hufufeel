@@ -13,3 +13,20 @@
     margin-right: 15px;
     margin-bottom: 15px;
 }
+.charge-btn {
+    border-radius: 0;
+}
+.btn-group .btn+.btn, .btn-group .btn+.btn-group, .btn-group .btn-group+.btn, .btn-group .btn-group+.btn-group {
+    margin-left: 35px;
+}
+.charge-padding {
+    padding-top: 25px;
+    padding-left: 25px;
+}
+.charge-font {
+    font-size: 18px;
+}
+.inline-block {
+    vertical-align: top;
+    display: inline-block;
+}

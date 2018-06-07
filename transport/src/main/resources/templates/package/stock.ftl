@@ -58,9 +58,12 @@
                     </form>
 
 
+                    <form role="form" method="post" action="/stock/select" id="selectForm">
+                        <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
                     <table class="table table-bordered table-striped table-condensed table-hover">
                         <thead>
                         <tr>
+                            <th width="1px"><input type="checkbox" id="select_all"></th>
                             <th>编号</th>
                             <th>货品SKU</th>
                             <th>货品名称</th>
@@ -72,6 +75,7 @@
                         <tbody>
                         <#list elements.getContent() as e>
                         <tr>
+                            <th><input class="x-checkbox" type="checkbox" name="trackingNumber[]" value="${e.id}"></th>
                             <td>${e.id}</td>
                             <td>${e.product.productSku}</td>
                             <td>${e.product.productName}</td>
@@ -82,9 +86,11 @@
                         </#list>
                         </tbody>
                     </table>
+                    </form>
                 </div>
 
                 <div class="box-footer clearfix">
+                    <button id="addToSend" class="btn btn-primary" type="button">添加到入库单</button>
                     <#assign ff="&">
                     <#if ws??>
                         <#list ws as w>
@@ -95,22 +101,40 @@
                 <#include "*/_layout/v2.0/components/pages.ftl">
                 </div>
             </div>
-
-
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
-
 <#include "*/_layout/footer.ftl"/>
 </div>
 
 <#include "*/_layout/script.ftl" />
 <script>
     $(function () {
+        $('#select_all').click(function () {
+            if($(this).is(":checked")) {
+                changeSelect(true);
+            } else {
+                changeSelect(false);
+            }
+        });
+
+        function changeSelect(value) {
+            $('.x-checkbox').prop("checked", value);
+        }
+
         $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
             checkboxClass: 'icheckbox_flat-green',
             radioClass: 'iradio_flat-green'
+        });
+
+        $("#addToSend").click(function (e) {
+            e.preventDefault();
+
+            if($(".x-checkbox:checked").length === 0) {
+                alert("请选择一件或多件货品");
+                return;
+            }
+
+            $('#selectForm').submit();
         });
     });
 </script>

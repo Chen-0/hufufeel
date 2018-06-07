@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +28,11 @@ public class StockService {
 
     @Resource
     private ProductWarehouseRepository productWarehouseRepository;
+
+    @Transactional(readOnly = true)
+    public List<ProductWarehouse> findAll(User user, Collection<Long> collection) {
+        return productWarehouseRepository.findByUserIdAndIdIn(user.getId(), collection);
+    }
 
     @Transactional(readOnly = true)
     public Page<ProductWarehouse> findAvailableStockByUser(

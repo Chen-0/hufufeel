@@ -10,11 +10,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
 public interface ProductWarehouseRepository extends JpaRepository<ProductWarehouse, Long>, JpaSpecificationExecutor<ProductWarehouse> {
 
     ProductWarehouse findTopByUserIdAndProductIdAndWarehouseId(long userId, long productId, long warehouseId);
+
+    List<ProductWarehouse> findByUserIdAndIdIn(long userId, Collection<Long> collection);
 
     @Query("select pw from ProductWarehouse pw where pw.userId = ?1 and pw.quantity > 0 and pw.warehouseId = ?2")
     List<ProductWarehouse> findAvailableStockByUserId(long userId, long warehouseId);
