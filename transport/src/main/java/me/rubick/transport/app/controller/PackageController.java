@@ -3,6 +3,7 @@ package me.rubick.transport.app.controller;
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.response.RestResponse;
+import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.HashUtils;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
@@ -14,6 +15,7 @@ import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.service.StockService;
 import me.rubick.transport.app.service.UserService;
 import me.rubick.transport.app.vo.ProductContainer;
+import me.rubick.transport.app.vo.ProductWarehouseVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -31,7 +33,6 @@ import java.util.List;
 
 @Controller
 @Slf4j
-@SessionAttributes("stockContainer")
 public class PackageController {
 
     @Resource
@@ -48,11 +49,6 @@ public class PackageController {
 
     @Resource
     private DistributionChannelRepository distributionChannelRepository;
-
-    @ModelAttribute("stockContainer")
-    public ProductContainer productController() {
-        return new ProductContainer();
-    }
 
     @RequestMapping(value = "/package/index", method = RequestMethod.GET)
     public String packageIndex(
@@ -211,66 +207,35 @@ public class PackageController {
         return "/package/stock";
     }
 
-    /**
-     * 添加到发货清单
-     * @param productContainer
-     * @param trackingNumbers
-     * @param redirectAttributes
-     * @return
-     */
-    @RequestMapping(value = "/stock/select")
-    public String selectStock(
-            @ModelAttribute("stockContainer") ProductContainer productContainer,
-            @RequestParam("trackingNumber[]") List<Long> trackingNumbers,
-            RedirectAttributes redirectAttributes
-    ) {
-        productContainer.getProducts().addAll(trackingNumbers);
-        redirectAttributes.addFlashAttribute("SUCCESS", "添加入库单成功！");
-        return "redirect:/stock/send";
-    }
 
-    /**
-     * 从发货清单中移除
-     * @param id
-     * @param productContainer
-     * @return
-     */
-    @RequestMapping("/stock/send/{id}/remove")
-    public RestResponse<String> removeStock(
-            @PathVariable("id") long id,
-            @ModelAttribute("stockContainer") ProductContainer productContainer
-    ) {
-        if (productContainer.getProducts().contains(id)) {
-            productContainer.getProducts().remove(id);
-        }
-
-        return new RestResponse<>();
-    }
-
-    @RequestMapping("/stock/send/remove/all")
-    public String removeAllStock(
-            @PathVariable("id") long id,
-            @ModelAttribute("stockContainer") ProductContainer productContainer
-    ) {
-        productContainer.getProducts().clear();
-        return "redirect:/stock/send";
-    }
-
-    /**
-     * 发货清单
-     * @param productContainer
-     * @param model
-     * @return
-     */
     @RequestMapping(value = "/stock/send", method = RequestMethod.GET)
     public String sendStock(
-            @ModelAttribute("stockContainer") ProductContainer productContainer,
             Model model
     ) {
         User user = userService.getByLogin();
-        List<ProductWarehouse> productWarehouses = stockService.findAll(user, productContainer.getProducts());
-        model.addAttribute("elements", productWarehouses);
+        List<Warehouse> warehouses = warehouseRepository.findAll();
+        model.addAttribute("warehouses", warehouses);
         return "/package/send";
+    }
+
+    @RequestMapping("/ajax/stock/get_available")
+    @ResponseBody
+    public RestResponse<List<ProductWarehouseVo>> ajaxGetStockByWarehouse(
+            @RequestParam long wid
+    ) {
+        User user = userService.getByLogin();
+        Warehouse warehouse = warehouseRepository.getOne(wid);
+
+        List<ProductWarehouse> warehouses = stockService.findAvailableStockByUser(user, warehouse);
+        List<ProductWarehouseVo> productWarehouseVos = BeanMapperUtils.mapList(warehouses, ProductWarehouseVo.class);
+
+        int max = warehouses.size();
+        for (int i = 0; i < max; i ++) {
+            productWarehouseVos.get(i).setProductName(warehouses.get(i).getProduct().getProductName());
+            productWarehouseVos.get(i).setProductSku(warehouses.get(i).getProduct().getProductSku());
+        }
+
+        return new RestResponse<>(productWarehouseVos);
     }
 }
 
