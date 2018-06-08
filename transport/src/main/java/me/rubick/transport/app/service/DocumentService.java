@@ -1,10 +1,10 @@
 package me.rubick.transport.app.service;
 
-import me.rubick.transport.app.utils.HashUtils;
+import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.utils.HashUtils;
+import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.model.Document;
 import me.rubick.transport.app.repository.DocumentRepository;
-import me.rubick.transport.app.utils.JsonMapper;
-import me.rubick.transport.app.utils.Log;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.Date;
 
 @Service
+@Slf4j
 public class DocumentService {
 
     private static final String directory = "d:\\uploads";
@@ -26,21 +27,21 @@ public class DocumentService {
         File file = new File(directory);
 
         if (!file.exists()) {
-            Log.info("{} 不存在，正在创建文件夹", directory);
+            log.info("{} 不存在，正在创建文件夹", directory);
             if (file.mkdir()) {
-                Log.info("{} 文件夹创建成功！", directory);
+                log.info("{} 文件夹创建成功！", directory);
             }
         } else {
             if (!file.isDirectory()) {
-                Log.info("{} 不是目录，正在删除", directory);
+                log.info("{} 不是目录，正在删除", directory);
                 file.delete();
 
-                Log.info("{} 不存在，正在创建文件夹", directory);
+                log.info("{} 不存在，正在创建文件夹", directory);
                 if (file.mkdir()) {
-                    Log.info("{} 文件夹创建成功！", directory);
+                    log.info("{} 文件夹创建成功！", directory);
                 }
             } else {
-                Log.info("{} 目录存在!", directory);
+                log.info("{} 目录存在!", directory);
             }
         }
     }
@@ -65,7 +66,7 @@ public class DocumentService {
             stream.write(multipartFile.getBytes());
             stream.close();
 
-            Log.info("文件保存成功！正在将信息写入数据库！");
+            log.info("文件保存成功！正在将信息写入数据库！");
             Document document = new Document();
             document.setFileName(filename);
             document.setFileType(multipartFile.getContentType());
@@ -73,14 +74,14 @@ public class DocumentService {
             document.setPathName(HashUtils.base64Encode(filename + new Date()));
             document.setCreatedAt(new Date());
 
-            Log.info("{} 写入数据库成功！", JsonMapper.toJson(documentRepository.save(document)));
+            log.info("{} 写入数据库成功！", JSONMapper.toJSON(documentRepository.save(document)));
 
             return document;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        Log.info("上传文件失败！");
+        log.info("上传文件失败！");
         return null;
     }
 
@@ -89,13 +90,13 @@ public class DocumentService {
         String suffix = string[string.length - 1];
 
         String newFileName = HashUtils.generateString() + "." + suffix;
-        Log.info("随机生成新的文件名，文件名为：{}", newFileName);
+        log.info("随机生成新的文件名，文件名为：{}", newFileName);
         return newFileName;
     }
 
     public Document findByPathName(String pathName) {
         Document document = documentRepository.findByPathName(pathName);
-        Log.info("读取数据成功！ document={}", JsonMapper.toJson(document));
+        log.info("读取数据成功！ document={}", JSONMapper.toJSON(document));
         return document;
     }
 }

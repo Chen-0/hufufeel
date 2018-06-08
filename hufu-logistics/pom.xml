@@ -30,5 +30,10 @@
             <artifactId>barcode4j-light</artifactId>
             <version>2.0</version>
         </dependency>
+        <dependency>
+            <groupId>me.rubick</groupId>
+            <artifactId>rubick-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

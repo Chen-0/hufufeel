@@ -18,7 +18,7 @@ public class Company implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private int id;
 
     @Column
     private String username;
@@ -43,11 +43,11 @@ public class Company implements UserDetails {
     )
     private List<Authority> authorities;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

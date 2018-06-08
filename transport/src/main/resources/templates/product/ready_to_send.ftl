@@ -22,7 +22,8 @@
 
         <!-- Main content -->
         <section class="content">
-
+            <form action="/package/create" method="post">
+                <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title">1.选择货品</h3>
@@ -35,6 +36,8 @@
                             <th>编号</th>
                             <th>商品名称</th>
                             <th>商品SKU</th>
+                            <th>大约重量（KG）</th>
+                            <th>数量（件）</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -44,6 +47,17 @@
                             <td>${e.id}</td>
                             <td>${e.productName}</td>
                             <td>${e.productSku}</td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="hidden" name="p[]" value="${e.id}">
+                                    <input type="text" class="form-control" name="weight[]" placeholder="单件重量*数量">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="qty[]">
+                                </div>
+                            </td>
                             <td>
                                 <a class="u-remove" href="javascript:void(0);" data-id="${e.id}">移除</a>
                             </td>
@@ -87,16 +101,18 @@
                         <div class="col-xs-4">
                             <div class="form-group">
                                 <label>选择派送方式：</label>
-                                <select class="form-control" id="channels">
+                                <select class="form-control" id="channels" name="dc">
                                     <option value="">1</option>
                                     <option>2</option>
                                 </select>
                             </div>
                         </div>
                     </div>
+
+                    <button type="submit" class="btn btn-primary">提交</button>
                 </div>
             </div>
-
+            </form>
         </section>
         <!-- /.content -->
     </div>

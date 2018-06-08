@@ -4,7 +4,7 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:mysql://localhost:3306/hufufeel</property>
+        <property name="connection.url">jdbc:mysql://127.0.0.1:3306/hufufeel</property>
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
         <mapping class="me.rubick.transport.app.model.Product"/>
         <mapping class="me.rubick.transport.app.model.ProductPackage"/>
@@ -13,6 +13,8 @@
         <mapping class="me.rubick.transport.app.model.RubickProductWarehourse"/>
         <mapping class="me.rubick.transport.app.model.Warehourse"/>
         <mapping class="me.rubick.transport.app.model.Warehouse"/>
+        <mapping class="me.rubick.transport.app.model.Package"/>
+        <mapping class="me.rubick.transport.app.model.PackageProduct"/>
         <!-- <property name="connection.username"/> -->
         <!-- <property name="connection.password"/> -->
 

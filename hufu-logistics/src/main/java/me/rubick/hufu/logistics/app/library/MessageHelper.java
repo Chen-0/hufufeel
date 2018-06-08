@@ -1,6 +1,7 @@
 package me.rubick.hufu.logistics.app.library;
 
-import me.rubick.hufu.logistics.app.utils.JSONMapper;
+
+import me.rubick.common.app.utils.JSONMapper;
 
 import java.util.HashMap;
 import java.util.Map;

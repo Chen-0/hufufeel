@@ -1,7 +1,7 @@
 package me.rubick.hufu.logistics.app.interceptor;
 
+import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.hufu.logistics.app.model.Company;
-import me.rubick.hufu.logistics.app.utils.JSONMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

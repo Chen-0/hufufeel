@@ -16,7 +16,7 @@
     </parent>
 
     <properties>
-        <start-class>me.rubick.transport.app.ApplicationProvider</start-class>
+        <start-class>me.rubick.transport.app.TransportApplicationProvider</start-class>
     </properties>
 
     <dependencies>

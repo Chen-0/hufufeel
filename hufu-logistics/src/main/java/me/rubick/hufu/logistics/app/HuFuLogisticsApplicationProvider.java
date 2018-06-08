@@ -14,8 +14,8 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 @EntityScan("me.rubick.hufu.logistics.app.model")
 @ComponentScan(basePackages = { "me.rubick.hufu.logistics.app" })
 @EnableSpringDataWebSupport
-public class ApplicationProvider {
+public class HuFuLogisticsApplicationProvider {
 	public static void main(String[] args) {
-		SpringApplication.run(ApplicationProvider.class, args);
+		SpringApplication.run(HuFuLogisticsApplicationProvider.class, args);
 	}
 }
