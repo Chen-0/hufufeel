@@ -1,12 +1,7 @@
 <header class="main-header">
-    <!-- Logo -->
-    <a href="../../index2.html" class="logo">
-        <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini"><b>A</b>LT</span>
-        <!-- logo for regular state and mobile devices -->
+    <a href="/" class="logo">
         <span class="logo-lg"><b>HUFU</b>FEEL</span>
     </a>
-    <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
 
         <ul class="nav navbar-nav">
@@ -37,7 +32,13 @@
                 </ul>
             </li>
         <#--查看库存-->
-            <li><a href="#">订单管理</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">订单管理<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/stock/send">新建发货单</a></li>
+                </ul>
+            </li>
             <li><a href="/user/charge_account">充值中心</a></li>
         </ul>
 

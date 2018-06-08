@@ -35,6 +35,17 @@ public class StockService {
     }
 
     @Transactional(readOnly = true)
+    public ProductWarehouse findAvailableStockByProductSku(String productSku) {
+        List<ProductWarehouse> productWarehouses = productWarehouseRepository.findAvailableStockByProductSku(productSku);
+
+        if (ObjectUtils.isEmpty(productWarehouses)) {
+            return null;
+        }
+
+        return productWarehouses.get(0);
+    }
+
+    @Transactional(readOnly = true)
     public Page<ProductWarehouse> findAvailableStockByUser(
             User user, Pageable pageable,
             String keyword,

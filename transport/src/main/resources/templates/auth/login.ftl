@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>登陆</title>
-    <link rel="stylesheet" href="/static/plugins/font-awesome-4.7.0/css/font-awesome.min.css">
+    <title>登陆 - 虎芙货运管家</title>
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/login.css">
 </head>
 
@@ -27,7 +26,7 @@
             </div>
 
         <#if SPRING_SECURITY_LAST_EXCEPTION??>
-            <p class="text-danger">${SPRING_SECURITY_LAST_EXCEPTION!}</p>
+            <p class="text-danger">账号或密码错误</p>
         </#if>
 
             <div style="text-align: center; margin-bottom: 5px;">
@@ -42,22 +41,5 @@
         </form>
     </div>
 </div>
-
-<#--<div class="login-container">-->
-
-<#--<div style="text-align: center;">HUFU FEEL</div>-->
-
-<#--<form action="/">-->
-
-<#--<label for="username">用户名：</label>-->
-<#--<input type="email" name="username" id="username">-->
-
-<#--<label for="password">密码：</label>-->
-<#--<input type="password" name="password" id="password">-->
-<#--</form>-->
-<#--</div>-->
-
-
 </body>
-
 </html>

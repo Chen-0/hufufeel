@@ -212,7 +212,6 @@ public class PackageController {
     public String sendStock(
             Model model
     ) {
-        User user = userService.getByLogin();
         List<Warehouse> warehouses = warehouseRepository.findAll();
         model.addAttribute("warehouses", warehouses);
         return "/package/send";
@@ -236,6 +235,29 @@ public class PackageController {
         }
 
         return new RestResponse<>(productWarehouseVos);
+    }
+
+    @RequestMapping("/ajax/stock/get_stock")
+    @ResponseBody
+    public RestResponse<ProductWarehouseVo> ajaxGetStockByProductSku(
+            @RequestParam String productSku,
+            @RequestParam int qty
+    ) {
+        productSku = productSku.trim();
+        ProductWarehouse productWarehouse = stockService.findAvailableStockByProductSku(productSku);
+        if (ObjectUtils.isEmpty(productWarehouse)) {
+            return new RestResponse<>("货品不存在");
+        }
+
+        if (productWarehouse.getQuantity() < qty) {
+            return new RestResponse<>("库存不足");
+        }
+        ProductWarehouseVo productWarehouseVo = BeanMapperUtils.map(productWarehouse, ProductWarehouseVo.class);
+
+        productWarehouseVo.setProductName(productWarehouse.getProduct().getProductName());
+        productWarehouseVo.setProductSku(productWarehouse.getProduct().getProductSku());
+
+        return new RestResponse<>(productWarehouseVo);
     }
 }
 

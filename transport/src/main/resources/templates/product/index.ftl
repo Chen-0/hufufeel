@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
+<#assign TITLE = "货品管理">
 <#include "*/_layout/head.ftl" />
 
 <body class="hold-transition skin-black-light sidebar-mini">
-<!-- Site wrapper -->
+
+
 <div class="wrapper">
 <#include "*/_layout/aside.ftl" />
 
     <div class="content-wrapper">
         <section class="content-header">
             <h1>
-                Blank page
-                <small>it all starts here</small>
+                货品管理
             </h1>
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -24,12 +25,7 @@
         <section class="content">
 
             <div class="box">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Bordered Table</h3>
-                </div>
-                <!-- /.box-header -->
                 <div class="box-body">
-
                     <form class="form-inline margin-bottom" role="form" method="get" action="/product/index">
                         <div class="form-group">
                             <label for="keyword">关键字：</label>
@@ -110,7 +106,7 @@
             e.preventDefault();
 
             if($(".x-checkbox:checked").length === 0) {
-                alert("请选择一件或多件商品");
+                alert("请选择一件或多件货品");
                 return;
             }
 
