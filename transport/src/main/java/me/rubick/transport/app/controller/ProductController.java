@@ -131,7 +131,7 @@ public class ProductController extends AbstractController {
         }
         product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
         productService.createProduct(product);
-        redirectAttributes.addFlashAttribute("SUCCESS", "创建货品成功！");
+        redirectAttributes.addFlashAttribute("SUCCESS", "添加货品成功！");
         return "redirect:/product/index";
     }
 
