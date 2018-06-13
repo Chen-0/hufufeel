@@ -16,13 +16,5 @@ $(document).ready(function () {
     if (msgContainer.length > 0) {
         msgContainer.fadeOut(3000);
     }
-
-    $.ajaxSetup({
-        headers:{
-            'X-CSRF-Token': '${_csrf.token!}'
-        },
-        method: 'post',
-        dataType: 'json'
-    });
 });
 

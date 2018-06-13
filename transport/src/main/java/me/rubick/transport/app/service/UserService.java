@@ -124,7 +124,9 @@ public class UserService {
 
     public CostSubjectSnapshotVo findCostSubjectByUserId(User user) {
         CostSubject costSubject = costSubjectRepository.findTopByUserId(user.getId());
-
+        if (ObjectUtils.isEmpty(costSubject)) {
+            return null;
+        }
         return JSONMapper.fromJson(costSubject.getCostSubjectSnapshot(), CostSubjectSnapshotVo.class);
     }
 }

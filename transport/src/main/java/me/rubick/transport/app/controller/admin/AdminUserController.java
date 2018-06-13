@@ -10,6 +10,7 @@ import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -43,15 +44,36 @@ public class AdminUserController extends AbstractController {
             Model model
     ) {
         User user = userRepository.findOne(id);
+
+        CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(user);
+        if (ObjectUtils.isEmpty(costSubjectSnapshotVo)) {
+            costSubjectSnapshotVo = new CostSubjectSnapshotVo();
+            costSubjectSnapshotVo.setRkt("RK-AZ");
+            costSubjectSnapshotVo.setRkv(BigDecimal.ZERO);
+            costSubjectSnapshotVo.setSjt("SJ-AS");
+            costSubjectSnapshotVo.setSjv(BigDecimal.ZERO);
+            costSubjectSnapshotVo.setDdt("DD-AZ");
+            costSubjectSnapshotVo.setDdv(null);
+        }
+
         model.addAttribute("user", user);
+        model.addAttribute("cs", costSubjectSnapshotVo);
+
+        model.addAttribute("INP_RK_AZ", configService.findByKey("INP-RK-AZ"));
+        model.addAttribute("INP_RK_AX", configService.findByKey("INP-RK-AX"));
+        model.addAttribute("INP_SJ_AS", configService.findByKey("INP-SJ-AS"));
+        model.addAttribute("INP_SJ_AJ", configService.findByKey("INP-SJ-AJ"));
+        model.addAttribute("INP_DD_AZ_1", configService.findByKey("INP_DD_AZ_1"));
+        model.addAttribute("INP_DD_AZ_2", configService.findByKey("INP_DD_AZ_2"));
+        model.addAttribute("INP_DD_AZ_3", configService.findByKey("INP_DD_AZ_3"));
+        model.addAttribute("INP_DD_AZ_4", configService.findByKey("INP_DD_AZ_4"));
+        model.addAttribute("INP_DD_AJ", configService.findByKey("INP-DD-AJ"));
         return "/admin/user/cost_subject";
     }
 
     @RequestMapping(value = "/{id}/cost_subject", method = RequestMethod.POST)
-    @ResponseBody
     public String postUserCostSubject(
             @PathVariable("id") long id,
-//            CostSubjectSnapshotVo costSubjectSnapshotVo
             @RequestParam("rkt") String rkt,
             @RequestParam("rkv") BigDecimal rkv,
             @RequestParam("sjt") String sjt,

@@ -18,6 +18,12 @@
         });
     });
 
+    var msgContainer = $('.message-container');
+
+    if (msgContainer.length > 0) {
+        msgContainer.fadeOut(3000);
+    }
+
     $('#logout').click(function () {
         $('#logoutForm').submit();
     });

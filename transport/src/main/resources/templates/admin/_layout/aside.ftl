@@ -1,4 +1,3 @@
-<#if USER.isAdmin() >
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -44,6 +43,18 @@
                 </li>
             </ul>
 
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        用户管理<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/admin/user/index">查看所有</a></li>
+                    </ul>
+                </li>
+            </ul>
+
             <form action="/logout" method="post" id="logoutForm">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
 
@@ -55,130 +66,13 @@
         </div>
     </div>
 </nav>
-<#else >
 
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <img src="http://www.hufufeel.com/Logistics/public/Images/logo1.png" alt=""
-            style="height: 50px; float: left; margin-right: 25px; margin-left:10px;">
-            <a class="navbar-brand" href="/">HUFU大客户中心</a>
-
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">
-                        运单管理<span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/order/index?status=1" id="ruku">待入库的运单</a></li>
-                        <li><a href="/order/index?status=2" id="fahuo">待发货的运单</a></li>
-                        <li><a href="/order/index?status=3" id="song">已发货的运单</a></li>
-                        <li><a href="/order/index?status=99">信息有误的运单</a></li>
-                    </ul>
-                </li>
-            </ul>
-
-
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">
-                        数据导入<span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/order/excel/upload">导入运单</a></li>
-                    </ul>
-                </li>
-            </ul>
-
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">
-                        信息<span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)">大客户名称：${USER.name}</a></li>
-                        <li><a href="javascript:void(0)">余额：${USER.money}</a></li>
-                        <#list USER.companyRExpressList as o >
-                            <li><a href="javascript:void(0)">${o.companyExpress.name}：${o.price}</a></li>
-                        </#list>
-                        <li><a href="javascript:void(0);" id="logout">退出</a></li>
-                    </ul>
-                </li>
-            </ul>
-
-            <form action="/logout" method="post" id="logoutForm">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
-            </form>
-        </div>
+<#if SUCCESS?? >
+<div class="message-container">
+    <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h4><i class="icon fa fa-check"></i> 操作成功</h4>
+    ${SUCCESS!}
     </div>
-</nav>
-
-<#--<nav class="navbar navbar-default" role="navigation">-->
-    <#--<div class="container-fluid">-->
-        <#--<!-- Brand and toggle get grouped for better mobile display &ndash;&gt;-->
-        <#--<div class="navbar-header">-->
-            <#--<img src="http://www.hufufeel.com/Logistics/public/Images/logo1.png" alt=""-->
-                 <#--style="height: 50px; float: left;">-->
-            <#--<a class="navbar-brand" href="javascript:void(0)">HUFU</a>-->
-        <#--</div>-->
-
-        <#--<!-- Collect the nav links, forms, and other content for toggling &ndash;&gt;-->
-        <#--<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">-->
-            <#--<ul class="nav navbar-nav">-->
-                <#--<!--<li><a href="">导入/</a></li>&ndash;&gt;-->
-                <#--<li class="dropdown">-->
-                    <#--<a href="#" class="dropdown-toggle" data-toggle="dropdown">运单管理 <span class="caret"></span></a>-->
-                    <#--<ul class="dropdown-menu" role="menu">-->
-                        <#--<li><a href="/order/index?status=1" id="ruku">待入库的运单</a></li>-->
-                        <#--<li><a href="/order/index?status=2" id="fahuo">待发货的运单</a></li>-->
-                        <#--<li><a href="/order/index?status=3" id="song">已发货的运单</a></li>-->
-                        <#--<li><a href="/order/index?status=99">信息有误的运单</a></li>-->
-                    <#--</ul>-->
-                <#--</li>-->
-
-                <#--<li class="dropdown">-->
-                    <#--<a href="#" class="dropdown-toggle" data-toggle="dropdown">数据处理 <span class="caret"></span></a>-->
-                    <#--<ul class="dropdown-menu" role="menu">-->
-                        <#--<li><a href="/order/excel/upload">导入运单</a></li>-->
-                    <#--</ul>-->
-                <#--</li>-->
-
-
-            <#--</ul>-->
-
-            <#--<form action="/logout" method="post" id="logoutForm">-->
-                <#--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">-->
-                <#--<ul class="nav navbar-nav">-->
-                    <#--<li class="dropdown">-->
-                        <#--<a href="#" class="dropdown-toggle" data-toggle="dropdown">信息 <span class="caret"></span></a>-->
-
-                        <#--<ul class="dropdown-menu" role="menu">-->
-                            <#--<li><a href="javascript:void(0)">大客户名称：${USER.name}</a></li>-->
-                            <#--<li><a href="javascript:void(0)">余额：${USER.money}</a></li>-->
-                            <#--<#list USER.companyRExpressList as o >-->
-                                <#--<li><a href="javascript:void(0)">${o.companyExpress.name}：${o.price}</a></li>-->
-                            <#--</#list>-->
-                            <#--<li><a href="javascript:void(0);" id="logout">退出</a></li>-->
-                        <#--</ul>-->
-
-                    <#--</li>-->
-                <#--</ul>-->
-            <#--</form>-->
-        <#--</div><!-- /.navbar-collapse &ndash;&gt;-->
-    <#--</div><!-- /.container-fluid &ndash;&gt;-->
-<#--</nav>-->
-
+</div>
 </#if>

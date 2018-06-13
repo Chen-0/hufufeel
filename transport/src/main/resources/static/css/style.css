@@ -159,3 +159,13 @@ table {
 .table-sub-item {
     background: #eee;
 }
+.message-container {
+    position: fixed;
+    right: 5px;
+    top: 13%;
+
+    width: 280px;
+    height: 200px;
+
+    z-index: 99999;
+}
