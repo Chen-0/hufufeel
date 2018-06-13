@@ -26,7 +26,13 @@ public class User implements UserDetails, Serializable {
     private String name;
 
     @Column
-    private BigDecimal money;
+    private BigDecimal usd;
+
+    @Column
+    private boolean arrearage;
+
+    @Column
+    private int ctype;
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -93,14 +99,6 @@ public class User implements UserDetails, Serializable {
         this.name = name;
     }
 
-    public BigDecimal getMoney() {
-        return money;
-    }
-
-    public void setMoney(BigDecimal money) {
-        this.money = money;
-    }
-
     public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
     }
@@ -113,5 +111,29 @@ public class User implements UserDetails, Serializable {
         }
 
         return false;
+    }
+
+    public BigDecimal getUsd() {
+        return usd;
+    }
+
+    public void setUsd(BigDecimal usd) {
+        this.usd = usd;
+    }
+
+    public boolean isArrearage() {
+        return arrearage;
+    }
+
+    public void setArrearage(boolean arrearage) {
+        this.arrearage = arrearage;
+    }
+
+    public int getCtype() {
+        return ctype;
+    }
+
+    public void setCtype(int ctype) {
+        this.ctype = ctype;
     }
 }

@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
 
 /**
  * JSON 工具类
  */
+@Slf4j
 public class JSONMapper {
 
     private static ObjectMapper objectMapper;
@@ -27,9 +31,19 @@ public class JSONMapper {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error("", e);
         }
 
         throw new RuntimeException("无法解析对象为JSON.");
+    }
+
+    public static <T> T fromJson(String json, Class<T> clazz) {
+        try {
+            return objectMapper.readValue(json, clazz);
+        } catch (IOException e) {
+            log.error("", e);
+        }
+
+        throw new RuntimeException("无法解析JSON为对象.");
     }
 }

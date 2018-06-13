@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<#assign TITLE = "添加货品">
 <#include "*/_layout/head.ftl" />
 
 <body class="hold-transition skin-black-light sidebar-mini">
@@ -9,12 +10,7 @@
 
     <div class="content-wrapper">
         <section class="content-header">
-            <h1>添加商品</h1>
-        <#--<ol class="breadcrumb">-->
-        <#--<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>-->
-        <#--<li><a href="#">Examples</a></li>-->
-        <#--<li class="active">Blank page</li>-->
-        <#--</ol>-->
+            <h1>添加货品</h1>
         </section>
 
 
@@ -22,15 +18,29 @@
             <div class="row">
                 <div class="col-xs-8 col-xs-offset-2">
                     <div class="box box-primary">
-                        <div class="box-header with-border">
-                        <#--<h3 class="box-title">Quick Example</h3>-->
-                        </div>
                         <form role="form" method="post" action="/product/post_create" enctype="multipart/form-data">
                             <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
 
                             <div class="box-body">
+
                                 <div class="form-group">
-                                    <label for="productName">商品名称：</label>
+                                    <label for="">业务类型*：</label>
+                                <#assign foo=felements.businessType>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="businessType" value="0" ${foo?string("", "checked=true")}>
+                                            出口业务
+                                        </label>
+
+                                        <label style="margin-left: 15px;">
+                                            <input type="radio" name="businessType" value="1" ${foo?string("checked=true", "")}>
+                                            进口业务
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="productName">商品名称*：</label>
                                     <input type="text" class="form-control" id="productName" name="productName" value="${felements.productName!}">
                                     <#if errors??>
                                         <p class="text-danger">${errors.productName!}</p>
@@ -38,7 +48,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="productSku">商品SKU：</label>
+                                    <label for="productSku">商品SKU*：</label>
                                     <input type="text" class="form-control" id="productSku" name="productSku" value="${felements.productSku!}">
                                     <#if errors??>
                                         <p class="text-danger">${errors.productSku!}</p>
@@ -46,7 +56,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="">电池类型：</label>
+                                    <label for="">电池类型*：</label>
                                     <#assign foo=felements.isBattery>
 
                                     <div class="radio">
@@ -70,37 +80,48 @@
                                 </#if>
                                 </div>
 
+
                                 <div class="form-group">
-                                    <label for="weight">重量（KG）：</label>
+                                    <label for="weight">重量（KG）*：</label>
                                     <input type="text" class="form-control" id="weight" name="weight" value="${felements.weight!}">
                                 <#if errors??>
                                     <p class="text-danger">${errors.weight!}</p>
                                 </#if>
                                 </div>
 
-
-                                <div class="form-group">
-                                    <label for="length">长（CM）：</label>
-                                    <input type="text" class="form-control" id="length" name="length" value="${felements.length!}">
-                                <#if errors??>
-                                    <p class="text-danger">${errors.length!}</p>
-                                </#if>
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <div class="form-group">
+                                            <label for="length">长（厘米）*：</label>
+                                            <input type="text" class="form-control" id="length" name="length" value="${felements.length!}">
+                                        <#if errors??>
+                                            <p class="text-danger">${errors.length!}</p>
+                                        </#if>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div class="form-group">
+                                            <label for="width">宽（厘米）*：</label>
+                                            <input type="text" class="form-control" id="width" name="width" value="${felements.width!}">
+                                        <#if errors??>
+                                            <p class="text-danger">${errors.width!}</p>
+                                        </#if>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div class="form-group">
+                                            <label for="height">高（厘米）*：</label>
+                                            <input type="text" class="form-control" id="height" name="height" value="${felements.height!}">
+                                        <#if errors??>
+                                            <p class="text-danger">${errors.height!}</p>
+                                        </#if>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="width">宽（CM）：</label>
-                                    <input type="text" class="form-control" id="width" name="width" value="${felements.width!}">
-                                <#if errors??>
-                                    <p class="text-danger">${errors.width!}</p>
-                                </#if>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="height">高（CM）：</label>
-                                    <input type="text" class="form-control" id="height" name="height" value="${felements.height!}">
-                                <#if errors??>
-                                    <p class="text-danger">${errors.height!}</p>
-                                </#if>
+                                    <label for="size">体积（立方米）：</label>
+                                    <input type="text" class="form-control" id="size" disabled>
                                 </div>
 
                                 <div class="form-group">
@@ -119,7 +140,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="">危险货物：</label>
+                                    <label for="">危险货物*：</label>
                                     <#assign foo=felements.isDanger>
                                     <div class="radio">
                                         <label>
@@ -135,7 +156,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="quotedName">申报名称：</label>
+                                    <label for="quotedName">申报名称*：</label>
                                     <input type="text" class="form-control" id="quotedName" name="quotedName" value="${felements.quotedName!}">
                                 <#if errors??>
                                     <p class="text-danger">${errors.quotedName!}</p>
@@ -143,7 +164,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="quotedPrice">申报价值（人民币）：</label>
+                                    <label for="quotedPrice">申报价值（人民币）*：</label>
                                     <input type="text" class="form-control" id="quotedPrice" name="quotedPrice" value="${felements.quotedPrice!}">
                                 <#if errors??>
                                     <p class="text-danger">${errors.quotedPrice!}</p>
@@ -160,10 +181,13 @@
 
 
                                 <div class="form-group">
-                                    <label for="p_file">货品图片：</label>
+                                    <label for="p_file">货品图片*：</label>
                                     <input type="file" id="p_file" name="p_file">
 
                                     <p class="help-block">请上传少于100KB的图片</p>
+                                <#if errors??>
+                                    <p class="text-danger">${errors.p_file!}</p>
+                                </#if>
                                 </div>
                             </div>
 
@@ -183,11 +207,32 @@
 
 <#include "*/_layout/script.ftl" />
 <script>
+    $(function () {
+        $('#datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true
+        });
+
+        $('#height, #width, #length').change(function () {
+            calcSize();
+        });
+
+        calcSize();
+
+        function calcSize() {
+            var a = $('#height').val();
+            var b = $('#width').val();
+            var c = $('#length').val();
+
+            if (isEmpty(a) || isEmpty(b) || isEmpty(c)) {
+                ;
+            } else {
+                $('#size').val(accDiv(accMul(accMul(a, b) , c) , 1000000.0));
+            }
+        }
+    });
     //Date picker
-    $('#datepicker').datepicker({
-        format: 'yyyy-mm-dd',
-        autoclose: true
-    })
+
 </script>
 </body>
 </html>

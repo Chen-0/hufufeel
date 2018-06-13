@@ -87,17 +87,17 @@
                 <div class="box-body">
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
-                            <label class="col-xs-1 control-label text-center">派送方式*</label>
+                            <label for="CKT-1" class="col-xs-1 control-label text-center">派送方式*</label>
                             <div class="col-xs-5">
-                                <select class="form-control" id="channels" name="dc">
+                                <select class="form-control" id="CKT-1" name="CKT-1">
                                     <option value="1">测试1</option>
                                     <option value="2">测试2</option>
                                 </select>
                             </div>
 
-                            <label class="col-xs-1 control-label text-center">保险类型*</label>
+                            <label for="CKT-2" class="col-xs-1 control-label text-center">保险类型*</label>
                             <div class="col-xs-5">
-                                <select class="form-control" id="channels" name="dc">
+                                <select class="form-control" id="CKT-2" name="CKT-2">
                                     <option value="HEIGHT">高保</option>
                                     <option value="LOW">低保</option>
                                 </select>
@@ -105,9 +105,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-xs-1 control-label text-center" style="text-align: center;">销售平台*</label>
+                            <label for="CKT-3" class="col-xs-1 control-label text-center" style="text-align: center;">销售平台*</label>
                             <div class="col-xs-5">
-                                <select class="form-control" id="channels" name="dc">
+                                <select class="form-control" id="CKT-3" name="CKT-3">
                                     <option value="1">我母鸡啊1</option>
                                     <option value="2">我母鸡啊2</option>
                                 </select>
@@ -115,21 +115,22 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-xs-1 control-label text-center" style="text-align: center;">参考号*</label>
+                            <label for="CKT-4" class="col-xs-1 control-label text-center" style="text-align: center;">参考号*</label>
                             <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
+                                <input class="form-control" id="CKT-4" name="CKT-4">
                             </div>
 
-                            <label class="col-xs-1 control-label text-center" style="text-align: center;">交易号*</label>
+                            <label for="CKT-5" class="col-xs-1 control-label text-center" style="text-align: center;">交易号*</label>
                             <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
+                                <input class="form-control" id="CKT-5" name="CKT-5">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-xs-1 control-label text-center" style="text-align: center;">备注</label>
+                            <label for="CKT-6" class="col-xs-1 control-label text-center"
+                                   style="text-align: center;">备注</label>
                             <div class="col-xs-11">
-                                <textarea class="form-control" placeholder="（可不填）"></textarea>
+                                <textarea class="form-control" placeholder="（可不填）" id="CKT-6" name="CKT-6"></textarea>
                             </div>
                         </div>
                     </form>
@@ -143,78 +144,78 @@
                 <div class="box-body">
                     <form class="form-horizontal" role="form">
                         <div class="form-group">
-                            <label class="col-xs-1 control-label text-center" style="text-align: center;">国家*</label>
+                            <label for="CKF-1" class="col-xs-1 control-label text-center" style="text-align: center;">国家*</label>
                             <div class="col-xs-5">
-                                <select class="form-control" id="channels" name="dc">
+                                <select class="form-control" id="CKF-1" name="CKF-1">
                                     <option value="1">我母鸡啊1</option>
                                     <option value="2">我母鸡啊2</option>
                                 </select>
                             </div>
 
-                            <label class="col-xs-1 control-label text-center">姓名*</label>
+                            <label for="CKF-2" class="col-xs-1 control-label text-center">姓名*</label>
                             <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
+                                <input class="form-control" id="CKF-2" name="CKF-2">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-xs-1 control-label text-center">州/省*</label>
+                            <label for="CKF-3" class="col-xs-1 control-label text-center">州/省*</label>
                             <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
+                                <input class="form-control" id="CKF-3" name="CKF-3">
                             </div>
 
-                            <label class="col-xs-1 control-label text-center">电话*</label>
+                            <label for="CKF-4" class="col-xs-1 control-label text-center">电话*</label>
                             <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-xs-1 control-label text-center">城市</label>
-                            <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
-                            </div>
-
-                            <label class="col-xs-1 control-label text-center">Email</label>
-                            <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
+                                <input class="form-control" id="CKF-4" name="CKF-4">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-xs-1 control-label text-center">邮编</label>
+                            <label for="CKF-5" class="col-xs-1 control-label text-center">城市</label>
                             <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
+                                <input class="form-control" id="CKF-5" name="CKF-5">
                             </div>
 
-                            <label class="col-xs-1 control-label text-center">身份证</label>
+                            <label for="CKF-6" class="col-xs-1 control-label text-center">Email</label>
                             <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-xs-1 control-label text-center">公司</label>
-                            <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
+                                <input class="form-control" id="CKF-6" name="CKF-6">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-xs-1 control-label text-center">街道</label>
+                            <label for="CKF-7" class="col-xs-1 control-label text-center">邮编</label>
                             <div class="col-xs-5">
-                                <textarea class="form-control"></textarea>
+                                <input class="form-control" id="CKF-7" name="CKF-7">
                             </div>
 
-                            <label class="col-xs-1 control-label text-center">门牌号</label>
+                            <label for="CKF-8" class="col-xs-1 control-label text-center">身份证</label>
                             <div class="col-xs-5">
-                                <input class="form-control" id="channels" name="dc">
+                                <input class="form-control" id="CKF-8" name="CKF-8">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="CKF-9" class="col-xs-1 control-label text-center">公司</label>
+                            <div class="col-xs-5">
+                                <input class="form-control" id="CKF-9" name="CKF-9">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="CKF-10" class="col-xs-1 control-label text-center">街道</label>
+                            <div class="col-xs-5">
+                                <textarea class="form-control" id="CKF-10" name="CKF-10"></textarea>
+                            </div>
+
+                            <label for="CKF-11" class="col-xs-1 control-label text-center">门牌号</label>
+                            <div class="col-xs-5">
+                                <input class="form-control" id="CKF-11" name="CKF-11">
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="box-footer clearfix">
-                    <button class="btn btn-primary btn-lg" type="button">提交</button>
+                    <button id="submit" class="btn btn-primary btn-lg" type="button">提交</button>
                 </div>
             </div>
         </section>
@@ -229,7 +230,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Default Modal</h4>
+                <h4 class="modal-title">查看货品</h4>
             </div>
             <div class="modal-body">
                 <table class="table table-bordered table-striped table-condensed table-hover">
@@ -266,8 +267,16 @@
             radioClass: 'iradio_flat-green'
         });
 
+        var $stockContent = $('#stock-content');
+
         $('input[name=wid]').on('ifChecked', function (event) { //ifCreated 事件应该在插件初始化之前绑定
-            var id = $(this).val();
+            showProduct($(this));
+        });
+
+        showProduct($('input[name=wid]'));
+
+        function showProduct($wInput) {
+            var id = $wInput.val();
 
             $.ajax({
                 url: '/ajax/stock/get_available',
@@ -277,9 +286,9 @@
                 success: function (data) {
                     var items = data.data;
 
-                    $('#stock-content').empty();
+                    $stockContent.empty();
                     for (var i = 0; i < items.length; i++) {
-                        $('#stock-content').append("<tr>\n" +
+                        $stockContent.append("<tr>\n" +
                                 "                        <td>" + items[i].id + "</td>\n" +
                                 "                        <td>" + items[i].productName + "</td>\n" +
                                 "                        <td>" + items[i].productSku + "</td>\n" +
@@ -288,7 +297,7 @@
                     }
                 }
             });
-        });
+        }
 
         $('#addProduct').click(function (e) {
             e.preventDefault();
@@ -320,7 +329,7 @@
                         var flag = true;
                         $('input[name="S-PW-id[]"]').each(function (t) {
                             console.log($(this).val());
-                            if (parseInt($(this).val()) === item.id) {
+                            if (parseInt($(this).val()) === item.productId) {
                                 flag = false;
                             }
                         });
@@ -331,14 +340,14 @@
                         }
 
 
-                        var input = '<input type="hidden" name="S-PW-id[]" value="' + item.id + '">';
+                        var input = '<input type="hidden" name="S-PW-id[]" value="' + item.productId + '">';
                         input = input + '<input type="hidden" name="S-PW-qty[]" value="' + qty + '">';
 
                         var options = '<a href="javascript:void(0)" class="PW-remove">移除</a>';
 
                         var box = "" +
                                 "<tr>\n" +
-                                "                            <td>" + item.id+input + "</td>\n" +
+                                "                            <td>" + item.id + input + "</td>\n" +
                                 "                            <td>" + item.productName + "</td>\n" +
                                 "                            <td>" + item.productSku + "</td>\n" +
                                 "                            <td>" + item.quantity + "</td>\n" +
@@ -353,12 +362,92 @@
                             $(this).parent().parent().remove();
                         });
                         $('#send-content').append($box);
-
-
                     }
                 }
             });
-        })
+        });
+
+//      ----------------- SUBMIT -----------------------------
+        $('#submit').click(function (e) {
+            e.preventDefault();
+
+            var data = {};
+
+            data.wid = getValue($('input[name=wid]:checked'));
+            data.pids = getArray($('input[name="S-PW-id[]"]'));
+            data.qty = getArray($('input[name="S-PW-qty[]"]'));
+            data.ckt1 = getValue('#CKT-1');
+            data.ckt2 = getValue('#CKT-2');
+            data.ckt3 = getValue('#CKT-3');
+            data.ckt4 = getValue('#CKT-4');
+            data.ckt5 = getValue('#CKT-5');
+            data.ckt6 = getValue('#CKT-6');
+
+            data.ckf1 = getValue('#CKF-1');
+            data.ckf2 = getValue('#CKF-2');
+            data.ckf3 = getValue('#CKF-3');
+            data.ckf4 = getValue('#CKF-4');
+            data.ckf5 = getValue('#CKF-5');
+            data.ckf6 = getValue('#CKF-6');
+            data.ckf7 = getValue('#CKF-7');
+            data.ckf8 = getValue('#CKF-8');
+            data.ckf9 = getValue('#CKF-9');
+            data.ckf10 = getValue('#CKF-10');
+            data.ckf10 = getValue('#CKF-11');
+
+            <#if _csrf??>
+                data.${_csrf.parameterName}="${_csrf.token}";
+            </#if>
+
+            console.log(data);
+
+//            $.ajax({
+//                url: '/order/create',
+//                data: data,
+//                success: function (resp) {
+//                    console.log(resp);
+//                }
+//            })
+
+            post('/order/create', data);
+        });
+
+        function getValue(e) {
+            return $(e).val();
+        }
+
+        function getArray(ele) {
+            var result = [];
+            for (var i = 0; i < ele.length; i++) {
+                result.push(ele.val());
+            }
+            return result;
+        }
+
+
+        function post(url, args) {
+            var body = $(document.body),
+                    form = $("<form method='post'></form>"),
+                    input;
+            form.attr({"action": url});
+            $.each(args, function (key, value) {
+                if (value instanceof Array) {
+                    input = $("<input type='hidden'>");
+                    input.attr({"name": key + '[]'});
+                    input.val(value);
+                    form.append(input);
+                } else {
+                    input = $("<input type='hidden'>");
+                    input.attr({"name": key});
+                    input.val(value);
+                    form.append(input);
+                }
+            });
+
+            form.appendTo(document.body);
+            form.submit();
+            document.body.removeChild(form[0]);
+        }
     });
 </script>
 </body>

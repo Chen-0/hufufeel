@@ -76,7 +76,11 @@
                         <td>${o.length}cm</td>
                         <td>${o.width}cm</td>
                         <td>${o.height}cm</td>
-                        <td>${o.deadline?date}</td>
+                        <td>
+                            <#if o.deadline??>
+                                ${o.deadline?date}
+                            </#if>
+                        </td>
                         <td>${o.isDanger?string("是", "否")}</td>
                         <td>${o.quotedPrice}</td>
                         <td>${o.quotedName}</td>

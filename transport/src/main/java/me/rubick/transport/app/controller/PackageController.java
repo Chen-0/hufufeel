@@ -69,8 +69,6 @@ public class PackageController {
     /**
      * 提交发货清单
      * @param wId
-     * @param dcId
-     * @param weights
      * @param qtys
      * @param pids
      * @param redirectAttributes
@@ -79,19 +77,12 @@ public class PackageController {
     @RequestMapping(value = "/package/create", method = RequestMethod.POST)
     public String createPackage(
             @RequestParam("w") long wId,
-            @RequestParam("dc") long dcId,
-            @RequestParam("weight[]") List<BigDecimal> weights,
+            @RequestParam String referenceNumber,
+            @RequestParam(required = false, defaultValue = "") String comment,
             @RequestParam("qty[]") List<Integer> qtys,
             @RequestParam("p[]") List<Long> pids,
             RedirectAttributes redirectAttributes
     ) throws BusinessException {
-        //check out
-        DistributionChannel distributionChannel = distributionChannelRepository.findOne(dcId);
-
-        if (ObjectUtils.isEmpty(distributionChannel)) {
-            throw  new BusinessException("[A001] 禁止访问");
-        }
-
         Warehouse warehouse = warehouseRepository.findOne(wId);
 
         if (ObjectUtils.isEmpty(warehouse)) {
@@ -103,41 +94,34 @@ public class PackageController {
         Package p = new Package();
         p.setUserId(user.getId());
         p.setWarehouseId(wId);
-        p.setDistributionChannelId(dcId);
         p.setStatus(PackageStatus.READY);
-        p.setReferenceNumber(HashUtils.generateString());
+        p.setReferenceNumber(referenceNumber);
         p.setWarehouseName(warehouse.getName());
-        p.setDistributionChannelName(distributionChannel.getName());
         p.setNickname(user.getName());
+        p.setComment(comment);
 
         // TODO validate
         List<Product> products = productService.findProducts(pids);
 
-        if (products.size() != weights.size() || products.size() != qtys.size()) {
-            //error
+        if (products.size() != qtys.size()) {
+            throw  new BusinessException("[A001] 禁止访问");
         }
 
-        List<PackageProduct> packageProducts = new ArrayList<>(weights.size());
+        List<PackageProduct> packageProducts = new ArrayList<>(qtys.size());
 
         int _qty = 0;
-        BigDecimal _weight = new BigDecimal(0);
 
         for (int i = 0; i < pids.size(); i++) {
             PackageProduct packageProduct = new PackageProduct();
             packageProduct.setProductId(pids.get(i));
-            packageProduct.setQty(qtys.get(i));
-            packageProduct.setWeight(weights.get(i));
-            packageProduct.setRealQty(0);
-            packageProduct.setRealWeight(new BigDecimal(0));
-
+            packageProduct.setExpectQuantity(qtys.get(i));
+            packageProduct.setQuantity(0);
             packageProducts.add(packageProduct);
-
-            _qty += packageProduct.getQty();
-            _weight = _weight.add(packageProduct.getWeight());
+            _qty += packageProduct.getExpectQuantity();
         }
 
-        p.setQty(_qty);
-        p.setWeight(_weight);
+        p.setExpectQuantity(_qty);
+        p.setSn(packageService.generateBatch());
         packageService.store(p, packageProducts);
 
         redirectAttributes.addFlashAttribute("SUCCESS", "入库单创建成功！");

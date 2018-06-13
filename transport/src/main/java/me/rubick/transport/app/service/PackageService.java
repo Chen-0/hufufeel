@@ -1,9 +1,7 @@
 package me.rubick.transport.app.service;
 
+import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
-import me.rubick.transport.app.model.PackageProduct;
-import me.rubick.transport.app.model.PackageStatus;
-import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.repository.PackageProductRepository;
 import me.rubick.transport.app.repository.PackageRepository;
 import org.springframework.data.domain.Page;
@@ -20,7 +18,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -80,22 +80,35 @@ public class PackageService {
         packageProductRepository.save(products);
     }
 
-    public Package inbound(long packageId, List<Long> pIds, List<BigDecimal> weight, List<Integer> qty) {
-        int count = pIds.size();
-        int _qty = 0;
-        BigDecimal _weight = new BigDecimal(0);
-
+    public Package inbound(long packageId, List<Product> products, List<Integer> qty) {
+        int count = products.size();
+        int t = 0;
         for (int i = 0; i < count; i ++) {
-            packageProductRepository.inbound(packageId, pIds.get(i), weight.get(i), qty.get(i));
+            packageProductRepository.inbound(
+                    packageId,
+                    products.get(i).getId(),
+                    qty.get(i));
 
-            _qty += qty.get(i);
-            _weight = _weight.add(weight.get(i));
+            t += qty.get(i);
         }
 
         Package p = packageRepository.findOne(packageId);
+        p.setQuantity(t);
         p.setStatus(PackageStatus.RECEIVED);
-        p.setRealQty(_qty);
-        p.setRealWeight(_weight);
         return packageRepository.save(p);
+    }
+
+    public String generateBatch() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        String dateString = format.format(new Date());
+        String batch = packageRepository.getMaxSN(dateString);
+
+        if (batch == null) {
+            return "RK" + dateString + "0001";
+        } else {
+            String temp = batch.substring(0, 8);
+            Integer no = Integer.valueOf(batch.substring(8)) + 1;
+            return temp + no;
+        }
     }
 }

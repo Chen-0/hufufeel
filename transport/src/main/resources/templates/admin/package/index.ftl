@@ -44,9 +44,9 @@
                         <th>参考号</th>
                         <th>客户</th>
                         <th>仓库</th>
-                        <th>派送方式</th>
                         <th>状态</th>
                         <th>提交时间</th>
+                        <th>备注</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -58,9 +58,9 @@
                         <td>${o.referenceNumber}</td>
                         <td>${o.nickname}</td>
                         <td>${o.warehouseName}</td>
-                        <td>${o.distributionChannelName}</td>
                         <td>${o.status.getValue()}</td>
                         <td>${o.createdAt?string}</td>
+                        <td>${o.comment!}</td>
                         <td>
                             <#switch o.status.ordinal()>
                                 <#case 0>
@@ -74,9 +74,13 @@
                         <td>商品</td>
                         <td>${p.product.productName}</td>
                         <td>${p.product.productSku}</td>
-                        <td>${p.qty} 件</td>
-                        <td>约 ${p.weight} KG</td>
+                        <td>预计：${p.expectQuantity} 件</td>
+                        <#if o.status.ordinal() != 0 ||o.status.ordinal() != 3  >
+                        <td>实际：${p.quantity} 件</td>
                         <td colspan="3"></td>
+                        <#else>
+                            <td colspan="4"></td>
+                        </#if>
                     </tr>
                     </#list>
                     </#list>

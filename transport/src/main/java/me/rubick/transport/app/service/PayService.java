@@ -91,7 +91,7 @@ public class PayService {
 
     private void successForAccount(Payment payment) {
         User user = userRepository.findOne(payment.getUserId());
-        user.setMoney(user.getMoney().add(payment.getTotalFee()));
+        user.setUsd(user.getUsd().add(payment.getTotalFee()));
         userRepository.save(user);
     }
 }

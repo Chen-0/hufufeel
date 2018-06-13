@@ -79,7 +79,6 @@ public class AdminPackageController extends AbstractController {
     @RequestMapping(value = "/package/{id}/inbound", method = RequestMethod.POST)
     public String changePackageStatus(
             @PathVariable("id") long id,
-            @RequestParam("weight[]") List<BigDecimal> weight,
             @RequestParam("qty[]") List<Integer> qty,
             @RequestParam("p[]") List<Long> pIds,
             RedirectAttributes redirectAttributes
@@ -87,9 +86,8 @@ public class AdminPackageController extends AbstractController {
         List<Product> products = productService.findProducts(pIds);
 
         int count = products.size();
-        if (count != 0 && count == pIds.size() && qty.size() == count && weight.size() == count) {
-            log.info("{}", JSONMapper.toJSON(weight));
-            Package p = packageService.inbound(id, pIds, weight, qty);
+        if (count != 0 && count == pIds.size() && qty.size() == count) {
+            Package p = packageService.inbound(id, products, qty);
 
             redirectAttributes.addFlashAttribute("SUCCESS", "操作成功！");
             messageService.send(

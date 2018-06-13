@@ -37,9 +37,11 @@
                    aria-expanded="false">订单管理<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a href="/stock/send">新建发货单</a></li>
+                    <li><a href="/order/index">发货单管理</a></li>
                 </ul>
             </li>
             <li><a href="/user/charge_account">充值中心</a></li>
+            <li><a href="/user/charge_account">个人中心</a></li>
         </ul>
 
 
@@ -65,7 +67,7 @@
                                 </#list>
                             </ul>
                         </li>
-                        <li class="footer"><a href="#">View all</a></li>
+                        <li class="footer"><a href="#">查看全部</a></li>
                     </ul>
                     <#else>
                         <a href="/message/index">

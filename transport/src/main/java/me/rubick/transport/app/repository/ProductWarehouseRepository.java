@@ -36,10 +36,15 @@ public interface ProductWarehouseRepository extends JpaRepository<ProductWarehou
      */
     @Modifying
     @Query("update ProductWarehouse pw " +
-            "set pw.quantity = pw.quantity - ?4, pw.weight = pw.weight - ?5 " +
+            "set pw.quantity = pw.quantity - ?4 " +
             "where pw.userId = ?1 and pw.productId = ?2 and pw.warehouseId = ?3 " +
             "and pw.quantity - ?4 >= 0")
-    int reduceStore(long userId, long productId, long warehouseId, int qty, BigDecimal weight);
+    int reduceStore(long userId, long productId, long warehouseId, int qty);
+
+    @Query("select count(pw) from ProductWarehouse pw " +
+            "where pw.userId = ?1 and pw.productId = ?2 and pw.warehouseId = ?3 " +
+            "and pw.quantity - ?4 >= 0")
+    int checkStore(long userId, long productId, long warehouseId, int qty);
 
     @Query("select pw from ProductWarehouse pw, Product p where pw.productId = p.id and p.productSku = ?1")
     List<ProductWarehouse> findAvailableStockByProductSku(String productSku);

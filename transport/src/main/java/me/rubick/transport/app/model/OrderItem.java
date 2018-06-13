@@ -4,22 +4,21 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "rubick_product_warehouse")
-public class ProductWarehouse {
+@Table(name = "rubick_order_item")
+public class OrderItem implements Serializable {
     private long id;
-    private long warehouseId;
+    private long orderId;
     private long productId;
-    private long userId;
+    private String productSnapshot;
     private int quantity;
     private Date createdAt;
     private Date updatedAt;
 
     private Product product;
-    private Warehouse warehouse;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -33,13 +32,13 @@ public class ProductWarehouse {
     }
 
     @Basic
-    @Column(name = "warehouse_id", nullable = false)
-    public long getWarehouseId() {
-        return warehouseId;
+    @Column(name = "order_id", nullable = false)
+    public long getOrderId() {
+        return orderId;
     }
 
-    public void setWarehouseId(long warehouseId) {
-        this.warehouseId = warehouseId;
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 
     @Basic
@@ -53,13 +52,13 @@ public class ProductWarehouse {
     }
 
     @Basic
-    @Column(name = "user_id", nullable = false)
-    public long getUserId() {
-        return userId;
+    @Column(name = "product_snapshot", nullable = false, length = -1)
+    public String getProductSnapshot() {
+        return productSnapshot;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setProductSnapshot(String productSnapshot) {
+        this.productSnapshot = productSnapshot;
     }
 
     @Basic
@@ -96,7 +95,7 @@ public class ProductWarehouse {
         this.updatedAt = updatedAt;
     }
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id", insertable = false, updatable = false)
     public Product getProduct() {
         return product;
@@ -104,15 +103,5 @@ public class ProductWarehouse {
 
     public void setProduct(Product product) {
         this.product = product;
-    }
-
-    @OneToOne
-    @JoinColumn(name = "warehouse_id", insertable = false, updatable = false)
-    public Warehouse getWarehouse() {
-        return warehouse;
-    }
-
-    public void setWarehouse(Warehouse warehouse) {
-        this.warehouse = warehouse;
     }
 }

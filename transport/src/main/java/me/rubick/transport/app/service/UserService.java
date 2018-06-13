@@ -1,12 +1,17 @@
 package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.transport.app.model.CostSubject;
 import me.rubick.transport.app.model.Role;
 import me.rubick.transport.app.model.User;
+import me.rubick.transport.app.repository.CostSubjectRepository;
 import me.rubick.transport.app.repository.RoleRepository;
 import me.rubick.transport.app.repository.UserRepository;
+import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +22,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +42,9 @@ public class UserService {
 
     @Resource
     private PasswordEncoder passwordEncoder;
+
+    @Resource
+    private CostSubjectRepository costSubjectRepository;
 
     public User get(long id) {
         return userRepository.getOne(id);
@@ -84,5 +93,38 @@ public class UserService {
 
     public User update(User user) {
         return userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findAll(String authority) {
+
+        return userRepository.findAll(new Specification<User>() {
+            @Override
+            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Join<User, Role> roleJoin = root.join("authorities", JoinType.INNER);
+
+                return cb.and(
+                        cb.equal(roleJoin.get("authority"), authority)
+                );
+            }
+        });
+    }
+
+    public void storeCostSubject(User user, CostSubjectSnapshotVo costSubjectSnapshotVo) {
+        CostSubject costSubject = costSubjectRepository.findTopByUserId(user.getId());
+
+        if (ObjectUtils.isEmpty(costSubject)) {
+            costSubject = new CostSubject();
+            costSubject.setUserId(user.getId());
+        }
+
+        costSubject.setCostSubjectSnapshot(JSONMapper.toJSON(costSubjectSnapshotVo));
+        costSubjectRepository.save(costSubject);
+    }
+
+    public CostSubjectSnapshotVo findCostSubjectByUserId(User user) {
+        CostSubject costSubject = costSubjectRepository.findTopByUserId(user.getId());
+
+        return JSONMapper.fromJson(costSubject.getCostSubjectSnapshot(), CostSubjectSnapshotVo.class);
     }
 }

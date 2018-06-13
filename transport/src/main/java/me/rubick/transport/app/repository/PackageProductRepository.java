@@ -10,6 +10,6 @@ import java.math.BigDecimal;
 public interface PackageProductRepository extends JpaRepository<PackageProduct, Long> {
 
     @Modifying
-    @Query("update PackageProduct p set p.realWeight = ?3, p.realQty = ?4 where p.packageId=?1 and p.productId=?2")
-    void inbound(long packageId, long productId, BigDecimal weight, int qty);
+    @Query("update PackageProduct p set p.quantity = ?3 where p.packageId=?1 and p.productId=?2")
+    void inbound(long packageId, long productId, int qty);
 }

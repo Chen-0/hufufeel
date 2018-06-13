@@ -63,7 +63,6 @@
                     <table class="table table-bordered table-striped table-condensed table-hover">
                         <thead>
                         <tr>
-                            <th width="1px"><input type="checkbox" id="select_all"></th>
                             <th>编号</th>
                             <th>货品SKU</th>
                             <th>货品名称</th>
@@ -75,13 +74,12 @@
                         <tbody>
                         <#list elements.getContent() as e>
                         <tr>
-                            <th><input class="x-checkbox" type="checkbox" name="trackingNumber[]" value="${e.id}"></th>
-                            <td>${e.id}</td>
+                            <td>${e_index + 1}</td>
                             <td>${e.product.productSku}</td>
                             <td>${e.product.productName}</td>
                             <td>${e.warehouse.name}</td>
                             <td>${e.quantity}</td>
-                            <td>${e.weight}</td>
+                            <td>${e.quantity * e.product.weight}</td>
                         </tr>
                         </#list>
                         </tbody>
@@ -90,7 +88,6 @@
                 </div>
 
                 <div class="box-footer clearfix">
-                    <button id="addToSend" class="btn btn-primary" type="button">添加到入库单</button>
                     <#assign ff="&">
                     <#if ws??>
                         <#list ws as w>

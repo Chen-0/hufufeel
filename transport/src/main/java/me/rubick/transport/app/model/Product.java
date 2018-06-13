@@ -31,6 +31,8 @@ public class Product {
     private boolean isDeleted;
     private Date createdAt;
     private Date updatedAt;
+    private boolean businessType;
+    private BigDecimal vol;
 
     private Document image;
 
@@ -254,5 +256,22 @@ public class Product {
 
     public void setImage(Document image) {
         this.image = image;
+    }
+
+    @Column(name = "business_type")
+    public boolean getBusinessType() {
+        return businessType;
+    }
+
+    public void setBusinessType(boolean businessType) {
+        this.businessType = businessType;
+    }
+
+    public BigDecimal getVol() {
+        return vol;
+    }
+
+    public void setVol(BigDecimal vol) {
+        this.vol = vol;
     }
 }

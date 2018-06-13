@@ -14,6 +14,7 @@ import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.vo.ProductContainer;
 import me.rubick.transport.app.vo.ProductFormVo;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,6 +22,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,7 +96,7 @@ public class ProductController extends AbstractController {
 
     @RequestMapping(value = "/product/create", method = RequestMethod.GET)
     public String getCreateProduct(Model model) {
-
+        model.addAttribute("bts", ProductBusinessTypeEnum.values());
         if (ObjectUtils.isEmpty(model.asMap().get("felements"))) {
             model.asMap().put("felements", new ProductFormVo());
         }
@@ -114,7 +116,21 @@ public class ProductController extends AbstractController {
             log.info("-------------------- form has error ----------------");
             log.info("{}", JSONMapper.toJSON(productFormVo));
             redirectAttributes.addFlashAttribute("felements", productFormVo);
-            redirectAttributes.addFlashAttribute("errors", FormUtils.toMap(bindingResult));
+            Map<String, String> map = FormUtils.toMap(bindingResult);
+
+            if (ObjectUtils.isEmpty(image) || image.isEmpty()) {
+                map.put("p_file", "请上传货品图片");
+            }
+            redirectAttributes.addFlashAttribute("errors", map);
+
+            return "redirect:/product/create";
+        }
+
+        if (ObjectUtils.isEmpty(image) || image.isEmpty()) {
+            Map<String, String> map = new HashMap<>();
+            map.put("p_file", "请上传货品图片");
+            redirectAttributes.addFlashAttribute("felements", productFormVo);
+            redirectAttributes.addFlashAttribute("errors", map);
 
             return "redirect:/product/create";
         }
@@ -129,7 +145,10 @@ public class ProductController extends AbstractController {
                 product.setImageId(document.getId());
             }
         }
-        product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
+
+        if (StringUtils.hasText(productFormVo.getDeadline())) {
+            product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
+        }
         productService.createProduct(product);
         redirectAttributes.addFlashAttribute("SUCCESS", "添加货品成功！");
         return "redirect:/product/index";

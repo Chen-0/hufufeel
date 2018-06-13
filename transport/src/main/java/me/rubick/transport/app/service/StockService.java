@@ -93,11 +93,16 @@ public class StockService {
         List<PackageProduct> products = p.getPackageProducts();
 
         for (PackageProduct pp : products) {
-            addStock(p.getUserId(), pp.getProductId(), p.getWarehouseId(), pp.getRealQty(), pp.getRealWeight());
+            addStock(
+                    p.getUserId(),
+                    pp.getProductId(),
+                    p.getWarehouseId(),
+                    pp.getQuantity()
+            );
         }
     }
 
-    private void addStock(long userId, long productId, long warehouseId, int qty, BigDecimal weight) {
+    public void addStock(long userId, long productId, long warehouseId, int qty) {
         ProductWarehouse productWarehouse = findOrNewProductWarehouse(
                 userId,
                 productId,
@@ -105,7 +110,6 @@ public class StockService {
         );
 
         productWarehouse.setQuantity(productWarehouse.getQuantity() + qty);
-        productWarehouse.setWeight(productWarehouse.getWeight().add(weight));
         productWarehouseRepository.save(productWarehouse);
     }
 
@@ -118,7 +122,6 @@ public class StockService {
             p.setUserId(userId);
             p.setWarehouseId(warehouseId);
             p.setQuantity(0);
-            p.setWeight(new BigDecimal(0));
 
             return productWarehouseRepository.save(p);
         }
@@ -126,14 +129,25 @@ public class StockService {
         return productWarehouse;
     }
 
-    public void reduceStore(User user, Product product, Warehouse warehouse, int qty, BigDecimal weight) {
+    public boolean reduceStore(User user, Product product, Warehouse warehouse, int qty) {
         int raw = productWarehouseRepository.reduceStore(
                 user.getId(),
                 product.getId(),
                 warehouse.getId(),
-                qty,
-                weight
+                qty
         );
         log.info("减库存成功，返回值：{}", raw);
+
+        return raw > 0;
+    }
+
+    public boolean checkStore(User user, Product product, Warehouse warehouse, int qty) {
+        int raw = productWarehouseRepository.checkStore(
+                user.getId(),
+                product.getId(),
+                warehouse.getId(),
+                qty);
+        log.info("检查库存成功，返回值：{}", raw);
+        return raw > 0;
     }
 }

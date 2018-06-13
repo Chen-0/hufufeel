@@ -19,15 +19,13 @@ public class Package {
     private String nickname;
     private PackageStatus status;
     private long warehouseId;
-    private long distributionChannelId;
     private Date createdAt;
     private Date updatedAt;
     private String warehouseName;
-    private String distributionChannelName;
-    private BigDecimal weight;
-    private BigDecimal realWeight = BigDecimal.ZERO;
-    private int qty;
-    private int realQty;
+    private int quantity;
+    private String comment;
+    private String sn;
+    private int expectQuantity;
 
     private List<PackageProduct> packageProducts;
 
@@ -83,16 +81,6 @@ public class Package {
     }
 
     @Basic
-    @Column(name = "distribution_channel_id", nullable = false)
-    public long getDistributionChannelId() {
-        return distributionChannelId;
-    }
-
-    public void setDistributionChannelId(long distributionChannelId) {
-        this.distributionChannelId = distributionChannelId;
-    }
-
-    @Basic
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @Generated(GenerationTime.INSERT)
@@ -127,7 +115,6 @@ public class Package {
         if (userId != that.userId) return false;
         if (status != that.status) return false;
         if (warehouseId != that.warehouseId) return false;
-        if (distributionChannelId != that.distributionChannelId) return false;
         if (referenceNumber != null ? !referenceNumber.equals(that.referenceNumber) : that.referenceNumber != null)
             return false;
         if (createdAt != null ? !createdAt.equals(that.createdAt) : that.createdAt != null) return false;
@@ -143,7 +130,6 @@ public class Package {
         result = 31 * result + (int) (userId ^ (userId >>> 32));
         result = 31 * result + status.ordinal();
         result = 31 * result + (int) (warehouseId ^ (warehouseId >>> 32));
-        result = 31 * result + (int) (distributionChannelId ^ (distributionChannelId >>> 32));
         result = 31 * result + (createdAt != null ? createdAt.hashCode() : 0);
         result = 31 * result + (updatedAt != null ? updatedAt.hashCode() : 0);
         return result;
@@ -156,15 +142,6 @@ public class Package {
 
     public void setWarehouseName(String warehouseName) {
         this.warehouseName = warehouseName;
-    }
-
-    @Column(name = "distribution_channel_name")
-    public String getDistributionChannelName() {
-        return distributionChannelName;
-    }
-
-    public void setDistributionChannelName(String distributionChannelName) {
-        this.distributionChannelName = distributionChannelName;
     }
 
     @OneToMany
@@ -186,39 +163,37 @@ public class Package {
         this.nickname = nickname;
     }
 
-    @Column(name = "weight")
-    public BigDecimal getWeight() {
-        return weight;
+    public String getComment() {
+        return comment;
     }
 
-    public void setWeight(BigDecimal weight) {
-        this.weight = weight;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
-    @Column(name = "real_weight")
-    public BigDecimal getRealWeight() {
-        return realWeight;
+    public String getSn() {
+        return sn;
     }
 
-    public void setRealWeight(BigDecimal realWeight) {
-        this.realWeight = realWeight;
+    public void setSn(String sn) {
+        this.sn = sn;
     }
 
-    @Column(name = "qty")
-    public int getQty() {
-        return qty;
+    @Column
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setQty(int qty) {
-        this.qty = qty;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
-    @Column(name = "real_qty")
-    public int getRealQty() {
-        return realQty;
+    @Column(name = "expect_quantity")
+    public int getExpectQuantity() {
+        return expectQuantity;
     }
 
-    public void setRealQty(int realQty) {
-        this.realQty = realQty;
+    public void setExpectQuantity(int expectQuantity) {
+        this.expectQuantity = expectQuantity;
     }
 }

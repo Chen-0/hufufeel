@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class FormUtils {
 
-    public static Map<String, Object> toMap(BindingResult bindingResult) {
-        Map<String, Object> map = new HashMap<>();
+    public static Map<String, String> toMap(BindingResult bindingResult) {
+        Map<String, String> map = new HashMap<>();
 
         if (bindingResult.hasErrors()) {
             for (FieldError fieldError : bindingResult.getFieldErrors()) {

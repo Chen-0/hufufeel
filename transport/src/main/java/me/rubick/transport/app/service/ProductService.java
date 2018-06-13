@@ -19,10 +19,13 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static java.math.BigDecimal.ROUND_HALF_DOWN;
 
 @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
 @Service
@@ -35,6 +38,7 @@ public class ProductService {
     private UserService userService;
 
     public void createProduct(Product product) {
+        product.setVol(product.getLength().multiply(product.getHeight().multiply(product.getWidth())).divide(new BigDecimal(1000000), 12, ROUND_HALF_DOWN));
         product.setStatus(ProductStatus.TO_CHECK);
         product.setUserId(userService.getByLogin().getId());
         productRepository.save(product);
