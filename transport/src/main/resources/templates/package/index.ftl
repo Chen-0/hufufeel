@@ -45,6 +45,12 @@
                             <th>实际总件数</th>
                             <th>总重量</th>
                             <th>状态</th>
+
+                            <#if _STATUS?exists && _STATUS == 5>
+                            <th>费用类型</th>
+                            <th>费用</th>
+                            </#if>
+
                             <th>创建时间</th>
                             <th>备注</th>
                             <th>操作</th>
@@ -65,12 +71,23 @@
                             <td>${e.quantity}</td>
                             <td>${tw}</td>
                             <td>${e.status.getValue()}</td>
+
+                            <#if _STATUS?exists && _STATUS == 5>
+                                <td>${smap["${e.id}"].type.getValue()}</td>
+                                <td>${smap["${e.id}"].total} USD</td>
+                            </#if>
+
                             <td>${e.createdAt?string}</td>
-                            <td>${e.comment}</td>
+                            <td>${e.comment!}</td>
                             <td>
-                                <a href="#">查看详情</a>
+                                <a href="/package/${e.id}/show">查看详情</a>
                                 <#if e.status.ordinal() == 0>
                                 <a href="/package/${e.id}/cancel">取消入库单</a>
+                                </#if>
+
+                                <#assign  key = e.id?string>
+                                <#if smap?exists && smap[key]?exists>
+                                    <a href="/user/statements/${smap["${e.id}"].id}/pay">立即支付</a>
                                 </#if>
                             </td>
                         </tr>
@@ -87,9 +104,7 @@
 
 
         </section>
-        <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
 
 <#include "*/_layout/footer.ftl"/>
 </div>

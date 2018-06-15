@@ -26,8 +26,10 @@ public class Package {
     private String comment;
     private String sn;
     private int expectQuantity;
+    private PackageStatus nextStatus = PackageStatus.NULL;
 
     private List<PackageProduct> packageProducts;
+    private User user;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -195,5 +197,24 @@ public class Package {
 
     public void setExpectQuantity(int expectQuantity) {
         this.expectQuantity = expectQuantity;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Column(name = "next_status")
+    public PackageStatus getNextStatus() {
+        return nextStatus;
+    }
+
+    public void setNextStatus(PackageStatus nextStatus) {
+        this.nextStatus = nextStatus;
     }
 }

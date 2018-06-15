@@ -1,5 +1,6 @@
 package me.rubick.transport.app.model;
 
+import me.rubick.transport.app.vo.ProductSnapshotVo;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -19,6 +20,9 @@ public class OrderItem implements Serializable {
     private Date updatedAt;
 
     private Product product;
+
+
+    private ProductSnapshotVo productSnapshotVo;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -103,5 +107,14 @@ public class OrderItem implements Serializable {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    @Transient
+    public ProductSnapshotVo getProductSnapshotVo() {
+        return productSnapshotVo;
+    }
+
+    public void setProductSnapshotVo(ProductSnapshotVo productSnapshotVo) {
+        this.productSnapshotVo = productSnapshotVo;
     }
 }

@@ -70,7 +70,7 @@
                             <td>${e.createdAt?string}</td>
                             <td>${e.comment!}</td>
                             <td>
-                                <a href="#">查看详情</a>
+                                <a href="/order/${e.id}/show">查看详情</a>
                                 <#if e.status.ordinal() == 0 || e.status.ordinal() == 4>
                                     <a href="/order/${e.id}/cancel">取消入库单</a>
                                 </#if>

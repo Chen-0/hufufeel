@@ -27,26 +27,44 @@
                         <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
 
                         <div class="form-group">
-                            <p class="charge-font">账户余额：<strong>${USER.money}元</strong></p>
+                            <p class="charge-font">账户余额：<strong>${USER.usd} 美元（USD）</strong></p>
                         </div>
 
-                        <div class="form-group inline-block">
-                            <p class="charge-font inline-block">充值金额：</p>
-                            <label class="select-label">
-                                <input type="radio" name="total" class="x-radio flat-red" value="5" checked> 5元
-                            </label>
-                            <label class="select-label">
-                                <input type="radio" name="total" class="x-radio flat-red" value="10"> 10元
-                            </label>
-                            <label class="select-label">
-                                <input type="radio" name="total" class="x-radio flat-red" value="20"> 20元
-                            </label>
-                            <label class="select-label">
-                                <input type="radio" name="total" class="x-radio flat-red" value="50"> 50元
-                            </label>
-                            <label class="select-label">
-                                <input type="radio" name="total" class="x-radio flat-red" value="100"> 100元
-                            </label>
+                        <div class="form-group">
+                            <p class="charge-font">当前汇率：1 美元 = ${U2R} 人民币</p>
+                        </div>
+
+                        <div class="form-group">
+                        <#--<p class="charge-font inline-block">充值金额：</p>-->
+                        <#--<label class="select-label">-->
+                        <#--<input type="radio" name="total" class="x-radio flat-red" value="5" checked> 5元-->
+                        <#--</label>-->
+                        <#--<label class="select-label">-->
+                        <#--<input type="radio" name="total" class="x-radio flat-red" value="10"> 10元-->
+                        <#--</label>-->
+                        <#--<label class="select-label">-->
+                        <#--<input type="radio" name="total" class="x-radio flat-red" value="20"> 20元-->
+                        <#--</label>-->
+                        <#--<label class="select-label">-->
+                        <#--<input type="radio" name="total" class="x-radio flat-red" value="50"> 50元-->
+                        <#--</label>-->
+                        <#--<label class="select-label">-->
+                        <#--<input type="radio" name="total" class="x-radio flat-red" value="100"> 100元-->
+                        <#--</label>-->
+
+                        <#--<label class="select-label">-->
+                        <#--<input type="radio" id="usd-radio" class="x-radio flat-red" value="100"> 其他-->
+                        <#--</label>-->
+
+                            <div class="form-group">
+                                <label class="col-xs-3 control-label charge-font" for="total">充值金额（人民币）：</label>
+                                <div class="col-xs-4">
+                                    <input class="form-control" id="total" name="total" type="text" placeholder="5">
+                                </div>
+                                <div class="col-xs-2">
+                                    <input type="text" class="form-control" id="r2u" disabled>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -81,7 +99,28 @@
             radioClass: 'iradio_flat-green'
         });
 
-//        $()
+        var u2r = ${U2R};
+
+        $('#total').change(function () {
+            var value = $(this).val();
+            if (isEmpty(value) || parseFloat(value) != value) {
+                $('#r2u').val("请输入数字")
+            } else {
+                $.ajax({
+                    url: '/api/base/r2u',
+                    data: {
+                        value: value
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.success) {
+                            $('#r2u').val(data.data + " USD");
+                        }
+                    }
+                })
+            }
+
+        });
     })
 </script>
 </body>

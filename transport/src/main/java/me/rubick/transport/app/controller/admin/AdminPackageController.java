@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.common.app.utils.TextUtils;
 import me.rubick.transport.app.controller.AbstractController;
+import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
-import me.rubick.transport.app.model.Product;
-import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.service.PackageService;
+import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.service.StockService;
 import org.springframework.data.domain.Page;
@@ -44,6 +44,9 @@ public class AdminPackageController extends AbstractController {
 
     @Resource
     private StockService stockService;
+
+    @Resource
+    private PayService payService;
 
 
     @RequestMapping("/package/index")
@@ -81,6 +84,7 @@ public class AdminPackageController extends AbstractController {
             @PathVariable("id") long id,
             @RequestParam("qty[]") List<Integer> qty,
             @RequestParam("p[]") List<Long> pIds,
+            @RequestParam(required = false, name = "total_fee") BigDecimal total,
             RedirectAttributes redirectAttributes
     ) {
         List<Product> products = productService.findProducts(pIds);
@@ -90,18 +94,77 @@ public class AdminPackageController extends AbstractController {
             Package p = packageService.inbound(id, products, qty);
 
             redirectAttributes.addFlashAttribute("SUCCESS", "操作成功！");
-            messageService.send(
-                    p.getId(),
-                    "/package/index?status=1",
-                    MessageFormat.format("入库单：{0}在{1}入库成功！{2}", p.getReferenceNumber(), p.getWarehouseName())
-            );
+
 
 
             //////////////////////  增加库存  /////////////////////////////////
-            stockService.addStock(p);
+//            stockService.addStock(p);
+
+            //////////////////////  收入库费  /////////////////////////////////
+            Statements statements = payService.saveStatements(payService.calcCK(p), total);
+            boolean flag = payService.payStatements(statements.getId());
+
+            if (flag) {
+                messageService.send(
+                        p.getUserId(),
+                        "/package/index?status=1",
+                        MessageFormat.format("入库单：{0}在{1}入库成功！", p.getReferenceNumber(), p.getWarehouseName())
+                );
+            } else {
+                p.setNextStatus(p.getStatus());
+                p.setStatus(PackageStatus.FREEZE);
+                packageRepository.save(p);
+
+                messageService.send(
+                        p.getUserId(),
+                        "/user/statements/index",
+                        MessageFormat.format("入库单：{0}，扣费失败，请充值账号并重新缴费。", p.getReferenceNumber(), p.getWarehouseName())
+                );
+            }
         }
 
 
+        return "redirect:/admin/package/index";
+    }
+
+    @RequestMapping(value = "/package/{id}/publish", method = RequestMethod.GET)
+    public String getPackagePublish(
+            Model model,
+            @PathVariable("id") long id
+
+    ) {
+        Package p = packageRepository.findOne(id);
+
+        model.addAttribute("o", p);
+        model.addAttribute("total", payService.calcSJ(p).getTotal());
+        return "/admin/package/publish";
+    }
+
+    @RequestMapping(value = "/package/{id}/publish", method = RequestMethod.POST)
+    public String postPackagePublish(
+            Model model,
+            @PathVariable("id") long id,
+            @RequestParam(required = false) BigDecimal total
+
+    ) {
+        Package p = packageRepository.findOne(id);
+        Statements statements = payService.saveStatements(payService.calcSJ(p), total);
+        boolean flag = payService.payStatements(statements.getId());
+
+        if (flag) {
+            //支付成功
+            stockService.addStock(p);
+        } else {
+            p.setNextStatus(PackageStatus.FINISH);
+            p.setStatus(PackageStatus.FREEZE);
+            packageRepository.save(p);
+
+            messageService.send(
+                    p.getUserId(),
+                    "/user/statements/index",
+                    MessageFormat.format("入库单上架失败，参考号：{0}，扣费失败，请充值账号并重新缴费。", p.getReferenceNumber(), p.getWarehouseName())
+            );
+        }
         return "redirect:/admin/package/index";
     }
 }

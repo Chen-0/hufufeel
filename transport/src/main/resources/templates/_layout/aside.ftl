@@ -24,13 +24,14 @@
             </li>
         <#--货品管理-->
         <#--新建货品-->
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                   aria-expanded="false">库存管理<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="/stock/index">查询库存</a></li>
-                </ul>
-            </li>
+            <li><a href="/stock/index">库存管理</a></li>
+            <#--<li class="dropdown">-->
+                <#--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"-->
+                   <#--aria-expanded="false">库存管理<span class="caret"></span></a>-->
+                <#--<ul class="dropdown-menu">-->
+                    <#--<li><a href="/stock/index">查询库存</a></li>-->
+                <#--</ul>-->
+            <#--</li>-->
         <#--查看库存-->
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -40,8 +41,14 @@
                     <li><a href="/order/index">发货单管理</a></li>
                 </ul>
             </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">个人中心<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/user/statements/index">费用流水</a></li>
+                </ul>
+            </li>
             <li><a href="/user/charge_account">充值中心</a></li>
-            <li><a href="/user/charge_account">个人中心</a></li>
         </ul>
 
 
@@ -67,7 +74,7 @@
                                 </#list>
                             </ul>
                         </li>
-                        <li class="footer"><a href="#">查看全部</a></li>
+                        <li class="footer"><a href="/message/index">查看全部</a></li>
                     </ul>
                     <#else>
                         <a href="/message/index">
@@ -134,6 +141,16 @@
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
         <h4><i class="icon fa fa-check"></i> 操作成功</h4>
     ${SUCCESS!}
+    </div>
+</div>
+</#if>
+
+<#if ERROR?? >
+<div class="message-container">
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h4><i class="icon fa fa-ban"></i> 操作失败</h4>
+    ${ERROR!}
     </div>
 </div>
 </#if>

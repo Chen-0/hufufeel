@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-public class ProductSnapshot implements Serializable {
+public class ProductSnapshotVo implements Serializable {
     private long id;
     private long userId;
     private String productName;

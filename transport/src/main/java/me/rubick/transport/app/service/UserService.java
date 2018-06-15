@@ -23,6 +23,7 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class UserService {
             Object object = auth.getPrincipal();
             if (!ObjectUtils.isEmpty(object) && object instanceof User) {
                 User user = (User) object;
-                return user;
+                return userRepository.findOne(user.getId());
             }
         }
 
@@ -122,11 +123,23 @@ public class UserService {
         costSubjectRepository.save(costSubject);
     }
 
-    public CostSubjectSnapshotVo findCostSubjectByUserId(User user) {
-        CostSubject costSubject = costSubjectRepository.findTopByUserId(user.getId());
+    public CostSubjectSnapshotVo findCostSubjectByUserId(long userId) {
+        CostSubject costSubject = costSubjectRepository.findTopByUserId(userId);
         if (ObjectUtils.isEmpty(costSubject)) {
             return null;
         }
         return JSONMapper.fromJson(costSubject.getCostSubjectSnapshot(), CostSubjectSnapshotVo.class);
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public boolean payUSD(long userId, BigDecimal usd) {
+        //小于 0.01 直接支付成功
+        if (usd.compareTo(new BigDecimal("0.01")) < 0) {
+            return true;
+        }
+
+        int row = userRepository.payUSD(userId, usd);
+        log.info("payUSD::userId={}, usd={} ---- row={}", userId, usd, row);
+        return row == 1;
     }
 }

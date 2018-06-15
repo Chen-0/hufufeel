@@ -36,9 +36,6 @@ public class OrderController extends AbstractController {
     @Resource
     private WarehouseRepository warehouseRepository;
 
-    @Resource
-    private OrderRepository orderRepository;
-
     @RequestMapping("/order/index")
     public String index(
             Model model,
@@ -52,6 +49,16 @@ public class OrderController extends AbstractController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("MENU", "DINGDANGUANLI");
         return "/order/index";
+    }
+
+    @RequestMapping(value = "/order/{id}/show", method = RequestMethod.GET)
+    public String showOrder(
+            @PathVariable long id,
+            Model model
+    ) {
+        Order order = orderService.findOne(id);
+        model.addAttribute("ele", order);
+        return "/order/show";
     }
 
     @RequestMapping(value = "/order/create", method = RequestMethod.POST)
@@ -91,7 +98,7 @@ public class OrderController extends AbstractController {
     public String cancelOrder(
             @PathVariable("id") long id,
             RedirectAttributes redirectAttributes) throws BusinessException {
-        Order order = orderRepository.findOne(id);
+        Order order = orderService.findOne(id);
 
         if (ObjectUtils.isEmpty(order)) {
             throw new BusinessException("[A005] 数据异常");

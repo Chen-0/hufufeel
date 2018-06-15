@@ -18,6 +18,10 @@ public class ConfigService {
     @Resource
     private ConfigRepository configRepository;
 
+    public String findOneByKey(String key) {
+        return findByKey(key).get(0);
+    }
+
     @Transactional(readOnly = true)
     public List<String> findByKey(String key) {
         List<Config> configs = configRepository.findByKey(key);

@@ -9,8 +9,7 @@ import me.rubick.transport.app.repository.OrderItemRepository;
 import me.rubick.transport.app.repository.OrderRepository;
 import me.rubick.transport.app.vo.CostSnapshotVo;
 import me.rubick.transport.app.vo.OrderSnapshotVo;
-import me.rubick.transport.app.vo.ProductFormVo;
-import me.rubick.transport.app.vo.ProductSnapshot;
+import me.rubick.transport.app.vo.ProductSnapshotVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -100,7 +99,7 @@ public class OrderService {
             OrderItem orderItem = new OrderItem();
             orderItem.setProductId(product.getId());
             orderItem.setQuantity(quantity);
-            orderItem.setProductSnapshot(JSONMapper.toJSON(BeanMapperUtils.map(products.get(i), ProductSnapshot.class)));
+            orderItem.setProductSnapshot(JSONMapper.toJSON(BeanMapperUtils.map(products.get(i), ProductSnapshotVo.class)));
 
             orderItems.add(orderItem);
 
@@ -171,5 +170,17 @@ public class OrderService {
         }
 
         orderRepository.save(order);
+    }
+
+    @Transactional(readOnly = true)
+    public Order findOne(long id) {
+        Order order = orderRepository.findOne(id);
+        order.setOrderSnapshotVo(JSONMapper.fromJson(order.getOrderSnapshot(), OrderSnapshotVo.class));
+        order.setCostSnapshotVo(JSONMapper.fromJson(order.getCostSnapshot(), CostSnapshotVo.class));
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            orderItem.setProductSnapshotVo(JSONMapper.fromJson(orderItem.getProductSnapshot(), ProductSnapshotVo.class));
+        }
+        return order;
     }
 }

@@ -27,5 +27,12 @@
     $('#logout').click(function () {
         $('#logoutForm').submit();
     });
+
+    function isEmpty(A) {
+        if (A === null || A === undefined || A === "") {
+            return true
+        }
+        return false
+    }
 </script>
 

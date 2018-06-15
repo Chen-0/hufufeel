@@ -23,6 +23,7 @@
         <mapping class="me.rubick.transport.app.model.Order"/>
         <mapping class="me.rubick.transport.app.model.OrderItem"/>
         <mapping class="me.rubick.transport.app.model.CostSubject"/>
+        <mapping class="me.rubick.transport.app.model.Statements"/>
         <!-- <property name="connection.username"/> -->
         <!-- <property name="connection.password"/> -->
 

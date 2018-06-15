@@ -54,11 +54,12 @@
                             <tr>
                                 <th><input class="x-checkbox" type="checkbox" name="trackingNumber[]" value="${e.id}"></th>
                                 <td>${e.id}</td>
-                                <td>${e.productName}</td>
+                                <td><a href="/product/${e.id}/show">${e.productName}</a></td>
                                 <td>${e.productSku}</td>
                                 <td>
-                                    <a class="x-remove" href="/product/${e.id}/remove">删除</a>
+                                    <a href="/product/${e.id}/show">查看</a>
                                     <a href="/product/${e.id}/update">更新</a>
+                                    <a class="x-remove" href="/product/${e.id}/remove">删除</a>
                                 </td>
                             </tr>
                             </#list>

@@ -5,15 +5,14 @@ import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.response.RestResponse;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.HashUtils;
+import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.transport.app.constants.StatementTypeEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.DistributionChannelRepository;
 import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
-import me.rubick.transport.app.service.PackageService;
-import me.rubick.transport.app.service.ProductService;
-import me.rubick.transport.app.service.StockService;
-import me.rubick.transport.app.service.UserService;
+import me.rubick.transport.app.service.*;
 import me.rubick.transport.app.vo.ProductContainer;
 import me.rubick.transport.app.vo.ProductWarehouseVo;
 import org.springframework.data.domain.Page;
@@ -29,7 +28,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -50,6 +51,9 @@ public class PackageController {
     @Resource
     private DistributionChannelRepository distributionChannelRepository;
 
+    @Resource
+    private PayService payService;
+
     @RequestMapping(value = "/package/index", method = RequestMethod.GET)
     public String packageIndex(
             @PageableDefault(size = 10, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
@@ -63,7 +67,30 @@ public class PackageController {
         model.addAttribute("_STATUS", status);
         model.addAttribute("keyword", keyword);
         model.addAttribute("MENU", "RUKUGUANLI");
+
+
+        if (status!= null && status == 5) {
+            Map<String, Statements> map= payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK));
+            log.info("{}", JSONMapper.toJSON(map));
+            model.addAttribute("smap", map);
+        }
         return "/package/index";
+    }
+
+    @RequestMapping("/package/{id}/show")
+    public String showPackage(
+            @PathVariable long id,
+            Model model
+    ) {
+        Package p = packageRepository.findOne(id);
+        User user = userService.getByLogin();
+
+        List<Statements> statements = payService.findByUserIdAndTypeIn(
+                p.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK)
+        );
+        model.addAttribute("statements", statements);
+        model.addAttribute("ele", p);
+        return "/package/show";
     }
 
     /**

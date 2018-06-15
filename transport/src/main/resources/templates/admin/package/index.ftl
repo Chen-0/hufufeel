@@ -66,6 +66,9 @@
                                 <#case 0>
                                     <a href="/admin/package/${o.id}/inbound">入库</a>
                                 <#break>
+                                <#case 1>
+                                    <a href="/admin/package/${o.id}/publish">上架</a>
+                                <#break >
                             </#switch>
                         </td>
                     </tr>

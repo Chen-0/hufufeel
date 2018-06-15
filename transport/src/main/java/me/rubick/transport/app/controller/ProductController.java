@@ -58,7 +58,7 @@ public class ProductController extends AbstractController {
     @RequestMapping(value = "/product/index")
     public String indexProduct(
             Model model,
-            @PageableDefault(size = 10, direction = Sort.Direction.DESC, sort = {"updatedAt", "id"}) Pageable pageable,
+            @PageableDefault(size = 10, direction = Sort.Direction.DESC, sort = {"id"}) Pageable pageable,
             @RequestParam(required = false, defaultValue = "") String keyword,
             @RequestParam(required = false) Integer status) throws BusinessException {
         User user = userService.getByLogin();

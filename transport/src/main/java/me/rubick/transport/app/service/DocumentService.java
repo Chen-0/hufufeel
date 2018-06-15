@@ -19,6 +19,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -79,7 +81,7 @@ public class DocumentService {
     public Document uploadProductImage(MultipartFile multipartFile) {
         try {
             Action action = new Action(multipartFile);
-            action.resize(200, 200);
+            action.resize(200, 200).toConvert();
 
             return saveAction(action);
         } catch (Exception e) {
@@ -130,9 +132,9 @@ public class DocumentService {
         action.getInstance().toFile(directory + File.separator + filename + "." + filetype);
 
         Document document = new Document();
-        document.setName(filename);
-        document.setPathName(filename);
-        document.setFileType(filetype);
+        document.setName(filename + "." + filetype);
+        document.setPathName(filename + "." + filetype);
+        document.setFileType("image/jpeg");
         document.setCreatedAt(new Date());
 
         return documentRepository.save(document);
@@ -148,9 +150,7 @@ public class DocumentService {
     }
 
     public Document findByPathName(String pathName) {
-        Document document = documentRepository.findByPathName(pathName);
-        log.info("读取数据成功！ document={}", JSONMapper.toJSON(document));
-        return document;
+        return documentRepository.findByName(pathName);
     }
 
     private static File multipartFile2File(MultipartFile multipartFile, String dir, String filename) throws BusinessException {
@@ -192,7 +192,7 @@ public class DocumentService {
         }
 
         public Action resize(int w, int h) {
-            this.builder.sourceRegion(Positions.CENTER, w, h).scale(1.0);
+            this.builder.size(w, h);
             return this;
         }
 
@@ -208,6 +208,7 @@ public class DocumentService {
         public Thumbnails.Builder<?> getInstance() {
             return builder;
         }
+
 
 //        public void save() {
 //            try {

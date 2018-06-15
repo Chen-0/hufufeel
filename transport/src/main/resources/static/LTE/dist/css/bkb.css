@@ -24,6 +24,8 @@
     padding-left: 25px;
 }
 .charge-font {
+    text-align: left !important;
+    font-weight: normal !important;
     font-size: 18px;
 }
 .inline-block {

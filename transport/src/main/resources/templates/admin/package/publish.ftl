@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<#assign title="货品入库" />
+<#assign title="货品上架" />
 <#include "*/admin/_layout/head.ftl" />
 
 <body>
@@ -15,16 +15,9 @@
         </div>
     </div>
 
-<#if success?? >
-    <div class="alert alert-success alert-dismissable alert-message">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-    ${success}
-    </div>
-</#if>
-
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <form action="/admin/package/${o.id}/inbound" method="post">
+            <form action="/admin/package/${o.id}/publish" method="post">
                 <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
 
                 <div class="panel panel-info">
@@ -56,13 +49,13 @@
                                 </tr>
                                 <#list o.packageProducts as p>
                                 <tr class="table-sub-item">
-                                    <td>商品<input type="hidden" name="p[]" value="${p.product.id}"></td>
+                                    <td>商品</td>
                                     <td>${p.product.productName}</td>
                                     <td>${p.product.productSku}</td>
                                     <td>预计：${p.expectQuantity} 件</td>
                                     <td>单件重量：${p.product.weight} KG</td>
-                                    <td colspan="1">实际数量（件）：<input type="text" class="form-control" placeholder=""
-                                                                   name="qty[]">
+                                    <td>
+                                        实际数量（件）${p.quantity}
                                     </td>
                                 </tr>
                                 </#list>
@@ -73,8 +66,8 @@
                         <div class="row" style="margin-top: 25px;">
                             <div class="col-xs-6">
                                 <div class="form-group">
-                                    <label for="total_fee">入库费用（USD）（自动计算，请输入货品的数量）</label>
-                                    <input type="text" class="form-control" id="total_fee" name="total_fee">
+                                    <label for="total">上架费用（USD）（自动计算）</label>
+                                    <input type="text" class="form-control" id="total" name="total" value="${total}">
                                 </div>
                             </div>
                         </div>
@@ -89,57 +82,5 @@
 </div>
 
 <#include "*/admin/_layout/script.ftl"/>
-<script>
-    $(function () {
-        var pids = [];
-        $('input[name="p[]"]').each(function () {
-            pids.push($(this).val());
-        });
-
-        console.log(pids);
-
-        function check(v) {
-            if (parseInt(v).toString().length === v.length) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        $('input[name="qty[]"]').change(function () {
-            var qqq = [];
-
-            $('input[name="qty[]"]').each(function () {
-                var v = $(this).val();
-
-                if (!isEmpty(v) && check(v)) {
-                    qqq.push(v);
-                }
-
-
-            });
-
-            if (pids.length === qqq.length) {
-                console.log(qqq);
-
-                $.ajax({
-                    url: '/api/base/${o.id}/calc_RK',
-                    data: {
-                        qty:qqq,
-                        p: pids
-                    },
-                    success: function (e) {
-                        console.log(e);
-
-                        if (e.success) {
-                            $('#total_fee').val(e.data);
-                        }
-                    }
-                })
-            }
-
-        });
-    })
-</script>
 </body>
 </html>

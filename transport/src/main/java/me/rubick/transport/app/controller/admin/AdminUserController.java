@@ -45,7 +45,7 @@ public class AdminUserController extends AbstractController {
     ) {
         User user = userRepository.findOne(id);
 
-        CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(user);
+        CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(user.getId());
         if (ObjectUtils.isEmpty(costSubjectSnapshotVo)) {
             costSubjectSnapshotVo = new CostSubjectSnapshotVo();
             costSubjectSnapshotVo.setRkt("RK-AZ");

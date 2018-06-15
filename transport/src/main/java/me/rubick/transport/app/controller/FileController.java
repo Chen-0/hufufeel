@@ -34,7 +34,7 @@ public class FileController {
         return "OK";
     }
 
-    @RequestMapping(value = "file/{pathName}", method = RequestMethod.GET)
+    @RequestMapping(value = "file/{pathName:[a-zA-Z0-9.]+}", method = RequestMethod.GET)
     public void getFile(@PathVariable("pathName") String pathName, HttpServletResponse response) {
         try {
             Document document = documentService.findByPathName(pathName);

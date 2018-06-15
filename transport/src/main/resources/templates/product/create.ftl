@@ -164,7 +164,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="quotedPrice">申报价值（人民币）*：</label>
+                                    <label for="quotedPrice">申报价值（USD）*：</label>
                                     <input type="text" class="form-control" id="quotedPrice" name="quotedPrice" value="${felements.quotedPrice!}">
                                 <#if errors??>
                                     <p class="text-danger">${errors.quotedPrice!}</p>
