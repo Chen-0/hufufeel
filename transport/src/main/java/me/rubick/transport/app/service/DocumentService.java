@@ -158,7 +158,9 @@ public class DocumentService {
         if (ObjectUtils.isEmpty(multipartFile) || multipartFile.isEmpty()) {
             throw new BusinessException("[A003]上传文件失败！");
         }
-        String filepath = Paths.get(dir, filename).toString();
+
+        String[] oldName = multipartFile.getOriginalFilename().split("\\.");
+        String filepath = Paths.get(dir, filename).toString() + "." + oldName[oldName.length - 1];
         File file = new File(filepath);
 
         try {
@@ -172,6 +174,10 @@ public class DocumentService {
         }
 
         return file;
+    }
+
+    public File multipartFile2File(MultipartFile multipartFile) throws BusinessException {
+        return multipartFile2File(multipartFile, temp_directory, HashUtils.generateString());
     }
 
     public static class Action {
@@ -208,14 +214,5 @@ public class DocumentService {
         public Thumbnails.Builder<?> getInstance() {
             return builder;
         }
-
-
-//        public void save() {
-//            try {
-//                this.builder.toFile(directory + File.separator + HashUtils.generateString() + ".jpg");
-//            } catch (IOException e) {
-//                log.error("", e);
-//            }
-//        }
     }
 }

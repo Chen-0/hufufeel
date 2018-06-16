@@ -90,16 +90,18 @@
                             <label for="CKT-1" class="col-xs-1 control-label text-center">派送方式*</label>
                             <div class="col-xs-5">
                                 <select class="form-control" id="CKT-1" name="CKT-1">
-                                    <option value="1">测试1</option>
-                                    <option value="2">测试2</option>
+                                    <#list CKT_1 as c>
+                                        <option value="${c}">${c}</option>
+                                    </#list>
                                 </select>
                             </div>
 
                             <label for="CKT-2" class="col-xs-1 control-label text-center">保险类型*</label>
                             <div class="col-xs-5">
                                 <select class="form-control" id="CKT-2" name="CKT-2">
-                                    <option value="HEIGHT">高保</option>
-                                    <option value="LOW">低保</option>
+                                <#list CKT_2 as c>
+                                    <option value="${c}">${c}</option>
+                                </#list>
                                 </select>
                             </div>
                         </div>
@@ -108,8 +110,9 @@
                             <label for="CKT-3" class="col-xs-1 control-label text-center" style="text-align: center;">销售平台*</label>
                             <div class="col-xs-5">
                                 <select class="form-control" id="CKT-3" name="CKT-3">
-                                    <option value="1">我母鸡啊1</option>
-                                    <option value="2">我母鸡啊2</option>
+                                <#list CKT_3 as c>
+                                    <option value="${c}">${c}</option>
+                                </#list>
                                 </select>
                             </div>
                         </div>
@@ -130,7 +133,7 @@
                             <label for="CKT-6" class="col-xs-1 control-label text-center"
                                    style="text-align: center;">备注</label>
                             <div class="col-xs-11">
-                                <textarea class="form-control" placeholder="（可不填）" id="CKT-6" name="CKT-6"></textarea>
+                                <input class="form-control" placeholder="（可不填）" id="CKT-6" name="CKT-6">
                             </div>
                         </div>
                     </form>
@@ -147,8 +150,9 @@
                             <label for="CKF-1" class="col-xs-1 control-label text-center" style="text-align: center;">国家*</label>
                             <div class="col-xs-5">
                                 <select class="form-control" id="CKF-1" name="CKF-1">
-                                    <option value="1">我母鸡啊1</option>
-                                    <option value="2">我母鸡啊2</option>
+                                <#list CKF_1 as c>
+                                    <option value="${c}">${c}</option>
+                                </#list>
                                 </select>
                             </div>
 
@@ -204,7 +208,7 @@
                         <div class="form-group">
                             <label for="CKF-10" class="col-xs-1 control-label text-center">街道</label>
                             <div class="col-xs-5">
-                                <textarea class="form-control" id="CKF-10" name="CKF-10"></textarea>
+                                <input class="form-control" id="CKF-10" name="CKF-10">
                             </div>
 
                             <label for="CKF-11" class="col-xs-1 control-label text-center">门牌号</label>
@@ -393,7 +397,7 @@
             data.ckf8 = getValue('#CKF-8');
             data.ckf9 = getValue('#CKF-9');
             data.ckf10 = getValue('#CKF-10');
-            data.ckf10 = getValue('#CKF-11');
+            data.ckf11 = getValue('#CKF-11');
 
             <#if _csrf??>
                 data.${_csrf.parameterName}="${_csrf.token}";

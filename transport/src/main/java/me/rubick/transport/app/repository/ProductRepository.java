@@ -11,4 +11,7 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
 
     public List<Product> findByIdInAndStatusIn(Collection<Long> id, Collection<ProductStatus> productStatuses);
+
+
+    public Product findTopByProductSkuAndStatus(String sku, ProductStatus productStatus);
 }

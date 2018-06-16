@@ -1,15 +1,19 @@
 package me.rubick.transport.app.service;
 
+import me.rubick.common.app.exception.BusinessException;
+import me.rubick.common.app.utils.HashUtils;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.PackageProductRepository;
 import me.rubick.transport.app.repository.PackageRepository;
+import me.rubick.transport.app.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -32,6 +36,9 @@ public class PackageService {
 
     @Resource
     private PackageProductRepository packageProductRepository;
+
+    @Resource
+    private ProductRepository productRepository;
 
 
     public Page<Package> searchPackage(
@@ -110,5 +117,47 @@ public class PackageService {
             Integer no = Integer.valueOf(batch.substring(8)) + 1;
             return temp + no;
         }
+    }
+
+    public void create(User user, Warehouse warehouse, String referenceNumber, String comment, List<Integer> qtys, List<Long> pids) {
+        Package p = new Package();
+        p.setUserId(user.getId());
+        p.setWarehouseId(warehouse.getId());
+        p.setStatus(PackageStatus.READY);
+        p.setReferenceNumber(referenceNumber);
+        p.setWarehouseName(warehouse.getName());
+        p.setNickname(user.getName());
+        p.setComment(comment);
+
+        List<PackageProduct> packageProducts = new ArrayList<>(qtys.size());
+
+        int _qty = 0;
+
+        for (int i = 0; i < pids.size(); i++) {
+            PackageProduct packageProduct = new PackageProduct();
+            packageProduct.setProductId(pids.get(i));
+            packageProduct.setExpectQuantity(qtys.get(i));
+            packageProduct.setQuantity(0);
+            packageProducts.add(packageProduct);
+            _qty += packageProduct.getExpectQuantity();
+        }
+
+        p.setExpectQuantity(_qty);
+        p.setSn(this.generateBatch());
+        this.store(p, packageProducts);
+    }
+
+    public void create(User user, Warehouse warehouse,  List<Integer> qtys, List<String> skus) throws BusinessException {
+        List<Long> pids = new ArrayList<>();
+
+        for (String s: skus) {
+            Product product = productRepository.findTopByProductSkuAndStatus(s, ProductStatus.READY_CHECK);
+            if (ObjectUtils.isEmpty(product)) {
+                throw new BusinessException("货品SKU: " + s + " 不存在，请检查");
+            }
+            pids.add(product.getId());
+        }
+
+        create(user, warehouse, HashUtils.generateString(), "", qtys, pids);
     }
 }

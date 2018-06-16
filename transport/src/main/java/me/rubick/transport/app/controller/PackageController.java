@@ -1,9 +1,12 @@
 package me.rubick.transport.app.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.excel.ExcelConverter;
 import me.rubick.common.app.exception.BusinessException;
+import me.rubick.common.app.exception.CommonException;
 import me.rubick.common.app.response.RestResponse;
 import me.rubick.common.app.utils.BeanMapperUtils;
+import me.rubick.common.app.utils.ExcelHepler;
 import me.rubick.common.app.utils.HashUtils;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.StatementTypeEnum;
@@ -13,8 +16,10 @@ import me.rubick.transport.app.repository.DistributionChannelRepository;
 import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.*;
+import me.rubick.transport.app.vo.PackageExcelVo;
 import me.rubick.transport.app.vo.ProductContainer;
 import me.rubick.transport.app.vo.ProductWarehouseVo;
+import org.apache.poi.ss.usermodel.Row;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,9 +28,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +41,7 @@ import java.util.Map;
 
 @Controller
 @Slf4j
-public class PackageController {
+public class PackageController extends AbstractController {
 
     @Resource
     private PackageRepository packageRepository;
@@ -43,13 +50,7 @@ public class PackageController {
     private PackageService packageService;
 
     @Resource
-    private UserService userService;
-
-    @Resource
     private ProductService productService;
-
-    @Resource
-    private DistributionChannelRepository distributionChannelRepository;
 
     @Resource
     private PayService payService;
@@ -118,15 +119,6 @@ public class PackageController {
 
         User user = userService.getByLogin();
 
-        Package p = new Package();
-        p.setUserId(user.getId());
-        p.setWarehouseId(wId);
-        p.setStatus(PackageStatus.READY);
-        p.setReferenceNumber(referenceNumber);
-        p.setWarehouseName(warehouse.getName());
-        p.setNickname(user.getName());
-        p.setComment(comment);
-
         // TODO validate
         List<Product> products = productService.findProducts(pids);
 
@@ -134,22 +126,7 @@ public class PackageController {
             throw  new BusinessException("[A001] 禁止访问");
         }
 
-        List<PackageProduct> packageProducts = new ArrayList<>(qtys.size());
 
-        int _qty = 0;
-
-        for (int i = 0; i < pids.size(); i++) {
-            PackageProduct packageProduct = new PackageProduct();
-            packageProduct.setProductId(pids.get(i));
-            packageProduct.setExpectQuantity(qtys.get(i));
-            packageProduct.setQuantity(0);
-            packageProducts.add(packageProduct);
-            _qty += packageProduct.getExpectQuantity();
-        }
-
-        p.setExpectQuantity(_qty);
-        p.setSn(packageService.generateBatch());
-        packageService.store(p, packageProducts);
 
         redirectAttributes.addFlashAttribute("SUCCESS", "入库单创建成功！");
         return "redirect:/package/index";
@@ -225,6 +202,10 @@ public class PackageController {
     ) {
         List<Warehouse> warehouses = warehouseRepository.findAll();
         model.addAttribute("warehouses", warehouses);
+        model.addAttribute("CKT_1", configService.findByKey("CKT_1"));
+        model.addAttribute("CKT_2", configService.findByKey("CKT_2"));
+        model.addAttribute("CKT_3", configService.findByKey("CKT_3"));
+        model.addAttribute("CKF_1", configService.findByKey("CKF_1"));
         return "/package/send";
     }
 
@@ -269,6 +250,56 @@ public class PackageController {
         productWarehouseVo.setProductSku(productWarehouse.getProduct().getProductSku());
 
         return new RestResponse<>(productWarehouseVo);
+    }
+
+    @RequestMapping(value = "/package/import", method = RequestMethod.GET)
+    public String getImportPackage(Model model) {
+        List<Warehouse> warehouses = warehouseRepository.findAll();
+
+        model.addAttribute("warehouses", warehouses);
+        return "package/import";
+    }
+
+    @RequestMapping(value = "/package/import", method = RequestMethod.POST)
+    public String importPackage(
+            @RequestParam("file") MultipartFile multipartFile,
+            @RequestParam long wid,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            User user = userService.getByLogin();
+            File file = documentService.multipartFile2File(multipartFile);
+            ExcelHepler<PackageExcelVo> excelHepler = new ExcelHepler<>();
+            List<PackageExcelVo> packageExcelVos = excelHepler.readToObject(file, new ExcelConverter<PackageExcelVo>() {
+                @Override
+                public PackageExcelVo read(Row row) throws BusinessException {
+                    PackageExcelVo packageExcelVo = new PackageExcelVo();
+                    packageExcelVo.setSKU(ExcelHepler.getValue(row, 0, false));
+                    packageExcelVo.setQuantity(new BigDecimal(ExcelHepler.getValue(row, 1, false)).intValue());
+
+                    return packageExcelVo;
+                }
+            });
+
+            List<Integer> qtys = new ArrayList<>();
+            List<String> skus = new ArrayList<>();
+
+            for (PackageExcelVo p : packageExcelVos) {
+                qtys.add(p.getQuantity());
+                skus.add(p.getSKU());
+            }
+
+            packageService.create(user, warehouseRepository.findOne(wid), qtys, skus);
+
+        } catch (BusinessException e) {
+            log.warn("", e);
+            redirectAttributes.addFlashAttribute("ERROR", e.getMessage());
+        } catch (CommonException e) {
+            log.warn("", e);
+            redirectAttributes.addFlashAttribute("ERROR", e.getMessage());
+        }
+
+        return "redirect:/package/index";
     }
 }
 
