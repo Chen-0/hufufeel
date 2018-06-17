@@ -151,7 +151,7 @@ public class PackageService {
         List<Long> pids = new ArrayList<>();
 
         for (String s: skus) {
-            Product product = productRepository.findTopByProductSkuAndStatus(s, ProductStatus.READY_CHECK);
+            Product product = productRepository.findTopByProductSkuAndUserIdAndStatus(s, user.getId(), ProductStatus.READY_CHECK);
             if (ObjectUtils.isEmpty(product)) {
                 throw new BusinessException("货品SKU: " + s + " 不存在，请检查");
             }

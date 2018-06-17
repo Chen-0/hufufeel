@@ -19,6 +19,7 @@
                    aria-expanded="false">入库管理<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a href="/product/ready_to_send">新建入库单</a></li>
+                    <li><a href="/package/import">导入入库单</a></li>
                     <li><a href="/package/index">入库单管理</a></li>
                 </ul>
             </li>
@@ -65,7 +66,6 @@
                     <ul class="dropdown-menu">
                         <li class="header">有 ${MSG_COUNT} 条未读信息</li>
                         <li>
-                            <!-- inner menu: contains the actual data -->
                             <ul class="menu">
                                 <#list MSG_ELEMENTS as e>
                                 <li>

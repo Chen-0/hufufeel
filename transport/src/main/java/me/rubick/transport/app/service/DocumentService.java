@@ -159,17 +159,15 @@ public class DocumentService {
             throw new BusinessException("[A003]上传文件失败！");
         }
 
+
+
         String[] oldName = multipartFile.getOriginalFilename().split("\\.");
         String filepath = Paths.get(dir, filename).toString() + "." + oldName[oldName.length - 1];
         File file = new File(filepath);
-
         try {
-            BufferedOutputStream stream =
-                    new BufferedOutputStream(new FileOutputStream(file));
-
-            stream.write(multipartFile.getBytes());
-            stream.close();
+            multipartFile.transferTo(file);
         } catch (IOException e) {
+            log.error("", e);
             throw new BusinessException("[A003]上传文件失败！");
         }
 

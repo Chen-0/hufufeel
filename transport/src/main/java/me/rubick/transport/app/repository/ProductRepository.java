@@ -13,5 +13,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     public List<Product> findByIdInAndStatusIn(Collection<Long> id, Collection<ProductStatus> productStatuses);
 
 
-    public Product findTopByProductSkuAndStatus(String sku, ProductStatus productStatus);
+    public Product findTopByProductSkuAndUserIdAndStatus(String sku, long userId, ProductStatus productStatus);
+
+    public List<Product> findByProductSkuInAndStatus(Collection<String> collection, ProductStatus productStatus);
 }

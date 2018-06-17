@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<#assign TITLE="新建入库单">
+<#assign TITLE="导入发货单">
 <#include "*/_layout/head.ftl" />
 
 <body class="hold-transition skin-black-light sidebar-mini">
@@ -21,31 +21,14 @@
 
         <!-- Main content -->
         <section class="content">
-            <form id="mainForm" action="/package/import" method="post" enctype="multipart/form-data">
+            <form id="mainForm" action="/order/import" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
 
-                <div class="box">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">1.选择仓库</h3>
-                    </div>
-                    <!-- /.box-header -->
-                    <div class="box-body">
-                        <!-- radio -->
-                        <div class="form-group">
-                        <#list warehouses as w>
-                            <label class="select-label">
-                                <input type="radio" name="wid" class="x-radio flat-red" value="${w.id}"
-                                       <#if w_index==0>checked</#if>>
-                            ${w.name}
-                            </label>
-                        </#list>
-                        </div>
-                    </div>
-                </div>
+
 
                 <div class="box">
                     <div class="box-header with-border">
-                        <h3 class="box-title">2.上传Excel文件</h3>
+                        <h3 class="box-title">1.上传Excel文件</h3>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
@@ -57,7 +40,7 @@
                                     <#if warn ??>
                                         <p class="text-danger margin">${warn!}</p>
                                     <#else>
-                                        <p class="margin">导入发货单模板：<a href="/static/hwc/package_template.xls" download="入库单模板.xls">点击下载</a></p>
+                                        <p class="margin">导入发货单模板：<a href="/static/hwc/order_template.xls" download="入库单模板.xls">点击下载</a></p>
                                     </#if>
 
                                 </div>

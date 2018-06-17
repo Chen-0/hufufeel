@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,8 +25,7 @@ public class ExcelHepler<T> {
         String excelFilePath = strings[strings.length - 1];
         Workbook workbook = null;
 
-        try {
-            InputStream inputStream = new FileInputStream(file);
+        try (InputStream inputStream = new FileInputStream(file)) {
             switch (excelFilePath) {
                 case "xlsx":
                     workbook = new XSSFWorkbook(inputStream);
@@ -68,6 +68,17 @@ public class ExcelHepler<T> {
         return items;
     }
 
+    public static BigDecimal getDecimal(Row row, int i) throws BusinessException {
+        try {
+            return new BigDecimal(getValue(row, i, false));
+        } catch (NumberFormatException e) {
+            int x = row.getRowNum() + 1;
+            int y = i + 1;
+            throw new BusinessException("错误发生在" + x + "行" + "，第" + y + "列，请输入数字！");
+        }
+
+    }
+
     public static String getValue(Row row, int i, boolean allowNull) throws BusinessException {
         Cell cell = row.getCell(i);
         String cellValue = "";
@@ -76,7 +87,9 @@ public class ExcelHepler<T> {
             if (allowNull) {
                 return "";
             } else {
-                throw new BusinessException("错误发生在" + row.getRowNum() + "行，" + i +"个单元格， 该单元格为空。（若此行没有数据，请把整行删除）");
+                int x = row.getRowNum() + 1;
+                int y = i + 1;
+                throw new BusinessException("错误发生在" + x + "行，" + y + "个单元格， 该单元格为空。（若此行没有数据，请把整行删除）");
             }
         }
 

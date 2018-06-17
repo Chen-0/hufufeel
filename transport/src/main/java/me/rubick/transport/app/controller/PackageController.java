@@ -34,10 +34,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @Slf4j
@@ -275,7 +272,11 @@ public class PackageController extends AbstractController {
                 public PackageExcelVo read(Row row) throws BusinessException {
                     PackageExcelVo packageExcelVo = new PackageExcelVo();
                     packageExcelVo.setSKU(ExcelHepler.getValue(row, 0, false));
-                    packageExcelVo.setQuantity(new BigDecimal(ExcelHepler.getValue(row, 1, false)).intValue());
+                    try {
+                        packageExcelVo.setQuantity(new BigDecimal(ExcelHepler.getValue(row, 1, false)).intValue());
+                    } catch (NumberFormatException e) {
+                        throw new BusinessException("请检查SKU:" + packageExcelVo.getSKU() + "的数量，必须为整数！");
+                    }
 
                     return packageExcelVo;
                 }
@@ -283,23 +284,32 @@ public class PackageController extends AbstractController {
 
             List<Integer> qtys = new ArrayList<>();
             List<String> skus = new ArrayList<>();
+            Set<String> set = new HashSet<>();
 
             for (PackageExcelVo p : packageExcelVos) {
                 qtys.add(p.getQuantity());
                 skus.add(p.getSKU());
+
+                if (set.contains(p.getSKU())) {
+                    throw new BusinessException("错误！SKU：" + p.getSKU() + "含有一个或多个！");
+                }
+                set.add(p.getSKU());
             }
 
             packageService.create(user, warehouseRepository.findOne(wid), qtys, skus);
 
         } catch (BusinessException e) {
             log.warn("", e);
-            redirectAttributes.addFlashAttribute("ERROR", e.getMessage());
+            redirectAttributes.addFlashAttribute("warn", e.getMessage());
+            return "redirect:/package/import";
         } catch (CommonException e) {
             log.warn("", e);
-            redirectAttributes.addFlashAttribute("ERROR", e.getMessage());
+            redirectAttributes.addFlashAttribute("warn", e.getMessage());
+            return "redirect:/package/import";
         }
 
-        return "redirect:/package/index";
+        redirectAttributes.addFlashAttribute("SUCCESS", "导入入库单成功！");
+        return "redirect:/package/import";
     }
 }
 
