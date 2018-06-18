@@ -3,8 +3,11 @@ package me.rubick.transport.app.controller.admin;
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.controller.AbstractController;
+import me.rubick.transport.app.model.OrderStatusEnum;
+import me.rubick.transport.app.model.Statements;
 import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.repository.UserRepository;
+import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.service.UserService;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.List;
 
 @Controller
@@ -28,6 +32,9 @@ public class AdminUserController extends AbstractController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private PayService payService;
 
     @RequestMapping("/index")
     public String index(Model model) {
@@ -95,6 +102,87 @@ public class AdminUserController extends AbstractController {
 
         userService.storeCostSubject(user, costSubjectSnapshotVo);
         redirectAttributes.addFlashAttribute("SUCCESS", "设置费用成功！");
-        return  "redirect:/admin/user/index";
+        return "redirect:/admin/user/index";
+    }
+
+
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    public String getCreateUser() {
+        return "/admin/user/create";
+    }
+
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String postCreateUser(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String name,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            User user = new User();
+            user.setName(name);
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setUsd(BigDecimal.ZERO);
+            user = userService.createUser(user);
+
+            redirectAttributes.addFlashAttribute("success", "创建用户成功！");
+            return "redirect:/admin/user/" + user.getId() + "/cost_subject";
+        } catch (IllegalArgumentException e) {
+            log.error("", e);
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("username", username);
+            redirectAttributes.addFlashAttribute("password", password);
+            redirectAttributes.addFlashAttribute("name", name);
+            return "redirect:/admin/user/create";
+
+        }
+    }
+
+    @RequestMapping(value = "/store_cost", method = RequestMethod.GET)
+    public String getStoreCost(
+            @RequestParam("ids[]") List<Long> ids,
+            Model model
+    ) {
+        List<User> users = userService.findByIdIn(ids);
+
+        model.addAttribute("elements", users);
+
+        return "/admin/user/store_cost";
+    }
+
+    @RequestMapping(value = "/store_cost", method = RequestMethod.POST)
+    public String postStoreCost(
+            @RequestParam("ids[]") List<Long> ids,
+            @RequestParam BigDecimal total,
+            RedirectAttributes redirectAttributes
+    ) {
+        List<User> users = userService.findByIdIn(ids);
+
+        for (User user: users) {
+            Statements statements = payService.createSTORECOST(user, total);
+
+            boolean flag = payService.payStatements(statements.getId());
+
+            if (flag) {
+                userService.updateUserFreeze(user.getId());
+                messageService.send(
+                        user.getId(),
+                        "#",
+                        MessageFormat.format("仓租费一共 {0} USD， 扣款成功！", statements.getTotal())
+                );
+            } else {
+                userService.updateUserFreeze(user.getId());
+
+                messageService.send(
+                        user.getId(),
+                        "#",
+                        MessageFormat.format("仓租费一共 {0} USD，扣款失败，请充值账号并重新缴费。", statements.getTotal())
+                );
+            }
+        }
+
+        redirectAttributes.addFlashAttribute("success", "仓租费批量扣费成功！");
+        return "redirect:/admin/user/index";
     }
 }

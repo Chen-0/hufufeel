@@ -2,11 +2,12 @@ package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.utils.JSONMapper;
-import me.rubick.transport.app.model.CostSubject;
-import me.rubick.transport.app.model.Role;
-import me.rubick.transport.app.model.User;
+import me.rubick.transport.app.constants.StatementStatusEnum;
+import me.rubick.transport.app.constants.StatementTypeEnum;
+import me.rubick.transport.app.model.*;
+import me.rubick.transport.app.repository.AuthorityRepository;
 import me.rubick.transport.app.repository.CostSubjectRepository;
-import me.rubick.transport.app.repository.RoleRepository;
+import me.rubick.transport.app.repository.StatementsRepository;
 import me.rubick.transport.app.repository.UserRepository;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import org.slf4j.Logger;
@@ -25,6 +26,8 @@ import javax.annotation.Resource;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -39,7 +42,10 @@ public class UserService {
     private UserRepository userRepository;
 
     @Resource
-    private RoleRepository roleRepository;
+    private StatementsRepository statementsRepository;
+
+    @Resource
+    private AuthorityRepository authorityRepository;
 
     @Resource
     private PasswordEncoder passwordEncoder;
@@ -51,31 +57,30 @@ public class UserService {
         return userRepository.getOne(id);
     }
 
+    public List<User> findByIdIn(Collection<Long> collection) {
+        return userRepository.findByIdIn(collection);
+    }
+
     public User getByUsername(String name) {
         return userRepository.findByUsername(name);
     }
 
-    public void createUser(User user) {
-        List<Role> roles = new ArrayList<>();
-        roles.add(roleRepository.getOne(1L));
-        saveUser(user);
+    public User createUser(User user) {
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(authorityRepository.getOne(3));
+        user.setAuthorities(authorities);
+        return saveUser(user);
     }
 
-    public void createAdmin(User user) {
-        List<Role> roles = new ArrayList<>();
-        roles.add(roleRepository.getOne(1L));
-        roles.add(roleRepository.getOne(2L));
-        saveUser(user);
-    }
-
-    private void saveUser(User user) {
-        Assert.hasText(user.getUsername(), "邮箱不能为空");
+    private User saveUser(User user) {
+        Assert.hasText(user.getUsername(), "登陆账号不能为空");
         Assert.hasText(user.getPassword(), "密码不能为空");
-        Assert.isTrue(userRepository.countByUsername(user.getUsername()) == 0, "该邮箱已被注册");
+        Assert.hasText(user.getName(), "用户昵称不能为空");
+        Assert.isTrue(userRepository.countByUsername(user.getUsername()) == 0, "该登陆账号已被注册");
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public User getByLogin() {
@@ -141,5 +146,22 @@ public class UserService {
         int row = userRepository.payUSD(userId, usd);
         log.info("payUSD::userId={}, usd={} ---- row={}", userId, usd, row);
         return row == 1;
+    }
+
+
+    public void updateUserFreeze(long userId) {
+        User user = userRepository.findOne(userId);
+        List<Statements> statements = statementsRepository.findByUserIdAndStatusAndTypeIn(
+                user.getId(),
+                StatementStatusEnum.UNPAY,
+                Arrays.asList(StatementTypeEnum.STORE)
+        );
+
+        if (ObjectUtils.isEmpty(statements)) {
+            user.setArrearage(false);
+        } else {
+            user.setArrearage(true);
+        }
+        userRepository.save(user);
     }
 }

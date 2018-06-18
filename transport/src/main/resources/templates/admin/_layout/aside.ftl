@@ -47,6 +47,24 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">
+                        出库单管理<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/admin/order/index">查看所有</a></li>
+                        <li><a href="/admin/order/index?status=0">待审核</a></li>
+                        <li><a href="/admin/order/index?status=1">待发货</a></li>
+                        <li><a href="/admin/order/index?status=2">已发货</a></li>
+                        <li><a href="/admin/order/index?status=3">已冻结</a></li>
+                        <li><a href="/admin/order/index?status=4">审核失败</a></li>
+                        <li><a href="/admin/order/index?status=5">已取消</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
                         用户管理<span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
@@ -73,6 +91,16 @@
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
         <h4><i class="icon fa fa-check"></i> 操作成功</h4>
     ${SUCCESS!}
+    </div>
+</div>
+</#if>
+
+<#if ERROR?? >
+<div class="message-container">
+    <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h4><i class="icon fa fa-check"></i> 操作失败</h4>
+    ${ERROR!}
     </div>
 </div>
 </#if>

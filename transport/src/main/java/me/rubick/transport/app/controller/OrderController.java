@@ -7,12 +7,14 @@ import me.rubick.common.app.exception.CommonException;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.ExcelHepler;
 import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.transport.app.constants.StatementTypeEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.DocumentRepository;
 import me.rubick.transport.app.repository.OrderRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.DocumentService;
 import me.rubick.transport.app.service.OrderService;
+import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.vo.OrderExcelVo;
 import me.rubick.transport.app.vo.OrderSnapshotVo;
@@ -31,6 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +53,9 @@ public class OrderController extends AbstractController {
     @Resource
     private DocumentService documentService;
 
+    @Resource
+    private PayService payService;
+
     @RequestMapping("/order/index")
     public String index(
             Model model,
@@ -62,6 +68,13 @@ public class OrderController extends AbstractController {
         model.addAttribute("_STATUS", status);
         model.addAttribute("keyword", keyword);
         model.addAttribute("MENU", "DINGDANGUANLI");
+
+        if (status!= null && status == OrderStatusEnum.FREEZE.ordinal()) {
+            Map<String, Statements> map= payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.ORDER));
+            log.info("{}", JSONMapper.toJSON(map));
+            model.addAttribute("smap", map);
+        }
+
         return "/order/index";
     }
 
@@ -70,7 +83,16 @@ public class OrderController extends AbstractController {
             @PathVariable long id,
             Model model
     ) {
+        User user = userService.getByLogin();
         Order order = orderService.findOne(id);
+
+        if (ObjectUtils.isEmpty(order)) {
+            return "redirect:/order/index";
+        }
+
+        if (user.getId() == order.getId()) {
+            return "redirect:/order/index";
+        }
         model.addAttribute("ele", order);
         return "/order/show";
     }

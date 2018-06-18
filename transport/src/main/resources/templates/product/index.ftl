@@ -44,8 +44,23 @@
                             <tr>
                                 <th width="1px"><input type="checkbox" id="select_all"></th>
                                 <th>编号</th>
-                                <th>商品名称</th>
-                                <th>商品SKU</th>
+                                <th>货品名称</th>
+                                <th>货品SKU</th>
+                                <th>电池类型</th>
+                                <th>原产地</th>
+                                <th>重量</th>
+                                <th>体积</th>
+                                <th>有效期</th>
+                                <th>危险品</th>
+                                <th>申报价值</th>
+                                <th>申报名称</th>
+                                <th>状态</th>
+                            <#if status??>
+                                <#if status == 2>
+                                    <th width="40">失败原因</th>
+                                </#if>
+                            </#if>
+                                <th width="40">备注</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -54,8 +69,27 @@
                             <tr>
                                 <th><input class="x-checkbox" type="checkbox" name="trackingNumber[]" value="${e.id}"></th>
                                 <td>${e.id}</td>
-                                <td><a href="/product/${e.id}/show">${e.productName}</a></td>
+                                <td>${e.productName}</td>
                                 <td>${e.productSku}</td>
+                                <td>${e.isBattery?string("是", "否")}</td>
+                                <td>${e.origin}</td>
+                                <td>${e.weight}kg</td>
+                                <td>${e.vol} 立方米</td>
+                                <td>
+                                    <#if e.deadline??>
+                                ${e.deadline?date}
+                            </#if>
+                                </td>
+                                <td>${e.isDanger?string("是", "否")}</td>
+                                <td>${e.quotedPrice}</td>
+                                <td>${e.quotedName}</td>
+                                <td>${e.status.getValue()}</td>
+                                <#if status??>
+                                    <#if status == 2>
+                                        <td>${e.reason!}</td>
+                                    </#if>
+                                </#if>
+                                <td>${e.comment!}</td>
                                 <td>
                                     <a href="/product/${e.id}/show">查看</a>
                                     <a href="/product/${e.id}/update">更新</a>
@@ -67,7 +101,6 @@
                         </table>
                     </form>
                 </div>
-                <!-- /.box-body -->
 
                 <div class="box-footer clearfix">
                     <#if _STATUS?exists && ( _STATUS == 1) >

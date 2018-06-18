@@ -67,7 +67,7 @@ public class PackageController extends AbstractController {
         model.addAttribute("MENU", "RUKUGUANLI");
 
 
-        if (status!= null && status == 5) {
+        if (status!= null && status == PackageStatus.FREEZE.ordinal()) {
             Map<String, Statements> map= payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK));
             log.info("{}", JSONMapper.toJSON(map));
             model.addAttribute("smap", map);

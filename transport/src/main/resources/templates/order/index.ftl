@@ -74,6 +74,11 @@
                                 <#if e.status.ordinal() == 0 || e.status.ordinal() == 4>
                                     <a href="/order/${e.id}/cancel">取消入库单</a>
                                 </#if>
+
+                                <#assign  key = e.id?string>
+                                <#if smap?exists && smap[key]?exists>
+                                    <a href="/user/statements/${smap["${e.id}"].id}/pay">立即支付</a>
+                                </#if>
                             </td>
                         </tr>
                         </#list>

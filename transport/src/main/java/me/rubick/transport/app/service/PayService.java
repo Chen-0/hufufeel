@@ -6,10 +6,7 @@ import me.rubick.transport.app.constants.StatementStatusEnum;
 import me.rubick.transport.app.constants.StatementTypeEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
-import me.rubick.transport.app.repository.PackageRepository;
-import me.rubick.transport.app.repository.PaymentRepository;
-import me.rubick.transport.app.repository.StatementsRepository;
-import me.rubick.transport.app.repository.UserRepository;
+import me.rubick.transport.app.repository.*;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +40,9 @@ public class PayService {
 
     @Resource
     private StockService stockService;
+
+    @Resource
+    private OrderRepository orderRepository;
 
 
     public Payment findPayment(long paymentId, User user) {
@@ -127,7 +127,7 @@ public class PayService {
 
     public Statements saveStatements(Statements statements, BigDecimal total) {
         log.info("系统自动生成 = {}, 提交={}", statements.getTotal(), total);
-        if (! ObjectUtils.isEmpty(total)) {
+        if (!ObjectUtils.isEmpty(total)) {
             statements.setTotal(total);
         }
         return statementsRepository.save(statements);
@@ -135,6 +135,7 @@ public class PayService {
 
     /**
      * 计算费用
+     *
      * @param p
      * @return
      */
@@ -232,6 +233,18 @@ public class PayService {
                         }
                         break;
                     }
+                    case ORDER: {
+                        Order order = orderRepository.findOne(Long.valueOf(statements.getTarget()));
+                        if (order.getNextStatus() != OrderStatusEnum.NULL) {
+                            order.setStatus(order.getNextStatus());
+                            order.setNextStatus(OrderStatusEnum.NULL);
+                            order.setOutTime(new Date());
+                            orderRepository.save(order);
+                        }
+                    }
+                    case STORE: {
+                        userService.updateUserFreeze(statements.getUserId());
+                    }
                 }
             } else {
                 throw new BusinessException("余额不足");
@@ -241,6 +254,7 @@ public class PayService {
 
     /**
      * 上架费
+     *
      * @param p
      * @return
      */
@@ -303,7 +317,80 @@ public class PayService {
     }
 
     @Transactional(readOnly = true)
-    public  List<Statements> findByUserIdAndTypeIn(long target, List<StatementTypeEnum> statementTypeEnum) {
+    public List<Statements> findByUserIdAndTypeIn(long target, List<StatementTypeEnum> statementTypeEnum) {
         return statementsRepository.findByTargetAndTypeIn(String.valueOf(target), statementTypeEnum);
+    }
+
+    public Statements createORDER(Order order) {
+        CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(order.getUserId());
+
+        Statements statements = new Statements();
+        statements.setUserId(order.getUserId());
+        statements.setStatus(StatementStatusEnum.UNPAY);
+        statements.setType(StatementTypeEnum.ORDER);
+        statements.setTarget(String.valueOf(order.getId()));
+        statements.setPayAt(null);
+
+        BigDecimal total = BigDecimal.ZERO;
+
+
+        //总重、总体积
+        int count = 0;
+        BigDecimal tWeight = BigDecimal.ZERO;
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            Product product = orderItem.getProduct();
+
+            count += orderItem.getQuantity();
+            tWeight = tWeight.add(product.getWeight().multiply(new BigDecimal(orderItem.getQuantity())));
+        }
+
+        log.info("orderId={}, count={}, total weight={}", order.getId(), count, tWeight);
+        String comment = MessageFormat.format("出库单：{0}，一共 {1} 件货品，总重量 {2}", order.getReferenceNumber(), count, tWeight);
+        log.info(comment);
+        switch (costSubjectSnapshotVo.getDdt()) {
+            case "DD-AZ":       //按体积
+                count = count >= 10 ? 10 : count;
+
+                if (tWeight.compareTo(new BigDecimal("1")) <= 0) {
+                    //1kg 内含 1kg
+                    total = total.add(tWeight.multiply(costSubjectSnapshotVo.getDdv().get(0)));
+                    total = total.add(costSubjectSnapshotVo.getDdv().get(1).multiply(new BigDecimal(count)));
+                    log.info("----- 1kg 内含 1kg");
+                } else {
+                    //超过1kg
+                    tWeight = tWeight.subtract(new BigDecimal("1"));
+                    total = new BigDecimal("0.3");
+                    total = total.add(costSubjectSnapshotVo.getDdv().get(2).multiply(tWeight));
+                    total = total.add(costSubjectSnapshotVo.getDdv().get(3).multiply(new BigDecimal(count)));
+                    log.info("----- 超过1kg");
+                }
+
+                break;
+            case "DD-AJ":       //按件
+                total = costSubjectSnapshotVo.getDdv().get(0).multiply(new BigDecimal(count));
+                break;
+        }
+
+        total = total.setScale(2, RoundingMode.FLOOR);
+        log.info("总价：{}", total);
+
+        statements.setComment(comment);
+        statements.setTotal(total);
+        return statements;
+    }
+
+    public Statements createSTORECOST(User user, BigDecimal total) {
+        Statements statements = new Statements();
+        statements.setUserId(user.getId());
+        statements.setStatus(StatementStatusEnum.UNPAY);
+        statements.setType(StatementTypeEnum.STORE);
+        statements.setTarget(String.valueOf(user.getId()));
+        statements.setPayAt(null);
+        total = total.setScale(2, RoundingMode.FLOOR);
+        statements.setTotal(total);
+        statements.setComment("收取仓租费：" + total + "USD");
+
+        return statementsRepository.save(statements);
     }
 }

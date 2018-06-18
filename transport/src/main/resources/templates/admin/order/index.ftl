@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<#assign title="货品管理" />
+<#assign title="出库单管理" />
 <#include "*/admin/_layout/head.ftl" />
 
 <body>
@@ -10,18 +10,20 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">
-                货品管理 （
-                <#if status??>
-                    <#switch status>
-                        <#case 0> 待审核 <#break>
-                        <#case 1> 已审核 <#break>
-                        <#case 2> 已拒绝 <#break>
-                    </#switch>
-                <#else >
+            ${title}（
+            <#if status??>
+                <#switch status>
+                    <#case 0> 待审核 <#break>
+                    <#case 1> 待发货 <#break>
+                    <#case 2> 已发货 <#break>
+                    <#case 3> 已冻结 <#break>
+                    <#case 4> 审核失败 <#break>
+                    <#case 5> 已取消 <#break>
+                </#switch>
+            <#else >
                 查看所有
-                </#if>
+            </#if>
                 ）
-            <#--<small><a href="/company/create">新增货品</a></small>-->
             </h1>
         </div>
     </div>
@@ -40,62 +42,58 @@
                 <table class="bordered">
                     <thead>
                     <tr>
-                        <th>#</th>
-                        <th>所属用户</th>
-                        <th>货品名称</th>
-                        <th>货品SKU</th>
-                        <th>电池类型</th>
-                        <th>原产地</th>
-                        <th>重量</th>
-                        <th>体积</th>
-                        <th>有效期</th>
-                        <th>危险品</th>
-                        <th>申报价值</th>
-                        <th>申报名称</th>
+                        <th>出库单号</th>
+                        <th>参考号</th>
+                        <th>销售交易号</th>
+                        <th>SKU数</th>
+                        <th>总件数</th>
+                        <th>实际总重量</th>
+                        <th>创建时间</th>
+                        <th>备注</th>
+                    <#if status?exists && status == 4>
+                        <th>失败原因</th>
+                    </#if>
                         <th>状态</th>
-                        <#if status??>
-                            <#if status == 2>
-                                <th width="40">失败原因</th>
-                            </#if>
-                        </#if>
-                        <th width="40">备注</th>
                         <th>操作</th>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <#list elements.getContent() as o>
+                    <#list elements.getContent() as e>
                     <tr>
-                        <td>${o.id}</td>
-                        <td>${o.user.name}</td>
-                        <td>${o.productName}</td>
-                        <td>${o.productSku}</td>
-                        <td>${o.isBattery?string("是", "否")}</td>
-                        <td>${o.origin}</td>
-                        <td>${o.weight}kg</td>
-                        <td>${o.vol} 立方米</td>
+                        <td>${e.sn}</td>
+                        <td>${e.referenceNumber}</td>
+                        <td>${e.tn}</td>
+                        <td>${e.skuQty}</td>
+                        <td>${e.quantity}</td>
                         <td>
-                            <#if o.deadline??>
-                                ${o.deadline?date}
-                            </#if>
+                            <#if e.weight gt 0 >
+                                    ${e.weight}
+                                </#if>
                         </td>
-                        <td>${o.isDanger?string("是", "否")}</td>
-                        <td>${o.quotedPrice}</td>
-                        <td>${o.quotedName}</td>
-                        <td>${o.status.getValue()}</td>
-                        <#if status??>
-                            <#if status == 2>
-                                <td>${o.reason!}</td>
-                            </#if>
+                        <td>${e.createdAt?string}</td>
+                        <td>${e.comment!}</td>
+                        <#if status?exists && status == 4>
+                            <td>${e.reason}</td>
                         </#if>
-                        <td>${o.comment!}</td>
+                        <td>${e.status.getValue()}</td>
                         <td>
-                            <a href="/admin/product/${o.id}/change_status?name=success">通过</a>
-                            <a class="x-fail-check" href="javascript:void(0);" data-id="${o.id}" data-toggle="modal"
-                               data-target="#myModal">拒绝</a>
-                            <#if o.productUrl??>
-                                <a href="">查看图片</a>
-                            </#if>
+                            <a href="/admin/order/${e.id}/show">查看详情</a>
+
+                            <#switch e.status.ordinal()>
+                                <#case 0>
+                                    <a href="/admin/order/${e.id}/change_status?name=success">通过</a>
+                                    <a class="x-fail-check" href="javascript:void(0);" data-id="${e.id}"
+                                       data-toggle="modal"
+                                       data-target="#myModal">拒绝</a>
+                                    <#break>
+                                <#case 1>
+                                    <a href="/admin/order/${e.id}/out_bound">去发货</a>
+                                    <#break >
+                                <#case 2>
+                                    <a href="/admin/order/${e.id}/logistics">更新物流</a>
+                                    <#break>
+                            </#switch>
                         </td>
                     </tr>
                     </#list>
@@ -106,17 +104,16 @@
                     <ul class="pagination">
                     <#if elements.isFirst() != true >
                         <li>
-                            <a href="/admin/product/index?page=${elements.previousPageable().pageNumber}&status=${status!}"
+                            <a href="/admin/order/index?page=${elements.previousPageable().pageNumber}&status=${status!}"
                                aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
                     </#if>
 
-
                     <#if elements.isLast() != true>
                         <li>
-                            <a href="/admin/product/index?page=${elements.nextPageable().pageNumber}&status=${status!}"
+                            <a href="/admin/order/index?page=${elements.nextPageable().pageNumber}&status=${status!}"
                                aria-label="Previous">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
@@ -133,12 +130,11 @@
     </div>
 </div>
 
-
 <#-- 拒绝审核的弹框 -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form id="commentForm" action="/product/{id}/change_status" method="post">
+            <form id="commentForm" action="/order/{id}/change_status" method="post">
                 <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -168,7 +164,7 @@
         $('.x-fail-check').click(function () {
             var id = $(this).attr('data-id');
 
-            $('#commentForm').attr('action', '/admin/product/' + id + '/change_status')
+            $('#commentForm').attr('action', '/admin/order/' + id + '/change_status')
         });
     })
 </script>

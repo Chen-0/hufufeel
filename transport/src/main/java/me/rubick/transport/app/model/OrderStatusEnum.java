@@ -2,7 +2,7 @@ package me.rubick.transport.app.model;
 
 public enum OrderStatusEnum {
 
-    CHECK("待审核"), READY("待发货"), SEND("已发货"), FREEZE("已冻结"), FAIL("审核失败"), CANCEL("已取消");
+    CHECK("待审核"), READY("待发货"), SEND("已发货"), FREEZE("已冻结"), FAIL("审核失败"), CANCEL("已取消"), NULL("");
 
     OrderStatusEnum(String value) {
         this.value = value;

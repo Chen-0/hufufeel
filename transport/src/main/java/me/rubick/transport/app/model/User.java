@@ -30,9 +30,9 @@ public class User implements UserDetails, Serializable {
 
     @Column
     private boolean arrearage;
-
-    @Column
-    private int ctype;
+//
+//    @Column
+//    private int ctype;
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -128,12 +128,12 @@ public class User implements UserDetails, Serializable {
     public void setArrearage(boolean arrearage) {
         this.arrearage = arrearage;
     }
-
-    public int getCtype() {
-        return ctype;
-    }
-
-    public void setCtype(int ctype) {
-        this.ctype = ctype;
-    }
+//
+//    public int getCtype() {
+//        return ctype;
+//    }
+//
+//    public void setCtype(int ctype) {
+//        this.ctype = ctype;
+//    }
 }

@@ -35,6 +35,7 @@ public class Product {
     private BigDecimal vol;
 
     private Document image;
+    private User user;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -273,5 +274,15 @@ public class Product {
 
     public void setVol(BigDecimal vol) {
         this.vol = vol;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -5,10 +5,7 @@ import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.model.*;
-import me.rubick.transport.app.repository.OrderItemRepository;
-import me.rubick.transport.app.repository.OrderRepository;
-import me.rubick.transport.app.repository.ProductRepository;
-import me.rubick.transport.app.repository.WarehouseRepository;
+import me.rubick.transport.app.repository.*;
 import me.rubick.transport.app.vo.CostSnapshotVo;
 import me.rubick.transport.app.vo.OrderExcelVo;
 import me.rubick.transport.app.vo.OrderSnapshotVo;
@@ -46,6 +43,9 @@ public class OrderService {
     private StockService stockService;
 
     @Resource
+    private OrderLogisticsRepository orderLogisticsRepository;
+
+    @Resource
     private ProductRepository productRepository;
 
     public Page<Order> findAll(User user, String keyword, Integer status, Pageable pageable) {
@@ -53,7 +53,9 @@ public class OrderService {
             @Override
             public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<>();
-                predicates.add(cb.equal(root.get("userId"), user.getId()));
+                if (!ObjectUtils.isEmpty(user)) {
+                    predicates.add(cb.equal(root.get("userId"), user.getId()));
+                }
 
                 if (StringUtils.hasText(keyword)) {
                     String _keyword = getKeyword(keyword);
@@ -205,7 +207,7 @@ public class OrderService {
     private WarehouseRepository warehouseRepository;
 
     public void createOrder(List<OrderExcelVo> orderExcelVos, User user) throws BusinessException {
-        for (OrderExcelVo orderExcelVo: orderExcelVos) {
+        for (OrderExcelVo orderExcelVo : orderExcelVos) {
             this.createOrder(orderExcelVo, user);
         }
     }
@@ -318,5 +320,29 @@ public class OrderService {
                 throw new BusinessException("请检查SKU:" + a + "的数量，必须为整数！");
             }
         }
+    }
+
+    public Order outbound(Order order, BigDecimal total, String express, String expressNo) {
+        order.setStatus(OrderStatusEnum.SEND);
+        order.setTotal(total);
+        order.setExpress(express);
+        order.setExpressNo(expressNo);
+        order.setOutTime(new Date());
+        return orderRepository.save(order);
+    }
+
+    public OrderLogistics findOrNewOrderLogistics(long orderId) {
+        OrderLogistics orderLogistics = orderLogisticsRepository.findTopByOrderId(orderId);
+
+        if (ObjectUtils.isEmpty(orderLogistics)) {
+            orderLogistics = new OrderLogistics();
+            orderLogistics.setOrderId(orderId);
+        }
+
+        return orderLogistics;
+    }
+
+    public OrderLogistics storeOrderLogistics(OrderLogistics orderLogistics) {
+        return orderLogisticsRepository.save(orderLogistics);
     }
 }

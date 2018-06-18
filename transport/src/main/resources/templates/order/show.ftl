@@ -57,16 +57,28 @@
                                 </tr>
                                 <tr>
                                     <td>创建时间</td>
-                                    <td></td>
+                                    <td>${ele.createdAt?string}</td>
                                     <td>发货时间</td>
-                                    <td></td>
-                                    <td>支付时间</td>
-                                    <td></td>
+                                    <td>
+                                        <#if ele.outTime??>
+                                            ${ele.outTime?string}
+                                        </#if>
+                                    </td>
+                                    <td>第三方派送方式</td>
+                                    <td>
+                                        <strong>${ele.express!}（${ele.expressNo!}）</strong>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>备注</td>
                                     <td colspan="5">${ele.comment!}</td>
                                 </tr>
+                            <#if ele.status.ordinal() == 4>
+                                <tr>
+                                    <td>审核失败原因</td>
+                                    <td colspan="5" class="text-danger">${ele.reason!}</td>
+                                </tr>
+                            </#if>
                                 <tr>
                                     <td colspan="6"><strong>收货人信息：</strong></td>
                                 </tr>

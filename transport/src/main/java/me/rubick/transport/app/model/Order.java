@@ -35,6 +35,9 @@ public class Order implements Serializable {
     private int skuQty;
     private String costSnapshot;
     private Date outTime;
+    private String express = "";
+    private String expressNo = "";
+    private OrderStatusEnum nextStatus = OrderStatusEnum.NULL;
 
     @Transient
     private OrderSnapshotVo orderSnapshotVo;
@@ -278,5 +281,32 @@ public class Order implements Serializable {
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    @Column
+    public String getExpress() {
+        return express;
+    }
+
+    public void setExpress(String express) {
+        this.express = express;
+    }
+
+    @Column(name = "express_no")
+    public String getExpressNo() {
+        return expressNo;
+    }
+
+    public void setExpressNo(String expressNo) {
+        this.expressNo = expressNo;
+    }
+
+    @Column(name = "next_status")
+    public OrderStatusEnum getNextStatus() {
+        return nextStatus;
+    }
+
+    public void setNextStatus(OrderStatusEnum nextStatus) {
+        this.nextStatus = nextStatus;
     }
 }

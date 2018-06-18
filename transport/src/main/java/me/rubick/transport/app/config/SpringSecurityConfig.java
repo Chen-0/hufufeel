@@ -1,6 +1,7 @@
 package me.rubick.transport.app.config;
 
 import me.rubick.transport.app.model.User;
+import me.rubick.transport.app.service.SecurityService;
 import me.rubick.transport.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,12 +21,11 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.util.ObjectUtils;
 
+import javax.annotation.Resource;
+
 
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private UserService userService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -42,7 +42,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/index", "/contact_us","/strategy", "/qa", "/cost", "/about_us").permitAll()
 
                 .antMatchers("/**")
-                .hasAnyAuthority("ROLE_ADMIN", "ROLE_USERS", "ROLE_DEFAULT")
+                .hasAnyAuthority("ROLE_ADMIN", "ROLE_USERS", "ROLE_HWC")
 
                 .and().formLogin()
                 .loginPage("/login")
@@ -60,6 +60,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authProvider());
     }
 
+    @Resource
+    private SecurityService securityService;
+
     @Bean
     @Override
     protected UserDetailsService userDetailsService() {
@@ -67,11 +70,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public UserDetails loadUserByUsername(String username)
                     throws UsernameNotFoundException {
-                User user = userService.getByUsername(username);
-
-                if (ObjectUtils.isEmpty(user)) {
-                    throw new UsernameNotFoundException("用户名或密码错误");
-                }
+                UserDetails user = securityService.loadUserByUsername(username);
 
                 return user;
             }
