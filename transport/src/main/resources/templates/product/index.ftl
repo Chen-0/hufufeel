@@ -55,12 +55,14 @@
                                 <th>申报价值</th>
                                 <th>申报名称</th>
                                 <th>状态</th>
-                            <#if status??>
-                                <#if status == 2>
+                            <#if _STATUS??>
+                                <#if _STATUS == 2>
                                     <th width="40">失败原因</th>
+                                <#else>
+                                    <th width="40">备注</th>
                                 </#if>
                             </#if>
-                                <th width="40">备注</th>
+
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -84,12 +86,14 @@
                                 <td>${e.quotedPrice}</td>
                                 <td>${e.quotedName}</td>
                                 <td>${e.status.getValue()}</td>
-                                <#if status??>
-                                    <#if status == 2>
+                                <#if _STATUS??>
+                                    <#if _STATUS == 2>
                                         <td>${e.reason!}</td>
+                                    <#else>
+                                        <td>${e.comment!}</td>
                                     </#if>
                                 </#if>
-                                <td>${e.comment!}</td>
+
                                 <td>
                                     <a href="/product/${e.id}/show">查看</a>
                                     <a href="/product/${e.id}/update">更新</a>

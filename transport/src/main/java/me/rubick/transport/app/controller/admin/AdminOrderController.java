@@ -64,6 +64,8 @@ public class AdminOrderController extends AbstractController {
             Model model
     ) {
         Order order = orderService.findOne(id);
+        OrderLogistics orderLogistics = orderService.findOrNewOrderLogistics(id);
+        model.addAttribute("lg", orderLogistics);
         model.addAttribute("ele", order);
         return "/admin/order/show";
     }
@@ -129,7 +131,7 @@ public class AdminOrderController extends AbstractController {
             Model model,
             @RequestParam(required = false) BigDecimal total,
             @RequestParam(required = false, defaultValue = "") String express,
-            @RequestParam(required = false, defaultValue = "") String expressNo,
+            @RequestParam(required = false, defaultValue = "", name = "express_no") String expressNo,
             RedirectAttributes redirectAttributes,
             @ModelAttribute("orderStatus") Integer status
     ) {

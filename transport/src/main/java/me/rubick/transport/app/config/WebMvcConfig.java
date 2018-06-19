@@ -1,5 +1,6 @@
 package me.rubick.transport.app.config;
 
+import me.rubick.transport.app.interceptor.AccessInterceptor;
 import me.rubick.transport.app.interceptor.InjectInterceptor;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +18,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Resource
     private InjectInterceptor injectInterceptor;
+
+    @Resource
+    private AccessInterceptor accessInterceptor;
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
@@ -45,5 +49,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         super.addInterceptors(registry);
         registry.addInterceptor(injectInterceptor);
+        registry.addInterceptor(accessInterceptor);
     }
 }

@@ -2,9 +2,12 @@ package me.rubick.transport.app.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.BusinessException;
-import me.rubick.transport.app.model.Payment;
-import me.rubick.transport.app.model.Statements;
-import me.rubick.transport.app.model.User;
+import me.rubick.transport.app.model.*;
+import me.rubick.transport.app.model.Package;
+import me.rubick.transport.app.repository.OrderRepository;
+import me.rubick.transport.app.repository.PackageRepository;
+import me.rubick.transport.app.service.OrderService;
+import me.rubick.transport.app.service.PackageService;
 import me.rubick.transport.app.service.PayService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -78,5 +81,25 @@ public class UserController extends AbstractController {
         }
 
         return "redirect:/user/statements/index";
+    }
+
+    @Resource
+    private OrderRepository orderRepository;
+
+    @Resource
+    private PackageRepository packageRepository;
+
+    @RequestMapping(value = "/user/index", method = RequestMethod.GET)
+    public String indexUser(Model model) {
+        User user = userService.getByLogin();
+
+        long oc = orderRepository.countByUserIdAndStatus(user.getId(), OrderStatusEnum.FREEZE);
+        long pc = packageRepository.countByUserIdAndStatus(user.getId(), PackageStatus.FREEZE);
+
+        model.addAttribute("oc", oc);
+        model.addAttribute("pc", pc);
+        model.addAttribute("user", user);
+
+        return "/user/index";
     }
 }

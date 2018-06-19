@@ -80,9 +80,10 @@
                             <td>${e.createdAt?string}</td>
                             <td>${e.comment!}</td>
                             <td>
-                                <a href="/package/${e.id}/show">查看详情</a>
+                                <a href="/package/${e.id}/show">查看</a>
                                 <#if e.status.ordinal() == 0>
-                                <a href="/package/${e.id}/cancel">取消入库单</a>
+                                    <a href="/package/${e.id}/cancel" class="x-remove">取消</a>
+                                    <a href="/package/${e.id}/print?type=sku" target="_blank">打印SKU</a>
                                 </#if>
 
                                 <#assign  key = e.id?string>
@@ -101,8 +102,6 @@
                 <#include "*/_layout/v2.0/components/pages.ftl">
                 </div>
             </div>
-
-
         </section>
     </div>
 

@@ -88,6 +88,7 @@
                             </tbody>
                         </table>
 
+                    <#if statements?exists && statements?size gt 0 >
                         <table class="table table-bordered" style="margin-top: 25px;">
                             <thead>
                             <tr>
@@ -102,26 +103,31 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <#list statements as e>
-                            <tr>
-                                <td>${e_index + 1}</td>
-                                <td>${e.type.getValue()}</td>
-                                <td>${e.comment!}</td>
-                                <td>${e.total} USD</td>
-                                <td>${e.status.getValue()}</td>
-                                <td>${e.createdAt?string}</td>
-                                <td>
-                                    <#if e.payAt??>
+                                <#list statements as e>
+                                <tr>
+                                    <td>${e_index + 1}</td>
+                                    <td>${e.type.getValue()}</td>
+                                    <td>${e.comment!}</td>
+                                    <td>${e.total} USD</td>
+                                    <td>${e.status.getValue()}</td>
+                                    <td>${e.createdAt?string}</td>
+                                    <td>
+                                        <#if e.payAt??>
                                         ${e.payAt?string}
                                     </#if>
-                                </td>
-                                <td>
-                                    <a href="/user/statements/${e.id}/pay">立即支付</a>
-                                </td>
-                            </tr>
-                            </#list>
+                                    </td>
+                                    <td>
+                                        <a href="/user/statements/${e.id}/pay">立即支付</a>
+                                    </td>
+                                </tr>
+                                </#list>
                             </tbody>
                         </table>
+                    </#if>
+                    </div>
+
+                    <div class="box-footer clearfix">
+                        <a class="btn btn-primary" href="/package/${ele.id}/print?type=sku" target="_blank">打印SKU</a>
                     </div>
                 </div>
             </div>

@@ -20,6 +20,7 @@ public class ProductWarehouse {
 
     private Product product;
     private Warehouse warehouse;
+    private User user;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -114,5 +115,15 @@ public class ProductWarehouse {
 
     public void setWarehouse(Warehouse warehouse) {
         this.warehouse = warehouse;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

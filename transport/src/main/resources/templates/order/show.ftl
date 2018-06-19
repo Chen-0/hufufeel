@@ -113,6 +113,15 @@
                                     <td>门牌号</td>
                                     <td>${ele.orderSnapshotVo.ckf11!}</td>
                                 </tr>
+
+                                <#if lg?exists && lg.comment?length gt 0 >
+                                    <tr>
+                                        <td>物流信息：</td>
+                                        <td colspan="5">
+                                            <pre>${lg.comment}</pre>
+                                        </td>
+                                    </tr>
+                                </#if>
                             </table>
 
                             <table class="table table-bordered" style="margin-top: 25px;">
@@ -146,7 +155,6 @@
                                 </#list>
                                 </tbody>
                             </table>
-
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<#assign TITLE="新建发货单">
+<#assign TITLE="修改发货单">
 <#include "*/_layout/head.ftl" />
 
 <body class="hold-transition skin-black-light sidebar-mini">
@@ -9,7 +9,7 @@
 
     <div class="content-wrapper">
         <section class="content-header">
-            <h1>新建发货单</h1>
+            <h1>${TITLE}</h1>
 
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -19,6 +19,14 @@
         </section>
 
         <section class="content">
+            <#if o.status.ordinal() == 4>
+            <div class="box">
+                <div class="alert alert-danger alert-dismissible">
+                    <h4><i class="icon fa fa-ban"></i>审核失败</h4>
+                    ${o.reason!}
+                </div>
+            </div>
+            </#if>
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title">1.选择发货仓库</h3>
@@ -27,17 +35,13 @@
                     <form id="mainForm" role="form">
                         <div class="form-group">
                         <#list warehouses as w>
+                            <#if w.id == wid>
                             <label class="select-label" for="wid_${w.id}">
                                 <input id="wid_${w.id}" type="radio" name="wid" class="x-radio flat-red"
-                                       value="${w.id}"
-                                    <#if wid??>
-                                       <#if w.id==wid>checked</#if>
-                                    <#else>
-                                       <#if w_index==0>checked</#if>
-                                    </#if>
-                                >
+                                       value="${w.id}" checked>
                             ${w.name}
                             </label>
+                            </#if>
                         </#list>
                         </div>
                     </form>
@@ -50,24 +54,6 @@
                     <h3 class="box-title">2.选择货品</h3>
                 </div>
                 <div class="box-body">
-
-                    <form role="form" class="form-inline margin-bottom">
-                        <div class="form-group">
-                            <label for="productSKU">货品SKU</label>
-                            <input type="text" class="form-control" id="productSKU">
-                        </div>
-                        <div class="form-group">
-                            <label for="qty">发货数量</label>
-                            <input type="text" class="form-control" id="qty">
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-primary" type="button" id="addProduct">添加货品</button>
-                            <button class="btn btn-default" type="button" data-toggle="modal"
-                                    data-target="#show-stock-modal">
-                                查看货品
-                            </button>
-                        </div>
-                    </form>
                     <table class="table table-bordered table-striped table-condensed table-hover">
                         <thead>
                         <tr>
@@ -432,7 +418,8 @@
                         var input = '<input type="hidden" name="S-PW-id[]" value="' + item.productId + '">';
                         input = input + '<input type="hidden" name="S-PW-qty[]" value="' + qty + '">';
 
-                        var options = '<a href="javascript:void(0)" class="PW-remove">移除</a>';
+//                        var options = '<a href="javascript:void(0)" class="PW-remove">移除</a>';
+                        var options = '';
 
                         var box = "" +
                                 "<tr>\n" +
@@ -506,7 +493,7 @@
 //                }
 //            })
 
-            post('/order/create', data);
+            post('/order/${o.id}/update', data);
         });
 
         function getValue(e) {

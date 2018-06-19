@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <#assign TITLE = "查看货品">
 <#include "*/_layout/head.ftl" />
@@ -12,7 +12,8 @@
     <div class="content-wrapper">
         <section class="content-header">
             <h1>
-                ${TITLE} <small>${ele.productName}</small>
+            ${TITLE}
+                <small>${ele.productName}</small>
             </h1>
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -82,19 +83,20 @@
                                         <tr>
                                             <td>状态</td>
                                             <td>${ele.status.getValue()}</td>
-                                            <#if ele.status.ordinal() == 2>
-                                                <td>原因</td>
-                                                <td colspan="3">${ele.reason!}</td>
-                                            <#else>
                                             <td colspan="4"></td>
-                                            </#if>
-
                                         </tr>
 
                                         <tr>
                                             <td>备注</td>
                                             <td colspan="5">${ele.comment!}</td>
                                         </tr>
+
+                                        <#if ele.status.ordinal() == 2>
+                                        <tr class="text-danger">
+                                            <td>审核失败原因</td>
+                                            <td colspan="5">${ele.reason!}</td>
+                                        </tr>
+                                        </#if>
                                     </table>
                                 </div>
                             </div>

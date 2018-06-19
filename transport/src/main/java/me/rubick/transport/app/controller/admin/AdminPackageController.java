@@ -7,6 +7,8 @@ import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.PackageRepository;
+import me.rubick.transport.app.repository.UserRepository;
+import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.PackageService;
 import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.service.ProductService;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,6 +51,12 @@ public class AdminPackageController extends AbstractController {
     @Resource
     private PayService payService;
 
+    @Resource
+    private UserRepository userRepository;
+
+    @Resource
+    private WarehouseRepository warehouseRepository;
+
 
     @RequestMapping("/package/index")
     public String adminPackageIndex(
@@ -58,8 +67,36 @@ public class AdminPackageController extends AbstractController {
     ) {
         Page<Package> packages = packageService.searchPackage(keyword, null, status, pageable);
         model.addAttribute("elements", packages);
+        model.addAttribute("status", status);
         return "/admin/package/index";
     }
+
+    //--------------------------- 查看库存 ---------------------------------------
+    @RequestMapping("/stock/index")
+    public String indexStore(
+            @PageableDefault(size = 25, direction = Sort.Direction.DESC, sort = {"id"}) Pageable pageable,
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(value = "w[]", required = false) List<Long> wIds,
+            @RequestParam(required = false, name = "uid") Long userId,
+            Model model
+    ) {
+        User user = null;
+        if (!ObjectUtils.isEmpty(userId)) {
+            user = userRepository.findOne(userId);
+        }
+        List<Warehouse> warehouses = warehouseRepository.findAll();
+        Page<ProductWarehouse> productWarehouses = stockService.findAvailableStockByUser(user, pageable, keyword, wIds);
+        List<User> users = userService.findAll("ROLE_HWC");
+
+        model.addAttribute("users", users);
+        model.addAttribute("elements", productWarehouses);
+        model.addAttribute("warehouses", warehouses);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("ws", wIds);
+        return "/admin/store/index";
+    }
+
+    //--------------------------- 查看库存 ---------------------------------------
 
     /**
      * 入库
@@ -93,8 +130,7 @@ public class AdminPackageController extends AbstractController {
         if (count != 0 && count == pIds.size() && qty.size() == count) {
             Package p = packageService.inbound(id, products, qty);
 
-            redirectAttributes.addFlashAttribute("SUCCESS", "操作成功！");
-
+            redirectAttributes.addFlashAttribute("success", "操作成功！");
 
 
             //////////////////////  增加库存  /////////////////////////////////
@@ -107,7 +143,7 @@ public class AdminPackageController extends AbstractController {
             if (flag) {
                 messageService.send(
                         p.getUserId(),
-                        "/package/index?status=1",
+                        "/package/" + p.getId() + "/show",
                         MessageFormat.format("入库单：{0}在{1}入库成功！", p.getReferenceNumber(), p.getWarehouseName())
                 );
             } else {
@@ -144,15 +180,23 @@ public class AdminPackageController extends AbstractController {
     public String postPackagePublish(
             Model model,
             @PathVariable("id") long id,
-            @RequestParam(required = false) BigDecimal total
+            @RequestParam(required = false) BigDecimal total,
+            RedirectAttributes redirectAttributes
 
     ) {
         Package p = packageRepository.findOne(id);
+
+
         Statements statements = payService.saveStatements(payService.calcSJ(p), total);
         boolean flag = payService.payStatements(statements.getId());
 
         if (flag) {
             //支付成功
+            messageService.send(
+                    p.getUserId(),
+                    "/package/"+p.getId()+"/show",
+                    MessageFormat.format("入库单上架失败，参考号：{0}，上架成功！费用已从您的账户里扣除。", p.getReferenceNumber(), p.getWarehouseName())
+            );
             stockService.addStock(p);
         } else {
             p.setNextStatus(PackageStatus.FINISH);
@@ -165,6 +209,8 @@ public class AdminPackageController extends AbstractController {
                     MessageFormat.format("入库单上架失败，参考号：{0}，扣费失败，请充值账号并重新缴费。", p.getReferenceNumber(), p.getWarehouseName())
             );
         }
+
+        redirectAttributes.addFlashAttribute("success", "上架成功！");
         return "redirect:/admin/package/index";
     }
 }

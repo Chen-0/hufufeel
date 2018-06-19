@@ -46,6 +46,6 @@ public interface ProductWarehouseRepository extends JpaRepository<ProductWarehou
             "and pw.quantity - ?4 >= 0")
     int checkStore(long userId, long productId, long warehouseId, int qty);
 
-    @Query("select pw from ProductWarehouse pw, Product p where pw.productId = p.id and p.productSku = ?1")
-    List<ProductWarehouse> findAvailableStockByProductSku(String productSku);
+    @Query("select pw from ProductWarehouse pw, Product p where pw.productId = p.id and p.productSku = ?1 and pw.userId=?2 and pw.warehouseId = ?3")
+    List<ProductWarehouse> findAvailableStockByProductSku(String productSku, long userId, long warehouseId);
 }

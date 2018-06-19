@@ -8,6 +8,6 @@ public class AdminController {
 
     @RequestMapping("/admin/index")
     public String adminIndex() {
-        return "admin/index";
+        return "redirect:/admin/product/index";
     }
 }

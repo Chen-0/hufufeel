@@ -33,9 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @Slf4j
@@ -69,8 +67,8 @@ public class OrderController extends AbstractController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("MENU", "DINGDANGUANLI");
 
-        if (status!= null && status == OrderStatusEnum.FREEZE.ordinal()) {
-            Map<String, Statements> map= payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.ORDER));
+        if (status != null && status == OrderStatusEnum.FREEZE.ordinal()) {
+            Map<String, Statements> map = payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.ORDER));
             log.info("{}", JSONMapper.toJSON(map));
             model.addAttribute("smap", map);
         }
@@ -86,6 +84,7 @@ public class OrderController extends AbstractController {
         User user = userService.getByLogin();
         Order order = orderService.findOne(id);
 
+
         if (ObjectUtils.isEmpty(order)) {
             return "redirect:/order/index";
         }
@@ -93,8 +92,38 @@ public class OrderController extends AbstractController {
         if (user.getId() == order.getId()) {
             return "redirect:/order/index";
         }
+        OrderLogistics orderLogistics = orderService.findOrNewOrderLogistics(id);
+        model.addAttribute("lg", orderLogistics);
         model.addAttribute("ele", order);
         return "/order/show";
+    }
+
+    @RequestMapping(value = "/order/create", method = RequestMethod.GET)
+    public String sendStock(
+            Model model
+    ) {
+        List<Warehouse> warehouses = warehouseRepository.findAll();
+        model.addAttribute("warehouses", warehouses);
+        model.addAttribute("CKT_1", configService.findByKey("CKT_1"));
+        model.addAttribute("CKT_2", configService.findByKey("CKT_2"));
+        model.addAttribute("CKT_3", configService.findByKey("CKT_3"));
+        model.addAttribute("CKF_1", configService.findByKey("CKF_1"));
+
+        if (ObjectUtils.isEmpty(model.asMap().get("sp"))) {
+            model.addAttribute("sp", new OrderSnapshotVo());
+        }
+
+        List<Long> pids = (List<Long>) model.asMap().get("pids");
+        List<Long> qty = (List<Long>) model.asMap().get("qty");
+        log.info("{}", JSONMapper.toJSON(pids));
+        log.info("{}", JSONMapper.toJSON(qty));
+
+        if (!ObjectUtils.isEmpty(pids)) {
+            model.addAttribute("products", productService.findProducts(pids));
+            model.addAttribute("qty", qty);
+
+        }
+        return "/package/send";
     }
 
     @RequestMapping(value = "/order/create", method = RequestMethod.POST)
@@ -107,13 +136,64 @@ public class OrderController extends AbstractController {
     ) throws BusinessException {
 
         Warehouse warehouse = warehouseRepository.findOne(wid);
-
+        Map<String, String> map = new HashMap<>();
+        boolean hasError = false;
         if (ObjectUtils.isEmpty(warehouse)) {
             log.error("仓库不存在 wid = {}", wid);
             throw new BusinessException("提交失败！含有一个或多个错误");
         }
 
         List<Product> products = productService.findProducts(productIds);
+
+        if (ObjectUtils.isEmpty(productIds)) {
+            map.put("product", "请添加货品");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckt4"))) {
+            map.put("ckt4", "参考号不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckt5"))) {
+            map.put("ckt5", "交易号不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckf2"))) {
+            map.put("ckf2", "姓名不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckf3"))) {
+            map.put("ckf3", "州/省不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckf4"))) {
+            map.put("ckf4", "电话不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckf5"))) {
+            map.put("ckf5", "城市不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckf10"))) {
+            map.put("ckf10", "街道不能为空");
+            hasError = true;
+        }
+
+        if (hasError) {
+            redirectAttributes.addFlashAttribute("pids", productIds);
+            redirectAttributes.addFlashAttribute("wid", wid);
+            redirectAttributes.addFlashAttribute("qty", quantities);
+            redirectAttributes.addFlashAttribute("qty", quantities);
+            redirectAttributes.addFlashAttribute("error", map);
+            redirectAttributes.addFlashAttribute("sp", BeanMapperUtils.map(params, OrderSnapshotVo.class));
+            return "redirect:/order/create";
+        }
 
         if (products.size() == productIds.size() && productIds.size() == quantities.size()) {
             User user = userService.getByLogin();
@@ -129,6 +209,95 @@ public class OrderController extends AbstractController {
             throw new BusinessException("提交失败！含有一个或多个错误");
         }
     }
+
+    @RequestMapping(value = "/order/{id}/update", method = RequestMethod.GET)
+    public String updateOrder(Model model, @PathVariable long id) {
+        Order order = orderService.findOne(id);
+        List<Warehouse> warehouses = warehouseRepository.findAll();
+        model.addAttribute("warehouses", warehouses);
+        model.addAttribute("CKT_1", configService.findByKey("CKT_1"));
+        model.addAttribute("CKT_2", configService.findByKey("CKT_2"));
+        model.addAttribute("CKT_3", configService.findByKey("CKT_3"));
+        model.addAttribute("CKF_1", configService.findByKey("CKF_1"));
+        model.addAttribute("o", order);
+
+        if (ObjectUtils.isEmpty(model.asMap().get("sp"))) {
+            model.addAttribute("sp", order.getOrderSnapshotVo());
+        }
+
+        model.addAttribute("wid", order.getWarehouseId());
+
+        List<Long> pids = new ArrayList<>();
+        List<Integer> qty = new ArrayList<>();
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            pids.add(orderItem.getProductId());
+            qty.add(orderItem.getQuantity());
+        }
+
+        model.addAttribute("products", productService.findProducts(pids));
+        model.addAttribute("qty", qty);
+        return "/package/update_send";
+    }
+
+    @RequestMapping(value = "/order/{id}/update", method = RequestMethod.POST)
+    public String updateOrder(
+            @PathVariable long id,
+            @RequestParam Map<String, String> params,
+            RedirectAttributes redirectAttributes
+    ) {
+        Map<String, String> map = new HashMap<>();
+        boolean hasError = false;
+
+        if (ObjectUtils.isEmpty(params.get("ckt4"))) {
+            map.put("ckt4", "参考号不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckt5"))) {
+            map.put("ckt5", "交易号不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckf2"))) {
+            map.put("ckf2", "姓名不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckf3"))) {
+            map.put("ckf3", "州/省不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckf4"))) {
+            map.put("ckf4", "电话不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckf5"))) {
+            map.put("ckf5", "城市不能为空");
+            hasError = true;
+        }
+
+        if (ObjectUtils.isEmpty(params.get("ckf10"))) {
+            map.put("ckf10", "街道不能为空");
+            hasError = true;
+        }
+
+        if (hasError) {
+            redirectAttributes.addFlashAttribute("error", map);
+            redirectAttributes.addFlashAttribute("sp", BeanMapperUtils.map(params, OrderSnapshotVo.class));
+            return "redirect:/order/create";
+        }
+
+        Order order = orderService.findOne(id);
+        order.setOrderSnapshot(JSONMapper.toJSON(BeanMapperUtils.map(params, OrderSnapshotVo.class)));
+        orderService.updateOrder(order);
+
+        redirectAttributes.addFlashAttribute("SUCCESS", "修改发货单成功！");
+        return "redirect:/order/index";
+    }
+
 
     @RequestMapping("/order/{id}/cancel")
     public String cancelOrder(

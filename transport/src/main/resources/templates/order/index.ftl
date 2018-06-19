@@ -70,10 +70,12 @@
                             <td>${e.createdAt?string}</td>
                             <td>${e.comment!}</td>
                             <td>
-                                <a href="/order/${e.id}/show">查看详情</a>
+                                <a href="/order/${e.id}/show">查看</a>
                                 <#if e.status.ordinal() == 0 || e.status.ordinal() == 4>
-                                    <a href="/order/${e.id}/cancel">取消入库单</a>
+                                    <a href="/order/${e.id}/update">修改</a>
+                                    <a href="/order/${e.id}/cancel" class="x-remove">取消</a>
                                 </#if>
+
 
                                 <#assign  key = e.id?string>
                                 <#if smap?exists && smap[key]?exists>
@@ -102,5 +104,16 @@
 </div>
 
 <#include "*/_layout/script.ftl" />
+<script>
+    $('.x-remove').click(function (e) {
+        e.preventDefault();
+
+        var url = $(this).attr("href");
+
+        if (confirm("确认取消该条目")) {
+            window.location.href = url;
+        }
+    });
+</script>
 </body>
 </html>

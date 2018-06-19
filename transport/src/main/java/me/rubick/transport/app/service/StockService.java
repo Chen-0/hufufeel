@@ -3,6 +3,7 @@ package me.rubick.transport.app.service;
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
+import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.repository.ProductWarehouseRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import org.springframework.data.domain.Page;
@@ -29,14 +30,17 @@ public class StockService {
     @Resource
     private ProductWarehouseRepository productWarehouseRepository;
 
+    @Resource
+    private PackageRepository packageRepository;
+
     @Transactional(readOnly = true)
     public List<ProductWarehouse> findAll(User user, Collection<Long> collection) {
         return productWarehouseRepository.findByUserIdAndIdIn(user.getId(), collection);
     }
 
     @Transactional(readOnly = true)
-    public ProductWarehouse findAvailableStockByProductSku(String productSku) {
-        List<ProductWarehouse> productWarehouses = productWarehouseRepository.findAvailableStockByProductSku(productSku);
+    public ProductWarehouse findAvailableStockByProductSku(String productSku, User user, long warehouseId) {
+        List<ProductWarehouse> productWarehouses = productWarehouseRepository.findAvailableStockByProductSku(productSku, user.getId(), warehouseId);
 
         if (ObjectUtils.isEmpty(productWarehouses)) {
             return null;
@@ -57,10 +61,13 @@ public class StockService {
             @Override
             public Predicate toPredicate(Root root, CriteriaQuery criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
-                predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("userId"), user.getId())));
+                if (!ObjectUtils.isEmpty(user)) {
+                    predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("userId"), user.getId())));
+                }
+
                 predicates.add(criteriaBuilder.and(criteriaBuilder.greaterThan(root.get("quantity"), 0)));
 
-                if (! ObjectUtils.isEmpty(keyword)) {
+                if (!ObjectUtils.isEmpty(keyword)) {
                     Join<ProductWarehouse, Product> joinP = root.join("product", JoinType.INNER);
                     Join<ProductWarehouse, Product> joinW = root.join("warehouse", JoinType.INNER);
                     predicates.add(criteriaBuilder.and(criteriaBuilder.or(
@@ -90,6 +97,8 @@ public class StockService {
     }
 
     public void addStock(Package p) {
+        p.setStatus(PackageStatus.FINISH);
+        packageRepository.save(p);
         List<PackageProduct> products = p.getPackageProducts();
 
         for (PackageProduct pp : products) {

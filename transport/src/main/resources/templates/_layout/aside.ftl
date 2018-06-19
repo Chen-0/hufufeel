@@ -23,22 +23,13 @@
                     <li><a href="/package/index">入库单管理</a></li>
                 </ul>
             </li>
-        <#--货品管理-->
-        <#--新建货品-->
             <li><a href="/stock/index">库存管理</a></li>
-            <#--<li class="dropdown">-->
-                <#--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"-->
-                   <#--aria-expanded="false">库存管理<span class="caret"></span></a>-->
-                <#--<ul class="dropdown-menu">-->
-                    <#--<li><a href="/stock/index">查询库存</a></li>-->
-                <#--</ul>-->
-            <#--</li>-->
-        <#--查看库存-->
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                   aria-expanded="false">订单管理<span class="caret"></span></a>
+                   aria-expanded="false">发货单管理<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li><a href="/stock/send">新建发货单</a></li>
+                    <li><a href="/order/create">新建发货单</a></li>
+                    <li><a href="/order/import">导入入库单</a></li>
                     <li><a href="/order/index">发货单管理</a></li>
                 </ul>
             </li>
@@ -85,7 +76,7 @@
                 </li>
 
                 <li class="user user-menu">
-                    <a href="javascript:void(0)">
+                    <a href="/user/index">
                         <img src="/static/LTE/user.jpg" class="user-image" alt="User Image">
                         <span class="hidden-xs">${USER.name}</span>
                     </a>

@@ -67,8 +67,8 @@ public class PackageController extends AbstractController {
         model.addAttribute("MENU", "RUKUGUANLI");
 
 
-        if (status!= null && status == PackageStatus.FREEZE.ordinal()) {
-            Map<String, Statements> map= payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK));
+        if (status != null && status == PackageStatus.FREEZE.ordinal()) {
+            Map<String, Statements> map = payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK));
             log.info("{}", JSONMapper.toJSON(map));
             model.addAttribute("smap", map);
         }
@@ -93,6 +93,7 @@ public class PackageController extends AbstractController {
 
     /**
      * 提交发货清单
+     *
      * @param wId
      * @param qtys
      * @param pids
@@ -111,7 +112,7 @@ public class PackageController extends AbstractController {
         Warehouse warehouse = warehouseRepository.findOne(wId);
 
         if (ObjectUtils.isEmpty(warehouse)) {
-            throw  new BusinessException("[A001] 禁止访问");
+            throw new BusinessException("[A001] 禁止访问");
         }
 
         User user = userService.getByLogin();
@@ -120,10 +121,10 @@ public class PackageController extends AbstractController {
         List<Product> products = productService.findProducts(pids);
 
         if (products.size() != qtys.size()) {
-            throw  new BusinessException("[A001] 禁止访问");
+            throw new BusinessException("[A001] 禁止访问");
         }
 
-
+        packageService.create(user, warehouse, referenceNumber, comment, qtys, pids);
 
         redirectAttributes.addFlashAttribute("SUCCESS", "入库单创建成功！");
         return "redirect:/package/index";
@@ -146,7 +147,7 @@ public class PackageController extends AbstractController {
             throw new BusinessException("");
         }
 
-        if (! p.getStatus().equals(PackageStatus.READY)) {
+        if (!p.getStatus().equals(PackageStatus.READY)) {
             throw new BusinessException("");
         }
 
@@ -167,6 +168,7 @@ public class PackageController extends AbstractController {
 
     /**
      * 库存管理
+     *
      * @param model
      * @param pageable
      * @param keyword
@@ -192,20 +194,6 @@ public class PackageController extends AbstractController {
         return "/package/stock";
     }
 
-
-    @RequestMapping(value = "/stock/send", method = RequestMethod.GET)
-    public String sendStock(
-            Model model
-    ) {
-        List<Warehouse> warehouses = warehouseRepository.findAll();
-        model.addAttribute("warehouses", warehouses);
-        model.addAttribute("CKT_1", configService.findByKey("CKT_1"));
-        model.addAttribute("CKT_2", configService.findByKey("CKT_2"));
-        model.addAttribute("CKT_3", configService.findByKey("CKT_3"));
-        model.addAttribute("CKF_1", configService.findByKey("CKF_1"));
-        return "/package/send";
-    }
-
     @RequestMapping("/ajax/stock/get_available")
     @ResponseBody
     public RestResponse<List<ProductWarehouseVo>> ajaxGetStockByWarehouse(
@@ -218,7 +206,7 @@ public class PackageController extends AbstractController {
         List<ProductWarehouseVo> productWarehouseVos = BeanMapperUtils.mapList(warehouses, ProductWarehouseVo.class);
 
         int max = warehouses.size();
-        for (int i = 0; i < max; i ++) {
+        for (int i = 0; i < max; i++) {
             productWarehouseVos.get(i).setProductName(warehouses.get(i).getProduct().getProductName());
             productWarehouseVos.get(i).setProductSku(warehouses.get(i).getProduct().getProductSku());
         }
@@ -230,10 +218,12 @@ public class PackageController extends AbstractController {
     @ResponseBody
     public RestResponse<ProductWarehouseVo> ajaxGetStockByProductSku(
             @RequestParam String productSku,
-            @RequestParam int qty
+            @RequestParam int qty,
+            @RequestParam long wid
     ) {
         productSku = productSku.trim();
-        ProductWarehouse productWarehouse = stockService.findAvailableStockByProductSku(productSku);
+        User user = userService.getByLogin();
+        ProductWarehouse productWarehouse = stockService.findAvailableStockByProductSku(productSku, user, wid);
         if (ObjectUtils.isEmpty(productWarehouse)) {
             return new RestResponse<>("货品不存在");
         }
@@ -310,6 +300,23 @@ public class PackageController extends AbstractController {
 
         redirectAttributes.addFlashAttribute("SUCCESS", "导入入库单成功！");
         return "redirect:/package/import";
+    }
+
+    @RequestMapping("/package/{id}/print")
+    public String printCode(
+            @PathVariable long id,
+            @RequestParam String type,
+            Model model
+    ) throws BusinessException {
+        if (type.equals("sku")) {
+            Package p = packageRepository.findOne(id);
+
+            model.addAttribute("items", p.getPackageProducts());
+
+            return "/package/print";
+        } else {
+            throw new BusinessException("");
+        }
     }
 }
 

@@ -12,7 +12,6 @@
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
             <ul class="nav navbar-nav">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -26,10 +25,7 @@
                         <li><a href="/admin/product/index?status=2">已拒绝</a></li>
                     </ul>
                 </li>
-            </ul>
 
-
-            <ul class="nav navbar-nav">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">
@@ -41,9 +37,9 @@
                         <li><a href="/admin/package/index?status=1">待上架</a></li>
                     </ul>
                 </li>
-            </ul>
 
-            <ul class="nav navbar-nav">
+                <li><a href="/admin/stock/index">库存管理</a></li>
+
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">
@@ -59,9 +55,7 @@
                         <li><a href="/admin/order/index?status=5">已取消</a></li>
                     </ul>
                 </li>
-            </ul>
 
-            <ul class="nav navbar-nav">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">

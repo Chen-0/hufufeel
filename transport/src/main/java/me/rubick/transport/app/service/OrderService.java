@@ -345,4 +345,12 @@ public class OrderService {
     public OrderLogistics storeOrderLogistics(OrderLogistics orderLogistics) {
         return orderLogisticsRepository.save(orderLogistics);
     }
+
+    public Order updateOrder(Order order) {
+        if (order.getStatus() == OrderStatusEnum.FAIL) {
+            order.setStatus(OrderStatusEnum.CHECK);
+        }
+
+        return orderRepository.save(order);
+    }
 }

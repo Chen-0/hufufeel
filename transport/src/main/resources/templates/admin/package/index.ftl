@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<#assign title="货品管理" />
+<#assign title="入库单管理" />
 <#include "*/admin/_layout/head.ftl" />
 
 <body>
@@ -10,12 +10,14 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">
-                仓库管理 （
+                ${title} （
                 <#if status??>
                     <#switch status>
-                        <#case 0> 待审核 <#break>
-                        <#case 1> 已审核 <#break>
-                        <#case 2> 已拒绝 <#break>
+                        <#case 0> 待入库 <#break>
+                        <#case 1> 已收货 <#break>
+                        <#case 2> 已上架 <#break>
+                        <#case 3> 已取消 <#break>
+                        <#case 4> 已冻结 <#break>
                     </#switch>
                 <#else >
                 查看所有
@@ -72,20 +74,20 @@
                             </#switch>
                         </td>
                     </tr>
-                    <#list o.packageProducts as p>
-                    <tr class="table-sub-item">
-                        <td>商品</td>
-                        <td>${p.product.productName}</td>
-                        <td>${p.product.productSku}</td>
-                        <td>预计：${p.expectQuantity} 件</td>
-                        <#if o.status.ordinal() != 0 ||o.status.ordinal() != 3  >
-                        <td>实际：${p.quantity} 件</td>
-                        <td colspan="3"></td>
-                        <#else>
-                            <td colspan="4"></td>
-                        </#if>
-                    </tr>
-                    </#list>
+                    <#--<#list o.packageProducts as p>-->
+                    <#--<tr class="table-sub-item">-->
+                        <#--<td>商品</td>-->
+                        <#--<td>${p.product.productName}</td>-->
+                        <#--<td>${p.product.productSku}</td>-->
+                        <#--<td>预计：${p.expectQuantity} 件</td>-->
+                        <#--<#if o.status.ordinal() != 0 ||o.status.ordinal() != 3  >-->
+                        <#--<td>实际：${p.quantity} 件</td>-->
+                        <#--<td colspan="3"></td>-->
+                        <#--<#else>-->
+                            <#--<td colspan="4"></td>-->
+                        <#--</#if>-->
+                    <#--</tr>-->
+                    <#--</#list>-->
                     </#list>
                     </tbody>
                 </table>
@@ -121,47 +123,6 @@
     </div>
 </div>
 
-
-<#-- 入库的弹框 -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="commentForm" action="/product/{id}/change_status" method="post">
-                <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">货品入库</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="qty">实际数量（件）：</label>
-                        <input type="text" class="form-control" id="qty" placeholder="" name="qty">
-                    </div>
-                    <div class="form-group">
-                        <label for="weight">实际重量（KG）：</label>
-                        <input type="text" class="form-control" id="weight" placeholder="" name="weight">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-primary">提交</button>
-                </div>
-            </form>
-
-        </div>
-    </div>
-</div>
-
 <#include "*/admin/_layout/script.ftl"/>
-<script>
-    $(function () {
-        $('.x-inbound').click(function () {
-            var id = $(this).attr('data-id');
-
-            $('#commentForm').attr('action', '/admin/package/' + id + '/change_status')
-        });
-    })
-</script>
 </body>
 </html>

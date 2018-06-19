@@ -90,11 +90,13 @@
                         </#if>
                         <td>${o.comment!}</td>
                         <td>
-                            <a href="/admin/product/${o.id}/change_status?name=success">通过</a>
-                            <a class="x-fail-check" href="javascript:void(0);" data-id="${o.id}" data-toggle="modal"
-                               data-target="#myModal">拒绝</a>
-                            <#if o.productUrl??>
-                                <a href="">查看图片</a>
+                            <a href="/admin/product/${o.id}/show">查看</a>
+                            <a href="/admin/product/${o.id}/update">修改</a>
+
+                            <#if o.status.ordinal() == 0>
+                                <a href="/admin/product/${o.id}/change_status?name=success">通过</a>
+                                <a class="x-fail-check" href="javascript:void(0);" data-id="${o.id}" data-toggle="modal"
+                                   data-target="#myModal">拒绝</a>
                             </#if>
                         </td>
                     </tr>

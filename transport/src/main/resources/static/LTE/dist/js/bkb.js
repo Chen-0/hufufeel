@@ -6,7 +6,7 @@ $(document).ready(function () {
 
         var url = $(this).attr("href");
 
-        if (confirm("确实删除该商品")) {
+        if (confirm("确实删除该条目")) {
             window.location.href = url;
         }
     });

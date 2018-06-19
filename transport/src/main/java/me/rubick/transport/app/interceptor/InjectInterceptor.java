@@ -56,6 +56,9 @@ public class InjectInterceptor extends HandlerInterceptorAdapter {
 
             List<Menu> menuList = menuService.getMenu(s);
             modelAndView.getModelMap().addAttribute("MENU", menuList);
+        } else {
+            List<Menu> menuList = menuService.getMenu("DEFAULT");
+            modelAndView.getModelMap().addAttribute("MENU", menuList);
         }
     }
 
