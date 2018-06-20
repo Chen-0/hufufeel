@@ -75,6 +75,10 @@ public class DocumentService {
         }
     }
 
+    public String getDirectory() {
+        return directory;
+    }
+
     @Resource
     private DocumentRepository documentRepository;
 

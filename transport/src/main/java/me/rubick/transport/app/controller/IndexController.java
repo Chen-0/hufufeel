@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -66,10 +67,5 @@ public class IndexController {
     @RequestMapping("/contact_us")
     public String contactUs() {
         return "index/contact_us";
-    }
-
-    @RequestMapping("/test")
-    public String ddd(@Valid ProductFormVo productFormVo, BindingResult bindingResult) {
-        return "index";
     }
 }

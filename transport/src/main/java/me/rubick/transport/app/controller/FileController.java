@@ -17,8 +17,6 @@ import java.io.IOException;
 @Controller
 public class FileController {
 
-    private static final String directory = "d:\\uploads";
-
     @Resource
     private DocumentService documentService;
 
@@ -40,7 +38,7 @@ public class FileController {
             Document document = documentService.findByPathName(pathName);
 
             response.setContentType(document.getFileType());
-            File file = new File(directory + "\\" + document.getPathName());
+            File file = new File(documentService.getDirectory() + File.separator + document.getPathName());
 
             FileInputStream fileInputStream = new FileInputStream(file);
 

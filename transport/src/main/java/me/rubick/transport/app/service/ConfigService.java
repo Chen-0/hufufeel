@@ -1,5 +1,7 @@
 package me.rubick.transport.app.service;
 
+import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.model.Config;
 import me.rubick.transport.app.repository.ConfigRepository;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.util.Map;
 
 @Service
 @Transactional
+@Slf4j
 public class ConfigService {
 
     @Resource
@@ -32,6 +35,21 @@ public class ConfigService {
             list.add(config.getValue());
         }
 
+        log.info("{}", JSONMapper.toJSON(list));
         return list;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, String> findMapByKey(String key) {
+        List<Config> configs = configRepository.findByKey(key);
+
+        Map<String, String> map = new HashMap<>();
+
+        for (Config config : configs) {
+            map.put(config.getValue(), config.getComment());
+        }
+
+        log.info("{}", JSONMapper.toJSON(map));
+        return map;
     }
 }

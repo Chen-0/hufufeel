@@ -8,6 +8,7 @@ public class Config {
     private long id;
     private String key;
     private String value;
+    private String comment;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -60,5 +61,13 @@ public class Config {
         result = 31 * result + (key != null ? key.hashCode() : 0);
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

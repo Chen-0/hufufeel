@@ -1,9 +1,6 @@
 package me.rubick.hufu.logistics.app.library.helper;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.web.multipart.MultipartFile;
 import me.rubick.hufu.logistics.app.exception.BaseException;
 import me.rubick.hufu.logistics.app.model.CompanyOrder;
@@ -83,27 +80,41 @@ abstract class AbstractExcelReader extends AbstractExcel {
     String getValue(Row row, int i) {
         Cell cell = row.getCell(i);
         Integer cellNo = i + 1;
-        String result = "";
+        String cellValue = "";
         if (cell == null) {
 //            throw new BaseException("Excel 导入错误：第" + row.getRowNum() + "行中的第" + cellNo + "个单元格为空元素");
-            return result;
+            return cellValue;
         }
 
 
         switch (cell.getCellType()) {
-//            case Cell.CELL_TYPE_BOOLEAN:
-//                result = (String) cell.getBooleanCellValue();
-//                break;
-            case Cell.CELL_TYPE_NUMERIC:
-                double d = cell.getNumericCellValue();
-                result = doubleTrans2(d);
-                break;
             case Cell.CELL_TYPE_STRING:
-                result = cell.getStringCellValue().trim();
+                cellValue = cell.getStringCellValue();
                 break;
+
+            case Cell.CELL_TYPE_FORMULA:
+                cellValue = cell.getCellFormula();
+                break;
+
+            case Cell.CELL_TYPE_NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    cellValue = cell.getDateCellValue().toString();
+                } else {
+                    cellValue = Double.toString(cell.getNumericCellValue());
+                }
+                break;
+
+            case Cell.CELL_TYPE_BLANK:
+                cellValue = "";
+                break;
+
+            case Cell.CELL_TYPE_BOOLEAN:
+                cellValue = Boolean.toString(cell.getBooleanCellValue());
+                break;
+
         }
 
-        return result;
+        return cellValue;
     }
 
     private String doubleTrans2(double num) {
