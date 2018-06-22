@@ -28,6 +28,9 @@ public class Document {
     @Generated(GenerationTime.INSERT)
     private Date createdAt;
 
+    @Column(name = "original_filename")
+    private String originalFilename;
+
     public Long getId() {
         return id;
     }
@@ -66,5 +69,13 @@ public class Document {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getOriginalFilename() {
+        return originalFilename;
+    }
+
+    public void setOriginalFilename(String originalFilename) {
+        this.originalFilename = originalFilename;
     }
 }

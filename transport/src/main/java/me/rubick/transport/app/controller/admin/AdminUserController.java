@@ -10,6 +10,7 @@ import me.rubick.transport.app.repository.UserRepository;
 import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.service.UserService;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
+import me.rubick.transport.app.vo.UserCsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -116,14 +117,22 @@ public class AdminUserController extends AbstractController {
             @RequestParam String username,
             @RequestParam String password,
             @RequestParam String name,
+            @RequestParam String csPhone,
+            @RequestParam String csQQ,
             RedirectAttributes redirectAttributes
     ) {
         try {
+            UserCsVo userCsVo = new UserCsVo();
+            userCsVo.setCsPhone(csPhone);
+            userCsVo.setCsQQ(csQQ);
+
             User user = new User();
             user.setName(name);
             user.setUsername(username);
             user.setPassword(password);
             user.setUsd(BigDecimal.ZERO);
+            user.setCsInfo(JSONMapper.toJSON(userCsVo));
+
             user = userService.createUser(user);
 
             redirectAttributes.addFlashAttribute("success", "创建用户成功！");
@@ -168,7 +177,7 @@ public class AdminUserController extends AbstractController {
                 userService.updateUserFreeze(user.getId());
                 messageService.send(
                         user.getId(),
-                        "#",
+                        "/user/index",
                         MessageFormat.format("仓租费一共 {0} USD， 扣款成功！", statements.getTotal())
                 );
             } else {
@@ -176,7 +185,7 @@ public class AdminUserController extends AbstractController {
 
                 messageService.send(
                         user.getId(),
-                        "#",
+                        "/user/index",
                         MessageFormat.format("仓租费一共 {0} USD，扣款失败，请充值账号并重新缴费。", statements.getTotal())
                 );
             }

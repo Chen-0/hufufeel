@@ -1,5 +1,6 @@
 package me.rubick.transport.app.model;
 
+import me.rubick.transport.app.vo.UserCsVo;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -30,6 +31,16 @@ public class User implements UserDetails, Serializable {
 
     @Column
     private boolean arrearage;
+
+    //客户编号
+    @Column(name = "hwc_sn")
+    private String hwcSn;
+
+    @Column(name = "cs_info")
+    private String csInfo;
+
+    @Transient
+    private UserCsVo userCsVo;
 //
 //    @Column
 //    private int ctype;
@@ -127,6 +138,31 @@ public class User implements UserDetails, Serializable {
 
     public void setArrearage(boolean arrearage) {
         this.arrearage = arrearage;
+    }
+
+    public String getHwcSn() {
+        return hwcSn;
+    }
+
+    public void setHwcSn(String hwcSn) {
+        this.hwcSn = hwcSn;
+    }
+
+    public String getCsInfo() {
+        return csInfo;
+    }
+
+    public void setCsInfo(String csInfo) {
+        this.csInfo = csInfo;
+    }
+
+    @Transient
+    public UserCsVo getUserCsVo() {
+        return userCsVo;
+    }
+
+    public void setUserCsVo(UserCsVo userCsVo) {
+        this.userCsVo = userCsVo;
     }
 //
 //    public int getCtype() {

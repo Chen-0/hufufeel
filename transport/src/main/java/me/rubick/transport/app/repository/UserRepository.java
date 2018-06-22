@@ -25,4 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     int payUSD(long userId, BigDecimal usd);
 
     List<User> findByIdIn(Collection<Long> collection);
+
+    int countByHwcSn(String hwcSn);
 }

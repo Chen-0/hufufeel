@@ -136,12 +136,12 @@
     $(function () {
         $('#mainForm').submit(function () {
 
-            var rfV = $('#referenceNumber').val();
-
-            if (isEmpty(rfV)) {
-                sweetAlert("哎呦……", "请填写参考号", "error");
-                return false;
-            }
+//            var rfV = $('#referenceNumber').val();
+//
+//            if (isEmpty(rfV)) {
+//                sweetAlert("哎呦……", "请填写参考号", "error");
+//                return false;
+//            }
 
             //check
             var weightInput = $('input[name="weight[]"]');

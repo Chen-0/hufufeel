@@ -314,23 +314,23 @@ public class ProductController extends AbstractController {
         return "redirect:/product/ready_to_send";
     }
 
-    /**
-     * 根据仓库筛选渠道
-     *
-     * @param id
-     * @return
-     */
-    @RequestMapping("/channel/select")
-    @ResponseBody
-    public RestResponse<List<DistributionChannel>> getChannelByWarehouse(
-            @RequestParam long id
-    ) {
-        Warehouse warehouse = warehouseRepository.findOne(id);
-
-        if (ObjectUtils.isEmpty(warehouse)) {
-            return new RestResponse<>(Collections.emptyList());
-        }
-
-        return new RestResponse<>(warehouse.getDistributionChannels());
-    }
+//    /**
+//     * 根据仓库筛选渠道
+//     *
+//     * @param id
+//     * @return
+//     */
+//    @RequestMapping("/channel/select")
+//    @ResponseBody
+//    public RestResponse<List<DistributionChannel>> getChannelByWarehouse(
+//            @RequestParam long id
+//    ) {
+//        Warehouse warehouse = warehouseRepository.findOne(id);
+//
+//        if (ObjectUtils.isEmpty(warehouse)) {
+//            return new RestResponse<>(Collections.emptyList());
+//        }
+//
+//        return new RestResponse<>(warehouse.getDistributionChannels());
+//    }
 }

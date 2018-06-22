@@ -3,7 +3,9 @@ package me.rubick.transport.app.service;
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.utils.BeanMapperUtils;
+import me.rubick.common.app.utils.DateUtils;
 import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.common.app.utils.TextUtils;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.*;
 import me.rubick.transport.app.vo.CostSnapshotVo;
@@ -94,10 +96,12 @@ public class OrderService {
             totalQty += item.getQuantity();
         }
 
+        String timestamp = DateUtils.getTimestamp0();
         OrderSnapshotVo orderSnapshotVo = getOrderSnapshotVo(params);
         Order order = new Order();
-        order.setReferenceNumber(orderSnapshotVo.getCkt4());
-        order.setTn(orderSnapshotVo.getCkt5());
+        order.setReferenceNumber(TextUtils.getOrDefault(orderSnapshotVo.getCkt4(), timestamp));
+        order.setTn(TextUtils.getOrDefault(orderSnapshotVo.getCkt5(), timestamp));
+
         order.setUserId(user.getId());
         order.setStatus(OrderStatusEnum.CHECK);
         order.setWarehouseId(warehouse.getId());
@@ -113,6 +117,13 @@ public class OrderService {
         order.setSkuQty(products.size());
         order.setCostSnapshot(JSONMapper.toJSON(new CostSnapshotVo()));
         order.setSn(generateBatch());
+        order.setcType(params.get("c_type"));
+
+        if(order.getcType().equals("u")) {
+            order.setDocumentId(Long.valueOf(params.get("did")));
+            order.setPhone("");
+            order.setContact("");
+        }
 
         orderRepository.save(order);
 
@@ -213,7 +224,7 @@ public class OrderService {
     }
 
     private void createOrder(OrderExcelVo orderExcelVo, User user) throws BusinessException {
-        Warehouse warehouse = warehouseRepository.findTopByName(orderExcelVo.getA());
+        Warehouse warehouse = warehouseRepository.findTopByNameAndVisible(orderExcelVo.getA(), true);
 
         if (ObjectUtils.isEmpty(warehouse)) {
             throw new BusinessException("错误！ 仓库：" + orderExcelVo.getA() + "无法匹配，请检查");
@@ -274,9 +285,10 @@ public class OrderService {
             totalQty += orderItem.getQuantity();
         }
 
+        String timestamp = DateUtils.getTimestamp0();
         Order order = new Order();
-        order.setReferenceNumber(orderSnapshotVo.getCkt4());
-        order.setTn(orderSnapshotVo.getCkt5());
+        order.setReferenceNumber(TextUtils.getOrDefault(orderSnapshotVo.getCkt4(), timestamp));
+        order.setTn(TextUtils.getOrDefault(orderSnapshotVo.getCkt5(), timestamp));
         order.setUserId(user.getId());
         order.setStatus(OrderStatusEnum.CHECK);
         order.setWarehouseId(warehouse.getId());

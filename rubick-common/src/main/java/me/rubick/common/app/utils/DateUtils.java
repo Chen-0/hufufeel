@@ -16,4 +16,13 @@ public class DateUtils {
             throw new CommonException(e);
         }
     }
+
+    public static String date2String0(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        return simpleDateFormat.format(date);
+    }
+
+    public static String getTimestamp0() {
+        return DateUtils.date2String0(new Date()) + HashUtils.generateNumberString(2);
+    }
 }

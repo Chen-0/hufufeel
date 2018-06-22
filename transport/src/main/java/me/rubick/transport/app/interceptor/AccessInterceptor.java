@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,9 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
             Map parameter = request.getParameterMap();
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (ObjectUtils.isEmpty(auth)) {
+                return super.preHandle(request, response, handler);
+            }
             Object o = auth.getPrincipal();
 
             if (o != null && o instanceof User) {

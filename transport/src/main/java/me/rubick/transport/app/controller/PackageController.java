@@ -103,7 +103,7 @@ public class PackageController extends AbstractController {
     @RequestMapping(value = "/package/create", method = RequestMethod.POST)
     public String createPackage(
             @RequestParam("w") long wId,
-            @RequestParam String referenceNumber,
+            @RequestParam(required = false, defaultValue = "") String referenceNumber,
             @RequestParam(required = false, defaultValue = "") String comment,
             @RequestParam("qty[]") List<Integer> qtys,
             @RequestParam("p[]") List<Long> pids,

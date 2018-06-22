@@ -29,8 +29,8 @@ public class Order implements Serializable {
     private String orderSnapshot;
     private String comment;
     private String reason;
-    private String phone;
-    private String contact;
+    private String phone = "";
+    private String contact = "";
     private int quantity;
     private int skuQty;
     private String costSnapshot;
@@ -38,6 +38,8 @@ public class Order implements Serializable {
     private String express = "";
     private String expressNo = "";
     private OrderStatusEnum nextStatus = OrderStatusEnum.NULL;
+    private String cType;
+    private Long documentId;
 
     @Transient
     private OrderSnapshotVo orderSnapshotVo;
@@ -47,6 +49,8 @@ public class Order implements Serializable {
 
 
     private List<OrderItem> orderItems;
+
+    private Document doc;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -308,5 +312,33 @@ public class Order implements Serializable {
 
     public void setNextStatus(OrderStatusEnum nextStatus) {
         this.nextStatus = nextStatus;
+    }
+
+    @Column(name = "document_id")
+    public Long getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(Long documentId) {
+        this.documentId = documentId;
+    }
+
+    @Column(name = "c_type")
+    public String getcType() {
+        return cType;
+    }
+
+    public void setcType(String cType) {
+        this.cType = cType;
+    }
+
+    @OneToOne
+    @JoinColumn(name = "document_id", insertable = false, updatable = false)
+    public Document getDoc() {
+        return doc;
+    }
+
+    public void setDoc(Document doc) {
+        this.doc = doc;
     }
 }

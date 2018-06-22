@@ -36,6 +36,16 @@
                             <input type="text" class="form-control" id="name" name="name" value="${name!}">
                         </div>
 
+                        <div class="form-group">
+                            <label for="csPhone">客服电话：</label>
+                            <input type="text" class="form-control" id="csPhone" name="csPhone" value="${csPhone!}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="csQQ">客服QQ：</label>
+                            <input type="text" class="form-control" id="csQQ" name="csQQ" value="${csQQ!}">
+                        </div>
+
                         <#if error??>
                         <p class="margin text-danger">${error!}</p>
                         </#if>

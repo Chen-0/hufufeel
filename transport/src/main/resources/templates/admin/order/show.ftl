@@ -83,9 +83,12 @@
                             <td colspan="5" class="text-danger">${ele.reason!}</td>
                         </tr>
                     </#if>
+
+
                         <tr>
                             <td colspan="6"><strong>收货人信息：</strong></td>
                         </tr>
+                    <#if ele.cType == "w">
                         <tr>
                             <td>姓名</td>
                             <td>${ele.orderSnapshotVo.ckf2!}</td>
@@ -102,9 +105,9 @@
                             <td>
                             ${ele.orderSnapshotVo.ckf3!}
 
-                            <#if ele.orderSnapshotVo.ckf7??>
-                                （邮编：${ele.orderSnapshotVo.ckf7!}）
-                            </#if>
+                                <#if ele.orderSnapshotVo.ckf7??>
+                                    （邮编：${ele.orderSnapshotVo.ckf7!}）
+                                </#if>
                             </td>
                             <td>城市</td>
                             <td>${ele.orderSnapshotVo.ckf5!}</td>
@@ -117,6 +120,11 @@
                             <td>门牌号</td>
                             <td>${ele.orderSnapshotVo.ckf11!}</td>
                         </tr>
+                    <#else>
+                        <tr>
+                            <td colspan="6"><span>${ele.doc.originalFilename}</span> <a href="/file/${ele.doc.name}" download="${ele.doc.originalFilename}">点击下载</a></td>
+                        </tr>
+                    </#if>
                     <#if lg?exists && lg.comment?length gt 0 >
                         <tr>
                             <td>物流信息：</td>

@@ -35,6 +35,7 @@
                             <th>#</th>
                             <th>账号</th>
                             <th>用户名</th>
+                            <th>客户编号</th>
                             <th>余额</th>
                             <th>状态</th>
                             <th>操作</th>
@@ -48,6 +49,7 @@
                             <td>${o.id}</td>
                             <td>${o.username}</td>
                             <td>${o.name}</td>
+                            <td>${o.hwcSn}</td>
                             <td>${o.usd} usd</td>
                             <td>${o.arrearage?string("冻结", "正常")}</td>
                             <td>

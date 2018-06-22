@@ -118,6 +118,7 @@ public class DocumentService {
             document.setFileType(multipartFile.getContentType());
             document.setPathName(filename);
             document.setCreatedAt(new Date());
+            document.setOriginalFilename(multipartFile.getOriginalFilename());
 
             log.info("{} 写入数据库成功！", JSONMapper.toJSON(documentRepository.save(document)));
 
@@ -140,6 +141,7 @@ public class DocumentService {
         document.setPathName(filename + "." + filetype);
         document.setFileType("image/jpeg");
         document.setCreatedAt(new Date());
+        document.setOriginalFilename(action.getOriginalFilename());
 
         return documentRepository.save(document);
     }
@@ -186,13 +188,15 @@ public class DocumentService {
 
         private Thumbnails.Builder<?> builder;
 
+        private String originalFilename;
+
         public Action(MultipartFile multipartFile) throws BusinessException {
             File file = toTempFile(multipartFile);
             this.builder = Thumbnails.of(file);
+            setOriginalFilename(multipartFile.getOriginalFilename());
         }
 
         public Action(File file) {
-            this.builder = Thumbnails.of(file);
         }
 
         private File toTempFile(MultipartFile multipartFile) throws BusinessException {
@@ -215,6 +219,14 @@ public class DocumentService {
 
         public Thumbnails.Builder<?> getInstance() {
             return builder;
+        }
+
+        public String getOriginalFilename() {
+            return originalFilename;
+        }
+
+        public void setOriginalFilename(String originalFilename) {
+            this.originalFilename = originalFilename;
         }
     }
 }

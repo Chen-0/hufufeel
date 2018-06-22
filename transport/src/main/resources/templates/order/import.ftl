@@ -30,7 +30,15 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">1.上传Excel文件</h3>
                     </div>
-                    <!-- /.box-header -->
+
+                <#if USER.arrearage == true >
+                    <div class="callout callout-danger" style="margin-top: 25px;">
+                        <h4>禁止操作！</h4>
+
+                        <p>您的账号已经被冻结，您的账号存在欠费行为：</p>
+                        <p>1、仓存费欠费</p>
+                    </div>
+                <#else>
                     <div class="box-body">
                         <div class="row">
                             <div class="col-xs-12 col-md-4">
@@ -49,6 +57,7 @@
 
                         <button id="submit" type="submit" class="btn btn-primary">提交</button>
                     </div>
+                </#if>
                 </div>
             </form>
         </section>

@@ -27,6 +27,7 @@ public class Package {
     private String sn;
     private int expectQuantity;
     private PackageStatus nextStatus = PackageStatus.NULL;
+    private String cn;
 
     private List<PackageProduct> packageProducts;
     private User user;
@@ -216,5 +217,14 @@ public class Package {
 
     public void setNextStatus(PackageStatus nextStatus) {
         this.nextStatus = nextStatus;
+    }
+
+    @Column(name = "cn")
+    public String getCn() {
+        return cn;
+    }
+
+    public void setCn(String cn) {
+        this.cn = cn;
     }
 }

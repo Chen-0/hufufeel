@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.excel.ExcelConverter;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.CommonException;
+import me.rubick.common.app.response.RestResponse;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.ExcelHepler;
 import me.rubick.common.app.utils.JSONMapper;
@@ -16,6 +17,7 @@ import me.rubick.transport.app.service.DocumentService;
 import me.rubick.transport.app.service.OrderService;
 import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.service.ProductService;
+import me.rubick.transport.app.vo.DocumentVo;
 import me.rubick.transport.app.vo.OrderExcelVo;
 import me.rubick.transport.app.vo.OrderSnapshotVo;
 import me.rubick.transport.app.vo.PackageExcelVo;
@@ -23,6 +25,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -31,8 +35,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Controller
@@ -132,6 +139,8 @@ public class OrderController extends AbstractController {
             @RequestParam("qty[]") List<Integer> quantities,
             @RequestParam("wid") long wid,
             @RequestParam Map<String, String> params,
+            @RequestParam(name = "c_type") String cType,
+            @RequestParam(name = "did", required = false) Long documentId,
             RedirectAttributes redirectAttributes
     ) throws BusinessException {
 
@@ -150,42 +159,42 @@ public class OrderController extends AbstractController {
             hasError = true;
         }
 
-        if (ObjectUtils.isEmpty(params.get("ckt4"))) {
-            map.put("ckt4", "参考号不能为空");
-            hasError = true;
-        }
+        if (cType.equals("w")) {
 
-        if (ObjectUtils.isEmpty(params.get("ckt5"))) {
-            map.put("ckt5", "交易号不能为空");
-            hasError = true;
-        }
+            if (ObjectUtils.isEmpty(params.get("ckf2"))) {
+                map.put("ckf2", "姓名不能为空");
+                hasError = true;
+            }
 
-        if (ObjectUtils.isEmpty(params.get("ckf2"))) {
-            map.put("ckf2", "姓名不能为空");
-            hasError = true;
-        }
+            if (ObjectUtils.isEmpty(params.get("ckf3"))) {
+                map.put("ckf3", "省份不能为空");
+                hasError = true;
+            }
 
-        if (ObjectUtils.isEmpty(params.get("ckf3"))) {
-            map.put("ckf3", "州/省不能为空");
-            hasError = true;
-        }
+            if (ObjectUtils.isEmpty(params.get("ckf5"))) {
+                map.put("ckf5", "城市不能为空");
+                hasError = true;
+            }
 
-        if (ObjectUtils.isEmpty(params.get("ckf4"))) {
-            map.put("ckf4", "电话不能为空");
-            hasError = true;
-        }
+            if (ObjectUtils.isEmpty(params.get("ckf10"))) {
+                map.put("ckf10", "街道不能为空");
+                hasError = true;
+            }
 
-        if (ObjectUtils.isEmpty(params.get("ckf5"))) {
-            map.put("ckf5", "城市不能为空");
-            hasError = true;
-        }
+            if (ObjectUtils.isEmpty(params.get("ckf7"))) {
+                map.put("ckf7", "邮编不能为空");
+                hasError = true;
+            }
+        } else if (cType.equals("u")) {
 
-        if (ObjectUtils.isEmpty(params.get("ckf10"))) {
-            map.put("ckf10", "街道不能为空");
-            hasError = true;
+            if (ObjectUtils.isEmpty(documentId) || documentId == -1) {
+                map.put("did", "请上传PDF文件");
+                hasError = true;
+            }
         }
 
         if (hasError) {
+            redirectAttributes.addFlashAttribute("cType", cType);
             redirectAttributes.addFlashAttribute("pids", productIds);
             redirectAttributes.addFlashAttribute("wid", wid);
             redirectAttributes.addFlashAttribute("qty", quantities);
@@ -244,44 +253,42 @@ public class OrderController extends AbstractController {
     public String updateOrder(
             @PathVariable long id,
             @RequestParam Map<String, String> params,
+            @RequestParam(name = "c_type") String cType,
             RedirectAttributes redirectAttributes
     ) {
         Map<String, String> map = new HashMap<>();
         boolean hasError = false;
-
-        if (ObjectUtils.isEmpty(params.get("ckt4"))) {
-            map.put("ckt4", "参考号不能为空");
-            hasError = true;
-        }
 
         if (ObjectUtils.isEmpty(params.get("ckt5"))) {
             map.put("ckt5", "交易号不能为空");
             hasError = true;
         }
 
-        if (ObjectUtils.isEmpty(params.get("ckf2"))) {
-            map.put("ckf2", "姓名不能为空");
-            hasError = true;
-        }
+        if (cType.equals("w")) {
+            if (ObjectUtils.isEmpty(params.get("ckf2"))) {
+                map.put("ckf2", "姓名不能为空");
+                hasError = true;
+            }
 
-        if (ObjectUtils.isEmpty(params.get("ckf3"))) {
-            map.put("ckf3", "州/省不能为空");
-            hasError = true;
-        }
+            if (ObjectUtils.isEmpty(params.get("ckf3"))) {
+                map.put("ckf3", "州/省不能为空");
+                hasError = true;
+            }
 
-        if (ObjectUtils.isEmpty(params.get("ckf4"))) {
-            map.put("ckf4", "电话不能为空");
-            hasError = true;
-        }
+            if (ObjectUtils.isEmpty(params.get("ckf4"))) {
+                map.put("ckf4", "电话不能为空");
+                hasError = true;
+            }
 
-        if (ObjectUtils.isEmpty(params.get("ckf5"))) {
-            map.put("ckf5", "城市不能为空");
-            hasError = true;
-        }
+            if (ObjectUtils.isEmpty(params.get("ckf5"))) {
+                map.put("ckf5", "城市不能为空");
+                hasError = true;
+            }
 
-        if (ObjectUtils.isEmpty(params.get("ckf10"))) {
-            map.put("ckf10", "街道不能为空");
-            hasError = true;
+            if (ObjectUtils.isEmpty(params.get("ckf10"))) {
+                map.put("ckf10", "街道不能为空");
+                hasError = true;
+            }
         }
 
         if (hasError) {
@@ -348,8 +355,8 @@ public class OrderController extends AbstractController {
                     orderExcelVo.setA(ExcelHepler.getValue(row, 0, false));
                     orderExcelVo.setB(ExcelHepler.getValue(row, 1, false));
                     orderExcelVo.setC(ExcelHepler.getValue(row, 2, false));
-                    orderExcelVo.setD(ExcelHepler.getValue(row, 3, false));
-                    orderExcelVo.setE(ExcelHepler.getValue(row, 4, false));
+                    orderExcelVo.setD(ExcelHepler.getValue(row, 3, true));
+                    orderExcelVo.setE(ExcelHepler.getValue(row, 4, true));
                     orderExcelVo.setF(ExcelHepler.getValue(row, 5, false));
                     orderExcelVo.setG(ExcelHepler.getValue(row, 6, false));
                     orderExcelVo.setH(ExcelHepler.getValue(row, 7, false));
@@ -390,5 +397,15 @@ public class OrderController extends AbstractController {
 
         redirectAttributes.addFlashAttribute("SUCCESS", "导入发货单成功！");
         return "redirect:/order/import";
+    }
+
+    @RequestMapping(value = "/order/pdf/upload", method = RequestMethod.POST)
+    @ResponseBody
+    public RestResponse<DocumentVo> uploadFile(
+            @RequestParam("uploadfile") MultipartFile uploadfile) {
+        Document document = documentService.storeDocument(uploadfile);
+
+        return new RestResponse<>(BeanMapperUtils.map(document, DocumentVo.class));
+
     }
 }

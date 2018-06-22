@@ -1,6 +1,7 @@
 package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.utils.HashUtils;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.StatementStatusEnum;
 import me.rubick.transport.app.constants.StatementTypeEnum;
@@ -10,6 +11,7 @@ import me.rubick.transport.app.repository.CostSubjectRepository;
 import me.rubick.transport.app.repository.StatementsRepository;
 import me.rubick.transport.app.repository.UserRepository;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
+import me.rubick.transport.app.vo.UserCsVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
@@ -62,7 +64,9 @@ public class UserService {
     }
 
     public User getByUsername(String name) {
-        return userRepository.findByUsername(name);
+        User user = userRepository.findByUsername(name);
+        user.setUserCsVo(JSONMapper.fromJson(user.getCsInfo(), UserCsVo.class));
+        return user;
     }
 
     public User createUser(User user) {
@@ -79,8 +83,17 @@ public class UserService {
         Assert.isTrue(userRepository.countByUsername(user.getUsername()) == 0, "该登陆账号已被注册");
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
+        user.setHwcSn(generateSn());
         return userRepository.save(user);
+    }
+
+    private String generateSn() {
+        String sn = HashUtils.generateNumberString(4);
+        do {
+            if (userRepository.countByHwcSn(sn) == 0) {
+                return sn;
+            }
+        } while (true);
     }
 
     public User getByLogin() {

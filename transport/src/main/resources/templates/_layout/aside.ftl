@@ -1,6 +1,6 @@
 <header class="main-header">
     <a href="/" class="logo">
-        <span class="logo-lg"><b>HUFU</b>FEEL</span>
+        <span class="logo-lg"><img src="/static/favicon.ico" alt=""><b>HUFU</b>FEEL</span>
     </a>
     <nav class="navbar navbar-static-top">
 
@@ -29,7 +29,7 @@
                    aria-expanded="false">发货单管理<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a href="/order/create">新建发货单</a></li>
-                    <li><a href="/order/import">导入入库单</a></li>
+                    <li><a href="/order/import">导入发货单</a></li>
                     <li><a href="/order/index">发货单管理</a></li>
                 </ul>
             </li>
