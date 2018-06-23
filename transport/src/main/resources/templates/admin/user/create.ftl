@@ -46,6 +46,10 @@
                             <input type="text" class="form-control" id="csQQ" name="csQQ" value="${csQQ!}">
                         </div>
 
+                        <div class="form-group">
+                            <label for="sn">客户编号：</label>
+                            <input type="text" class="form-control" id="sn" name="sn" value="${sn!}">
+                        </div>
                         <#if error??>
                         <p class="margin text-danger">${error!}</p>
                         </#if>

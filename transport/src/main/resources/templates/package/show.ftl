@@ -19,7 +19,7 @@
             </ol>
         </section>
 
-        <section class="content" style="padding-top: 55px; ">
+        <section class="content">
             <div class="col-md-12 col-xs-12">
                 <div class="box">
                     <div class="box-body">

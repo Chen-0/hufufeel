@@ -108,7 +108,8 @@ public class AdminUserController extends AbstractController {
 
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String getCreateUser() {
+    public String getCreateUser(Model model) {
+        model.addAttribute("sn", userService.generateSn());
         return "/admin/user/create";
     }
 
@@ -119,6 +120,7 @@ public class AdminUserController extends AbstractController {
             @RequestParam String name,
             @RequestParam String csPhone,
             @RequestParam String csQQ,
+            @RequestParam String sn,
             RedirectAttributes redirectAttributes
     ) {
         try {
@@ -132,6 +134,7 @@ public class AdminUserController extends AbstractController {
             user.setPassword(password);
             user.setUsd(BigDecimal.ZERO);
             user.setCsInfo(JSONMapper.toJSON(userCsVo));
+            user.setHwcSn(sn);
 
             user = userService.createUser(user);
 

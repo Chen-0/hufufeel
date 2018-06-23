@@ -144,7 +144,7 @@ public class AdminPackageController extends AbstractController {
                 messageService.send(
                         p.getUserId(),
                         "/package/" + p.getId() + "/show",
-                        MessageFormat.format("入库单：{0}在{1}入库成功！", p.getReferenceNumber(), p.getWarehouseName())
+                        MessageFormat.format("单号：{0}在{1}入库成功！", p.getSn(), p.getWarehouseName())
                 );
             } else {
                 p.setNextStatus(p.getStatus());
@@ -154,7 +154,7 @@ public class AdminPackageController extends AbstractController {
                 messageService.send(
                         p.getUserId(),
                         "/user/statements/index",
-                        MessageFormat.format("入库单：{0}，扣费失败，请充值账号并重新缴费。", p.getReferenceNumber(), p.getWarehouseName())
+                        MessageFormat.format("单号：{0}，扣费失败，请充值账号并重新缴费。", p.getSn(), p.getWarehouseName())
                 );
             }
         }
@@ -195,7 +195,7 @@ public class AdminPackageController extends AbstractController {
             messageService.send(
                     p.getUserId(),
                     "/package/"+p.getId()+"/show",
-                    MessageFormat.format("入库单上架失败，参考号：{0}，上架成功！费用已从您的账户里扣除。", p.getReferenceNumber(), p.getWarehouseName())
+                    MessageFormat.format("入库单上架成功，单号：{0}，上架成功！费用已从您的账户里扣除。", p.getSn(), p.getWarehouseName())
             );
             stockService.addStock(p);
         } else {
@@ -206,7 +206,7 @@ public class AdminPackageController extends AbstractController {
             messageService.send(
                     p.getUserId(),
                     "/user/statements/index",
-                    MessageFormat.format("入库单上架失败，参考号：{0}，扣费失败，请充值账号并重新缴费。", p.getReferenceNumber(), p.getWarehouseName())
+                    MessageFormat.format("入库单上架失败，单号：{0}，扣费失败，请充值账号并重新缴费。", p.getSn(), p.getWarehouseName())
             );
         }
 

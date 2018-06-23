@@ -83,12 +83,12 @@ public class UserService {
         Assert.isTrue(userRepository.countByUsername(user.getUsername()) == 0, "该登陆账号已被注册");
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setHwcSn(generateSn());
+//        user.setHwcSn(generateSn());
         return userRepository.save(user);
     }
 
-    private String generateSn() {
-        String sn = HashUtils.generateNumberString(4);
+    public String generateSn() {
+        String sn = "10" + HashUtils.generateNumberString(4);
         do {
             if (userRepository.countByHwcSn(sn) == 0) {
                 return sn;

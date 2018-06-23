@@ -140,9 +140,17 @@ public class ProductController extends AbstractController {
 
         //更新图片
         if (!ObjectUtils.isEmpty(image) && !image.isEmpty()) {
-            Document document = documentService.uploadProductImage(image);
-            if (!ObjectUtils.isEmpty(document)) {
-                product.setImageId(document.getId());
+            try {
+                Document document = documentService.uploadProductImage(image);
+                if (!ObjectUtils.isEmpty(document)) {
+                    product.setImageId(document.getId());
+                }
+            } catch (BusinessException e) {
+                Map<String, String> map = new HashMap<>();
+                map.put("p_file", e.getMessage());
+                redirectAttributes.addFlashAttribute("felements", productFormVo);
+                redirectAttributes.addFlashAttribute("errors", map);
+                return "redirect:/product/create";
             }
         }
 

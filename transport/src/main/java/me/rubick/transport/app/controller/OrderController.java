@@ -198,7 +198,6 @@ public class OrderController extends AbstractController {
             redirectAttributes.addFlashAttribute("pids", productIds);
             redirectAttributes.addFlashAttribute("wid", wid);
             redirectAttributes.addFlashAttribute("qty", quantities);
-            redirectAttributes.addFlashAttribute("qty", quantities);
             redirectAttributes.addFlashAttribute("error", map);
             redirectAttributes.addFlashAttribute("sp", BeanMapperUtils.map(params, OrderSnapshotVo.class));
             return "redirect:/order/create";
@@ -222,8 +221,6 @@ public class OrderController extends AbstractController {
     @RequestMapping(value = "/order/{id}/update", method = RequestMethod.GET)
     public String updateOrder(Model model, @PathVariable long id) {
         Order order = orderService.findOne(id);
-        List<Warehouse> warehouses = warehouseRepository.findAll();
-        model.addAttribute("warehouses", warehouses);
         model.addAttribute("CKT_1", configService.findByKey("CKT_1"));
         model.addAttribute("CKT_2", configService.findByKey("CKT_2"));
         model.addAttribute("CKT_3", configService.findByKey("CKT_3"));
@@ -234,18 +231,9 @@ public class OrderController extends AbstractController {
             model.addAttribute("sp", order.getOrderSnapshotVo());
         }
 
-        model.addAttribute("wid", order.getWarehouseId());
-
-        List<Long> pids = new ArrayList<>();
-        List<Integer> qty = new ArrayList<>();
-
-        for (OrderItem orderItem : order.getOrderItems()) {
-            pids.add(orderItem.getProductId());
-            qty.add(orderItem.getQuantity());
+        if (ObjectUtils.isEmpty(model.asMap().get("cType"))) {
+            model.addAttribute("cType", order.getcType());
         }
-
-        model.addAttribute("products", productService.findProducts(pids));
-        model.addAttribute("qty", qty);
         return "/package/update_send";
     }
 
@@ -253,30 +241,22 @@ public class OrderController extends AbstractController {
     public String updateOrder(
             @PathVariable long id,
             @RequestParam Map<String, String> params,
+            RedirectAttributes redirectAttributes,
             @RequestParam(name = "c_type") String cType,
-            RedirectAttributes redirectAttributes
+            @RequestParam(name = "did", required = false) Long documentId
     ) {
         Map<String, String> map = new HashMap<>();
         boolean hasError = false;
 
-        if (ObjectUtils.isEmpty(params.get("ckt5"))) {
-            map.put("ckt5", "交易号不能为空");
-            hasError = true;
-        }
-
         if (cType.equals("w")) {
+
             if (ObjectUtils.isEmpty(params.get("ckf2"))) {
                 map.put("ckf2", "姓名不能为空");
                 hasError = true;
             }
 
             if (ObjectUtils.isEmpty(params.get("ckf3"))) {
-                map.put("ckf3", "州/省不能为空");
-                hasError = true;
-            }
-
-            if (ObjectUtils.isEmpty(params.get("ckf4"))) {
-                map.put("ckf4", "电话不能为空");
+                map.put("ckf3", "省份不能为空");
                 hasError = true;
             }
 
@@ -289,16 +269,44 @@ public class OrderController extends AbstractController {
                 map.put("ckf10", "街道不能为空");
                 hasError = true;
             }
+
+            if (ObjectUtils.isEmpty(params.get("ckf7"))) {
+                map.put("ckf7", "邮编不能为空");
+                hasError = true;
+            }
+        } else if (cType.equals("u")) {
+
+            if (ObjectUtils.isEmpty(documentId) || documentId == -1) {
+                map.put("did", "请上传PDF文件");
+                hasError = true;
+            }
         }
 
         if (hasError) {
+            redirectAttributes.addFlashAttribute("cType", cType);
             redirectAttributes.addFlashAttribute("error", map);
             redirectAttributes.addFlashAttribute("sp", BeanMapperUtils.map(params, OrderSnapshotVo.class));
-            return "redirect:/order/create";
+            return "redirect:/order/" + id + "/update";
         }
 
         Order order = orderService.findOne(id);
-        order.setOrderSnapshot(JSONMapper.toJSON(BeanMapperUtils.map(params, OrderSnapshotVo.class)));
+        OrderSnapshotVo orderSnapshotVo = BeanMapperUtils.map(params, OrderSnapshotVo.class);
+        order.setReferenceNumber(orderSnapshotVo.getCkt4());
+        order.setTn(orderSnapshotVo.getCkt5());
+        order.setComment(orderSnapshotVo.getCkt6());
+        order.setOrderSnapshot(JSONMapper.toJSON(orderSnapshotVo));
+        order.setcType(cType);
+
+        if (cType.equals("u")) {
+            order.setDocumentId(Long.valueOf(params.get("did")));
+            order.setPhone("");
+            order.setContact("");
+        } else {
+            order.setDocumentId(null);
+            order.setPhone(orderSnapshotVo.getCkf4());
+            order.setContact(orderSnapshotVo.getCkf2());
+        }
+
         orderService.updateOrder(order);
 
         redirectAttributes.addFlashAttribute("SUCCESS", "修改发货单成功！");

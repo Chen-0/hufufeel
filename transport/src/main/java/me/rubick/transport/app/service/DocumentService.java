@@ -18,8 +18,10 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -82,13 +84,13 @@ public class DocumentService {
     @Resource
     private DocumentRepository documentRepository;
 
-    public Document uploadProductImage(MultipartFile multipartFile) {
-        try {
-            Action action = new Action(multipartFile);
-            action.resize(200, 200).toConvert();
+    public Document uploadProductImage(MultipartFile multipartFile) throws BusinessException {
+        Action action = new Action(multipartFile);
+        action.resize(200, 200).toConvert();
 
+        try {
             return saveAction(action);
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error("", e);
         }
 
@@ -166,7 +168,6 @@ public class DocumentService {
         }
 
 
-
         String[] oldName = multipartFile.getOriginalFilename().split("\\.");
         String filepath = Paths.get(dir, filename).toString() + "." + oldName[oldName.length - 1];
         File file = new File(filepath);
@@ -192,11 +193,22 @@ public class DocumentService {
 
         public Action(MultipartFile multipartFile) throws BusinessException {
             File file = toTempFile(multipartFile);
+            check(file);
             this.builder = Thumbnails.of(file);
             setOriginalFilename(multipartFile.getOriginalFilename());
         }
 
         public Action(File file) {
+        }
+
+        private boolean check(File file) throws BusinessException {
+            log.info("{}", file.getAbsolutePath());
+            String mimetype = new MimetypesFileTypeMap().getContentType(file);
+            String type = mimetype.split("/")[0];
+            if (!type.equals("image")) {
+                throw new BusinessException("文件不是图片文件，请重新上传！");
+            }
+            return true;
         }
 
         private File toTempFile(MultipartFile multipartFile) throws BusinessException {

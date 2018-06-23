@@ -98,9 +98,18 @@ public class OrderService {
 
         String timestamp = DateUtils.getTimestamp0();
         OrderSnapshotVo orderSnapshotVo = getOrderSnapshotVo(params);
+
+        if (! StringUtils.hasText(orderSnapshotVo.getCkt4())) {
+            orderSnapshotVo.setCkt4(timestamp);
+        }
+
+        if (! StringUtils.hasText(orderSnapshotVo.getCkt5())) {
+            orderSnapshotVo.setCkt5(timestamp);
+        }
+
         Order order = new Order();
-        order.setReferenceNumber(TextUtils.getOrDefault(orderSnapshotVo.getCkt4(), timestamp));
-        order.setTn(TextUtils.getOrDefault(orderSnapshotVo.getCkt5(), timestamp));
+        order.setReferenceNumber(orderSnapshotVo.getCkt4());
+        order.setTn(orderSnapshotVo.getCkt5());
 
         order.setUserId(user.getId());
         order.setStatus(OrderStatusEnum.CHECK);
@@ -286,9 +295,17 @@ public class OrderService {
         }
 
         String timestamp = DateUtils.getTimestamp0();
+        if (! StringUtils.hasText(orderSnapshotVo.getCkt4())) {
+            orderSnapshotVo.setCkt4(timestamp);
+        }
+
+        if (! StringUtils.hasText(orderSnapshotVo.getCkt5())) {
+            orderSnapshotVo.setCkt5(timestamp);
+        }
+
         Order order = new Order();
-        order.setReferenceNumber(TextUtils.getOrDefault(orderSnapshotVo.getCkt4(), timestamp));
-        order.setTn(TextUtils.getOrDefault(orderSnapshotVo.getCkt5(), timestamp));
+        order.setReferenceNumber(orderSnapshotVo.getCkt4());
+        order.setTn(orderSnapshotVo.getCkt5());
         order.setUserId(user.getId());
         order.setStatus(OrderStatusEnum.CHECK);
         order.setWarehouseId(warehouse.getId());

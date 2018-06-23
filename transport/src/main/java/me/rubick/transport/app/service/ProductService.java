@@ -38,9 +38,11 @@ public class ProductService {
     private UserService userService;
 
     public void createProduct(Product product) {
+        User user = userService.getByLogin();
         product.setVol(product.getLength().multiply(product.getHeight().multiply(product.getWidth())).divide(new BigDecimal(1000000), 12, ROUND_HALF_DOWN));
         product.setStatus(ProductStatus.TO_CHECK);
-        product.setUserId(userService.getByLogin().getId());
+        product.setUserId(user.getId());
+        product.setProductSku(user.getHwcSn() + "-" + product.getProductSku());
         productRepository.save(product);
     }
 

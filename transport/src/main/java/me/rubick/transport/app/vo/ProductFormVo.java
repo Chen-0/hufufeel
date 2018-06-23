@@ -17,7 +17,8 @@ public class ProductFormVo implements Serializable {
     private String productName;
 
     @NotEmpty(message = "商品SKU不能为空")
-    @Size(min = 0, max = 32, message = "不能超过32个字符")
+    @Size(min = 0, max = 12, message = "不能超过12个字符")
+    @Pattern(regexp = "^[0-9]{1,12}", message = "请输入数字")
     private String productSku;
 
     @NotNull(message = "电池类型不能为空")

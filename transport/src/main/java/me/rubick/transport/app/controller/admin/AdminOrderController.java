@@ -86,20 +86,28 @@ public class AdminOrderController extends AbstractController {
 
         if (name.equals("success")) {
             order.setStatus(OrderStatusEnum.READY);
+
+            messageService.send(
+                    order.getUserId(),
+                    "/order/" + order.getId() + "/show",
+                    MessageFormat.format("出库单：{0} 审核成功！", order.getSn())
+            );
         } else if (name.equals("fail")) {
             order.setStatus(OrderStatusEnum.FAIL);
             order.setReason(comment);
+
+            messageService.send(
+                    order.getUserId(),
+                    "/order/" + order.getId() + "/show",
+                    MessageFormat.format("出库单：{0} 审核失败！", order.getSn())
+            );
         } else {
             return "redirect:/admin/product/index";
         }
 
         orderRepository.save(order);
         redirectAttributes.addFlashAttribute("success", "更新货品审核状态！");
-        messageService.send(
-                order.getUserId(),
-                "/order/index",
-                MessageFormat.format("出库单：{0} 审核成功！", order.getReferenceNumber())
-        );
+
 
         if (ObjectUtils.isEmpty(status) || status == -1) {
             return "redirect:/admin/order/index";
@@ -153,7 +161,7 @@ public class AdminOrderController extends AbstractController {
             messageService.send(
                     order.getUserId(),
                     MessageFormat.format("/order/{0}/show", order.getId()),
-                    MessageFormat.format("出库单：{0}已经出库！", order.getReferenceNumber())
+                    MessageFormat.format("出库单：{0}已经出库！", order.getSn())
             );
         } else {
             order.setNextStatus(order.getStatus());
@@ -163,7 +171,7 @@ public class AdminOrderController extends AbstractController {
             messageService.send(
                     order.getUserId(),
                     MessageFormat.format("/order/{0}/show", order.getId()),
-                    MessageFormat.format("出库单：{0}，扣费失败，请充值账号并重新缴费。", order.getReferenceNumber())
+                    MessageFormat.format("出库单：{0}，扣费失败，请充值账号并重新缴费。", order.getSn())
             );
         }
 

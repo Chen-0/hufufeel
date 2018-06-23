@@ -9,6 +9,7 @@ import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.service.OrderService;
 import me.rubick.transport.app.service.PackageService;
 import me.rubick.transport.app.service.PayService;
+import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -92,6 +93,7 @@ public class UserController extends AbstractController {
     @RequestMapping(value = "/user/index", method = RequestMethod.GET)
     public String indexUser(Model model) {
         User user = userService.getByLogin();
+        CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(user.getId());
 
         long oc = orderRepository.countByUserIdAndStatus(user.getId(), OrderStatusEnum.FREEZE);
         long pc = packageRepository.countByUserIdAndStatus(user.getId(), PackageStatus.FREEZE);
@@ -99,6 +101,7 @@ public class UserController extends AbstractController {
         model.addAttribute("oc", oc);
         model.addAttribute("pc", pc);
         model.addAttribute("user", user);
+        model.addAttribute("cc", costSubjectSnapshotVo);
 
         return "/user/index";
     }
