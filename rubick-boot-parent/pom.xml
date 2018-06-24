@@ -10,7 +10,6 @@
 
     <name>${artifactId}</name>
 
-    <relativePath />
 
     <parent>
         <groupId>org.springframework.boot</groupId>
