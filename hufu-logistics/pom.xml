@@ -5,6 +5,7 @@
 
     <artifactId>hufu-logistics</artifactId>
     <packaging>jar</packaging>
+    <version>1.0.0</version>
 
     <parent>
         <groupId>me.rubick</groupId>
