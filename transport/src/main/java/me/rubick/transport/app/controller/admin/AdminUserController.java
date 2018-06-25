@@ -1,6 +1,9 @@
 package me.rubick.transport.app.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.exception.FormException;
+import me.rubick.common.app.helper.FormHelper;
+import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.OrderStatusEnum;
@@ -11,6 +14,7 @@ import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.service.UserService;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import me.rubick.transport.app.vo.UserCsVo;
+import me.rubick.transport.app.vo.admin.UserCreateVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +26,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/admin/user/")
@@ -109,45 +114,60 @@ public class AdminUserController extends AbstractController {
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String getCreateUser(Model model) {
-        model.addAttribute("sn", userService.generateSn());
+        if (ObjectUtils.isEmpty(model.asMap().get("fele"))) {
+            UserCreateVo userCreateVo = new UserCreateVo();
+            userCreateVo.setHwcSn(userService.generateSn());
+            model.addAttribute("fele", userCreateVo.toMap());
+        }
         return "/admin/user/create";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String postCreateUser(
-            @RequestParam String username,
-            @RequestParam String password,
-            @RequestParam String name,
-            @RequestParam String csPhone,
-            @RequestParam String csQQ,
-            @RequestParam String sn,
+            @RequestParam String json,
             RedirectAttributes redirectAttributes
     ) {
+        log.info("{}", json);
+        UserCreateVo userCreateVo = JSONMapper.fromJson(json, UserCreateVo.class);
+
+        try {
+            FormHelper formHelper = FormHelper.getInstance();
+            formHelper.notNull(userCreateVo.getName(), "name");
+            formHelper.notNull(userCreateVo.getUsername(), "username");
+            formHelper.notNull(userCreateVo.getPassword(), "password");
+            formHelper.notNull(userCreateVo.getHwcSn(), "hwcSn");
+            formHelper.notNull(userCreateVo.getCsPhone(), "csPhone");
+            formHelper.notNull(userCreateVo.getCsQQ(), "csQQ");
+
+            String pattern = "^[0-9]{6}";
+            boolean isMatch = Pattern.matches(pattern, userCreateVo.getHwcSn());
+
+            if (!isMatch) {
+                formHelper.addError("hwcSn", "请输入6位数字");
+            }
+            formHelper.hasError();
+        } catch (FormException e) {
+            redirectAttributes.addFlashAttribute("ferror", e.getErrorField());
+            redirectAttributes.addFlashAttribute("fele", userCreateVo.toMap());
+            return "redirect:/admin/user/create";
+        }
+
         try {
             UserCsVo userCsVo = new UserCsVo();
-            userCsVo.setCsPhone(csPhone);
-            userCsVo.setCsQQ(csQQ);
+            userCsVo.setCsPhone(userCreateVo.getCsPhone());
+            userCsVo.setCsQQ(userCreateVo.getCsQQ());
 
-            User user = new User();
-            user.setName(name);
-            user.setUsername(username);
-            user.setPassword(password);
+            User user = BeanMapperUtils.map(userCreateVo, User.class);
             user.setUsd(BigDecimal.ZERO);
             user.setCsInfo(JSONMapper.toJSON(userCsVo));
-            user.setHwcSn(sn);
-
             user = userService.createUser(user);
 
             redirectAttributes.addFlashAttribute("success", "创建用户成功！");
             return "redirect:/admin/user/" + user.getId() + "/cost_subject";
-        } catch (IllegalArgumentException e) {
-            log.error("", e);
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            redirectAttributes.addFlashAttribute("username", username);
-            redirectAttributes.addFlashAttribute("password", password);
-            redirectAttributes.addFlashAttribute("name", name);
+        } catch (FormException e) {
+            redirectAttributes.addFlashAttribute("ferror", e.getErrorField());
+            redirectAttributes.addFlashAttribute("fele", userCreateVo);
             return "redirect:/admin/user/create";
-
         }
     }
 

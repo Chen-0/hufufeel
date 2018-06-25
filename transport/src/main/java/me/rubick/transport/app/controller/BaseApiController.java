@@ -22,13 +22,13 @@ public class BaseApiController extends AbstractController {
     @Resource
     private PackageRepository packageRepository;
 
-    @RequestMapping("/api/base/r2u")
+    @RequestMapping("/api/base/u2r")
     public RestResponse<BigDecimal> r2u(
             @RequestParam BigDecimal value
     ) {
         BigDecimal u2r = new BigDecimal(configService.findOneByKey("U2R"));
 
-        BigDecimal result = value.divide(u2r, 2, RoundingMode.FLOOR);
+        BigDecimal result = value.multiply(u2r);
 
         return new RestResponse<>(result);
     }

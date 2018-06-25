@@ -37,6 +37,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                    aria-expanded="false">个人中心<span class="caret"></span></a>
                 <ul class="dropdown-menu">
+                    <li><a href="/user/index">我的账户</a></li>
                     <li><a href="/user/statements/index">费用流水</a></li>
                 </ul>
             </li>
@@ -78,7 +79,7 @@
                 <li class="user user-menu">
                     <a href="/user/index">
                         <img src="/static/LTE/user.jpg" class="user-image" alt="User Image">
-                        <span class="hidden-xs">${USER.name}</span>
+                        <span class="hidden-xs">${USER.name} <small>No.${USER.hwcSn}</small></span>
                     </a>
                 </li>
                 <li>
@@ -100,7 +101,7 @@
                 <img src="/static/LTE/user.jpg" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
-                <p>${USER.name}</p>
+                <p>${USER.name} <small>No.${USER.hwcSn}</small></p>
                 <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
             </div>
         </div>
@@ -128,7 +129,7 @@
 
 <#if SUCCESS?? >
 <div class="message-container">
-    <div class="alert alert-success alert-dismissible">
+    <div class="alert alert-success alert-dismissible" style="margin: 0;">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
         <h4><i class="icon fa fa-check"></i> 操作成功</h4>
     ${SUCCESS!}
@@ -138,7 +139,7 @@
 
 <#if ERROR?? >
 <div class="message-container">
-    <div class="alert alert-danger alert-dismissible">
+    <div class="alert alert-danger alert-dismissible" style="margin: 0;">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
         <h4><i class="icon fa fa-ban"></i> 操作失败</h4>
     ${ERROR!}

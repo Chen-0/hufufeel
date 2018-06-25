@@ -42,7 +42,10 @@ public class ProductService {
         product.setVol(product.getLength().multiply(product.getHeight().multiply(product.getWidth())).divide(new BigDecimal(1000000), 12, ROUND_HALF_DOWN));
         product.setStatus(ProductStatus.TO_CHECK);
         product.setUserId(user.getId());
-        product.setProductSku(user.getHwcSn() + "-" + product.getProductSku());
+
+        if (!product.getProductSku().startsWith(user.getHwcSn() + "-")) {
+            product.setProductSku(user.getHwcSn() + "-" + product.getProductSku());
+        }
         productRepository.save(product);
     }
 

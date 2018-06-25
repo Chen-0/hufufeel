@@ -104,7 +104,7 @@ public class AdminProductController extends AbstractController {
         messageService.send(
                 product.getUserId(),
                 "/product/index?status=1",
-                MessageFormat.format("货品：{0} 审核成功！{1}", product.getProductName())
+                MessageFormat.format("货品：{0} 审核成功！", product.getProductName())
         );
 
         if (ObjectUtils.isEmpty(status) || status == -1) {

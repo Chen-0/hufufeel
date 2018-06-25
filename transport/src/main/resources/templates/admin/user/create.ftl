@@ -15,48 +15,25 @@
 
     <div class="row">
         <div class="col-lg-offset-2 col-lg-8">
-            <form role="form" method="post" action="/admin/user/create" id="main">
+            <form class="xn-form" role="form" method="post" action="/admin/user/create">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">${title}</h3>
                     </div>
                     <div class="panel-body">
-                        <div class="form-group">
-                            <label for="username">登陆账号：</label>
-                            <input type="text" class="form-control" id="username" name="username" value="${username!}">
-                        </div>
-                        <div class="form-group">
-                            <label for="password">登陆密码：</label>
-                            <input type="text" class="form-control" id="password" name="password" value="${password!}">
-                        </div>
+                        <@formGroup key="登陆账号" name="username"></@formGroup>
+                        <@formGroup key="登陆密码" name="password"></@formGroup>
+                        <@formGroup key="客户昵称" name="name"></@formGroup>
+                        <@formGroup key="客服电话" name="csPhone"></@formGroup>
+                        <@formGroup key="客服QQ" name="csQQ"></@formGroup>
+                        <@formGroup key="客户编号" name="hwcSn"></@formGroup>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="name">用户昵称：</label>
-                            <input type="text" class="form-control" id="name" name="name" value="${name!}">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="csPhone">客服电话：</label>
-                            <input type="text" class="form-control" id="csPhone" name="csPhone" value="${csPhone!}">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="csQQ">客服QQ：</label>
-                            <input type="text" class="form-control" id="csQQ" name="csQQ" value="${csQQ!}">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="sn">客户编号：</label>
-                            <input type="text" class="form-control" id="sn" name="sn" value="${sn!}">
-                        </div>
-                        <#if error??>
-                        <p class="margin text-danger">${error!}</p>
-                        </#if>
+                    <div class="panel-footer clearfix">
+                        <button type="submit" class="btn btn-default" id="btn">提交</button>
                     </div>
                 </div>
-
-                <button type="submit" class="btn btn-default" id="btn">提交</button>
             </form>
         </div>
     </div>

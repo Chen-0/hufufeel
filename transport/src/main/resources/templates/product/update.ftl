@@ -52,7 +52,11 @@
 
                                 <div class="form-group">
                                     <label for="productSku">商品SKU*：</label>
-                                    <input type="text" class="form-control" id="productSku" name="productSku" value="${felements.productSku!}">
+                                    <#if felements.productSku?exists>
+                                    <input type="text" class="form-control" id="productSku" name="productSku" value="${felements.productSku?substring(7)}">
+                                    <#else>
+                                        <input type="text" class="form-control" id="productSku" name="productSku">
+                                    </#if>
                                 <#if errors??>
                                     <p class="text-danger">${errors.productSku!}</p>
                                 </#if>

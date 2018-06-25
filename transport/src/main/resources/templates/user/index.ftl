@@ -25,7 +25,7 @@
                 <div class="col-xs-3">
                     <div class="box box-widget widget-user">
                         <div class="widget-user-header bg-aqua-active">
-                            <h3 class="widget-user-username">${user.name}</h3>
+                            <h3 class="widget-user-username">${user.name} <small>No.${user.hwcSn}</small></h3>
                             <h5 class="widget-user-desc">${user.username}</h5>
                         </div>
                         <div class="widget-user-image">

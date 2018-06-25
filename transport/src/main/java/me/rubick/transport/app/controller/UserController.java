@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,9 +45,15 @@ public class UserController extends AbstractController {
 
     @RequestMapping(value = "/user/charge_account", method = RequestMethod.POST)
     public String postChargeAccount(
-            @RequestParam BigDecimal total
+            @RequestParam BigDecimal total,
+            RedirectAttributes redirectAttributes
             ) throws BusinessException {
         User user = userService.getByLogin();
+
+        if (ObjectUtils.isEmpty(total)) {
+            redirectAttributes.addFlashAttribute("nu", "请输入充值金额！");
+            return "redirect:/user/charge_account";
+        }
 
         try {
             Payment payment = payService.createPaymentForAccount(user, total);

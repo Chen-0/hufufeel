@@ -69,7 +69,8 @@
                             <tbody>
                             <#list elements.getContent() as e>
                             <tr>
-                                <th><input class="x-checkbox" type="checkbox" name="trackingNumber[]" value="${e.id}"></th>
+                                <th><input class="x-checkbox" type="checkbox" name="trackingNumber[]" value="${e.id}">
+                                </th>
                                 <td>${e.id}</td>
                                 <td>${e.productName}</td>
                                 <td>${e.productSku}</td>
@@ -96,7 +97,9 @@
 
                                 <td>
                                     <a href="/product/${e.id}/show">查看</a>
-                                    <a href="/product/${e.id}/update">更新</a>
+                                    <#if e.status.ordinal() != 1>
+                                        <a href="/product/${e.id}/update">更新</a>
+                                    </#if>
                                     <a class="x-remove" href="/product/${e.id}/remove">删除</a>
                                 </td>
                             </tr>
@@ -107,9 +110,9 @@
                 </div>
 
                 <div class="box-footer clearfix">
-                    <#if _STATUS?exists && ( _STATUS == 1) >
+                <#if _STATUS?exists && ( _STATUS == 1) >
                     <button id="addToSend" class="btn btn-primary">添加到入库单</button>
-                    </#if>
+                </#if>
                 <#assign BASEURL="/product/index?keyword=${keyword}&status=${_STATUS!}&page="/>
                 <#include "*/_layout/v2.0/components/pages.ftl">
                 </div>
@@ -128,7 +131,7 @@
 <script>
     $(function () {
         $('#select_all').click(function () {
-            if($(this).is(":checked")) {
+            if ($(this).is(":checked")) {
                 changeSelect(true);
             } else {
                 changeSelect(false);
@@ -143,7 +146,7 @@
         $("#addToSend").click(function (e) {
             e.preventDefault();
 
-            if($(".x-checkbox:checked").length === 0) {
+            if ($(".x-checkbox:checked").length === 0) {
                 alert("请选择一件或多件货品");
                 return;
             }

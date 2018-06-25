@@ -33,10 +33,10 @@
                 <input value="登陆" type="submit">
             </div>
 
-            <div>
-                <a href="">我要注册</a>
-                <a href="" style="float: right;">忘记密码</a>
-            </div>
+            <#--<div>-->
+                <#--<a href="">我要注册</a>-->
+                <#--<a href="" style="float: right;">忘记密码</a>-->
+            <#--</div>-->
 
         </form>
     </div>

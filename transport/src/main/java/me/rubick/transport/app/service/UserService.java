@@ -1,6 +1,8 @@
 package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.exception.FormException;
+import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.utils.HashUtils;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.StatementStatusEnum;
@@ -69,21 +71,23 @@ public class UserService {
         return user;
     }
 
-    public User createUser(User user) {
+    public User createUser(User user) throws FormException {
         List<Authority> authorities = new ArrayList<>();
         authorities.add(authorityRepository.getOne(3));
         user.setAuthorities(authorities);
         return saveUser(user);
     }
 
-    private User saveUser(User user) {
-        Assert.hasText(user.getUsername(), "登陆账号不能为空");
-        Assert.hasText(user.getPassword(), "密码不能为空");
-        Assert.hasText(user.getName(), "用户昵称不能为空");
-        Assert.isTrue(userRepository.countByUsername(user.getUsername()) == 0, "该登陆账号已被注册");
+    private User saveUser(User user) throws FormException {
+        FormHelper formHelper = FormHelper.getInstance();
+
+        if (userRepository.countByUsername(user.getUsername()) != 0) {
+            formHelper.addError("username", "该登陆账号已被注册");
+        }
+
+        formHelper.hasError();
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        user.setHwcSn(generateSn());
         return userRepository.save(user);
     }
 
