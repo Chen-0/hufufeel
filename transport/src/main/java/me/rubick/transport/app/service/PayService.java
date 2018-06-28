@@ -2,8 +2,7 @@ package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.BusinessException;
-import me.rubick.transport.app.constants.StatementStatusEnum;
-import me.rubick.transport.app.constants.StatementTypeEnum;
+import me.rubick.transport.app.constants.*;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.*;
@@ -46,7 +45,7 @@ public class PayService {
 
 
     public Payment findPayment(long paymentId, User user) {
-        return paymentRepository.findTopByIdAndUserIdAndStatus(paymentId, user.getId(), PaymentStatus.FALSE);
+        return paymentRepository.findTopByIdAndUserIdAndStatus(paymentId, user.getId(), PaymentStatusEnum.FALSE);
     }
 
     public Payment createPaymentForAccount(User user, BigDecimal totalFee) throws BusinessException {
@@ -63,9 +62,9 @@ public class PayService {
         payment.setUserId(user.getId());
         payment.setExtendsInfo("");
         payment.setOutTradeNo(generateOutTradeNo());
-        payment.setStatus(PaymentStatus.FALSE);
+        payment.setStatus(PaymentStatusEnum.FALSE);
         payment.setTotalFee(totalFee);
-        payment.setType(PaymentType.ACCOUNT);
+        payment.setType(PaymentTypeEnum.ACCOUNT);
 
         return paymentRepository.save(payment);
     }
@@ -87,7 +86,7 @@ public class PayService {
         }
 
         //支付成功
-        payment.setStatus(PaymentStatus.TRUE);
+        payment.setStatus(PaymentStatusEnum.TRUE);
         payment.setSuccessAt(new Date());
         paymentRepository.save(payment);
 
@@ -140,6 +139,11 @@ public class PayService {
      * @return
      */
     public Statements calcCK(Package p) {
+
+        if (p.getType().equals(PackageTypeEnum.REJECT)) {
+            return calcTHRK(p);
+        }
+
         CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(p.getUserId());
 
         Statements statements = new Statements();
@@ -163,7 +167,7 @@ public class PayService {
 //            tSize = tSize.add(product.getVol().multiply(new BigDecimal(pp.getQuantity())));
         }
 
-        String comment = MessageFormat.format("入库单：{0} ，总重：{1} KG", p.getReferenceNumber(), tWeight);
+        String comment = MessageFormat.format("入库单：{0} ，总重：{1} KG", p.getSn(), tWeight);
 //        String comment = MessageFormat.format("入库单总重：{0} KG, 入库总体积：{1} 立方米", tWeight, tSize);
 
         switch (costSubjectSnapshotVo.getRkt()) {
@@ -178,6 +182,56 @@ public class PayService {
         }
 
         log.info("总价：{}", total);
+        statements.setComment(comment);
+        statements.setTotal(total);
+        return statements;
+    }
+
+    private Statements calcTHRK(Package p) {
+        CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(p.getUserId());
+
+        Statements statements = new Statements();
+        statements.setUserId(p.getUserId());
+        statements.setStatus(StatementStatusEnum.UNPAY);
+        statements.setType(StatementTypeEnum.RK);
+        statements.setTarget(String.valueOf(p.getId()));
+        statements.setPayAt(null);
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        switch (costSubjectSnapshotVo.getThrkt()) {
+            case "TH_RK_AD":       //按单收费
+                total = total.add(costSubjectSnapshotVo.getThrkv());
+                break;
+        }
+
+        log.info("总价：{}", total);
+        String comment = MessageFormat.format("退货单：{0} 正在入库！产生费用为：{1} USD", p.getSn(), total);
+        statements.setComment(comment);
+        statements.setTotal(total);
+        return statements;
+    }
+
+    private Statements calcTHSJ(Package p) {
+        CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(p.getUserId());
+
+        Statements statements = new Statements();
+        statements.setUserId(p.getUserId());
+        statements.setStatus(StatementStatusEnum.UNPAY);
+        statements.setType(StatementTypeEnum.RK);
+        statements.setTarget(String.valueOf(p.getId()));
+        statements.setPayAt(null);
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        switch (costSubjectSnapshotVo.getThsjt()) {
+            case "TH_SJ_SL":       //按单收费
+                total = total.add(costSubjectSnapshotVo.getThsjv().multiply(new BigDecimal(p.getQuantity())));
+                break;
+        }
+
+        log.info("总价：{}", total);
+        String comment = MessageFormat.format("退货单：{0} 正在上架！产生费用为：{1} USD", p.getSn(), total);
         statements.setComment(comment);
         statements.setTotal(total);
         return statements;
@@ -215,18 +269,18 @@ public class PayService {
                 switch (statements.getType()) {
                     case RK: {
                         Package p = packageRepository.findOne(Long.valueOf(statements.getTarget()));
-                        if (p.getNextStatus() != PackageStatus.NULL) {
+                        if (p.getNextStatus() != PackageStatusEnum.NULL) {
                             p.setStatus(p.getNextStatus());
-                            p.setNextStatus(PackageStatus.NULL);
+                            p.setNextStatus(PackageStatusEnum.NULL);
                             packageRepository.save(p);
                         }
                         break;
                     }
                     case SJ: {
                         Package p = packageRepository.findOne(Long.valueOf(statements.getTarget()));
-                        if (p.getNextStatus() != PackageStatus.NULL) {
+                        if (p.getNextStatus() != PackageStatusEnum.NULL) {
                             p.setStatus(p.getNextStatus());
-                            p.setNextStatus(PackageStatus.NULL);
+                            p.setNextStatus(PackageStatusEnum.NULL);
                             packageRepository.save(p);
 
                             stockService.addStock(p);
@@ -259,6 +313,10 @@ public class PayService {
      * @return
      */
     public Statements calcSJ(Package p) {
+        if (p.getType().equals(PackageTypeEnum.REJECT)) {
+            return calcTHSJ(p);
+        }
+
         CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(p.getUserId());
 
         Statements statements = new Statements();
@@ -282,7 +340,7 @@ public class PayService {
             tSize = tSize.add(product.getVol().multiply(new BigDecimal(pp.getQuantity())));
         }
 
-        String comment = MessageFormat.format("入库单：{0}，一共 {1} 件货品，总体积 {2}", p.getReferenceNumber(), count, tSize);
+        String comment = MessageFormat.format("入库单：{0}，一共 {1} 件货品，总体积 {2}", p.getSn(), count, tSize);
         log.info(comment);
         switch (costSubjectSnapshotVo.getSjt()) {
             case "SJ-AS":       //按体积
@@ -346,7 +404,7 @@ public class PayService {
         }
 
         log.info("orderId={}, count={}, total weight={}", order.getId(), count, tWeight);
-        String comment = MessageFormat.format("出库单：{0}，一共 {1} 件货品，总重量 {2}", order.getReferenceNumber(), count, tWeight);
+        String comment = MessageFormat.format("出库单：{0}，一共 {1} 件货品，总重量 {2}", order.getSn(), count, tWeight);
         log.info(comment);
         switch (costSubjectSnapshotVo.getDdt()) {
             case "DD-AZ":       //按体积

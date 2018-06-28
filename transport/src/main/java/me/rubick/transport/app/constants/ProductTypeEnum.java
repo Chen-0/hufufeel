@@ -1,12 +1,12 @@
-package me.rubick.transport.app.model;
+package me.rubick.transport.app.constants;
 
-public enum ProductStatus {
+public enum ProductTypeEnum {
 
-    TO_CHECK("待审核"), READY_CHECK("审核成功"), FAIL_CHECK("审核失败");
+    NORMAL("正常商品"), REJECT("退货商品");
 
     private String value;
 
-    ProductStatus(String value) {
+    ProductTypeEnum(String value) {
         this.value = value;
     }
 

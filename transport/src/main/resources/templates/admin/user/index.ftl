@@ -53,7 +53,7 @@
                             <td>${o.usd} usd</td>
                             <td>${o.arrearage?string("冻结", "正常")}</td>
                             <td>
-                                <a href="/admin/user/${o.id}/cost_subject">费用设置</a>
+                                <a href="/admin/user/${o.id}/cost_subject">用户设置</a>
                             </td>
                         </tr>
                         </#list>

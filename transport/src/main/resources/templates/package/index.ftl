@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
-<#assign TITLE="入库单管理">
+<#if TYPE == 0>
+    <#assign TITLE="入库单管理">
+<#else>
+    <#assign TITLE="退货单管理">
+</#if>
 <#include "*/_layout/head.ftl" />
 
 <body class="hold-transition skin-black-light sidebar-mini">
@@ -84,6 +88,7 @@
                                 <#if e.status.ordinal() == 0>
                                     <a href="/package/${e.id}/cancel" class="x-remove">取消</a>
                                     <a href="/package/${e.id}/print?type=sku" target="_blank">打印SKU</a>
+                                    <a href="/package/${e.id}/print_package" target="_blank">打印运单</a>
                                 </#if>
 
                                 <#assign  key = e.id?string>

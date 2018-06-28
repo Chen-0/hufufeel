@@ -6,7 +6,6 @@ import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.controller.AbstractController;
-import me.rubick.transport.app.model.OrderStatusEnum;
 import me.rubick.transport.app.model.Statements;
 import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.repository.UserRepository;
@@ -56,7 +55,7 @@ public class AdminUserController extends AbstractController {
             @PathVariable("id") long id,
             Model model
     ) {
-        User user = userRepository.findOne(id);
+        User user = userService.findOne(id);
 
         CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(user.getId());
         if (ObjectUtils.isEmpty(costSubjectSnapshotVo)) {
@@ -67,10 +66,19 @@ public class AdminUserController extends AbstractController {
             costSubjectSnapshotVo.setSjv(BigDecimal.ZERO);
             costSubjectSnapshotVo.setDdt("DD-AZ");
             costSubjectSnapshotVo.setDdv(null);
+            costSubjectSnapshotVo.setThrkt("TH_RK_AD");
+            costSubjectSnapshotVo.setThrkv(BigDecimal.ZERO);
+            costSubjectSnapshotVo.setThsjt("TH_SJ_SL");
+            costSubjectSnapshotVo.setThsjv(BigDecimal.ZERO);
         }
+
+        UserCreateVo userCreateVo = BeanMapperUtils.map(user, UserCreateVo.class);
+        userCreateVo.setCsPhone(user.getUserCsVo().getCsPhone());
+        userCreateVo.setCsQQ(user.getUserCsVo().getCsQQ());
 
         model.addAttribute("user", user);
         model.addAttribute("cs", costSubjectSnapshotVo);
+        model.addAttribute("fele", userCreateVo.toMap());
 
         model.addAttribute("INP_RK_AZ", configService.findByKey("INP-RK-AZ"));
         model.addAttribute("INP_RK_AX", configService.findByKey("INP-RK-AX"));
@@ -81,6 +89,10 @@ public class AdminUserController extends AbstractController {
         model.addAttribute("INP_DD_AZ_3", configService.findByKey("INP_DD_AZ_3"));
         model.addAttribute("INP_DD_AZ_4", configService.findByKey("INP_DD_AZ_4"));
         model.addAttribute("INP_DD_AJ", configService.findByKey("INP-DD-AJ"));
+
+        //退货单
+        model.addAttribute("INP_TH_RK_AD", configService.findByKey("INP_TH_RK_AD"));
+        model.addAttribute("INP_TH_SJ_SL", configService.findByKey("INP_TH_SJ_SL"));
         return "/admin/user/cost_subject";
     }
 
@@ -93,18 +105,42 @@ public class AdminUserController extends AbstractController {
             @RequestParam("sjv") BigDecimal sjv,
             @RequestParam("ddt") String ddt,
             @RequestParam("ddv[]") List<BigDecimal> ddv,
+            @RequestParam String thrkt,
+            @RequestParam BigDecimal thrkv,
+            @RequestParam String thsjt,
+            @RequestParam BigDecimal thsjv,
+            @RequestParam String csPhone,
+            @RequestParam String csQQ,
             RedirectAttributes redirectAttributes
     ) {
-        User user = userRepository.findOne(id);
-        CostSubjectSnapshotVo costSubjectSnapshotVo = new CostSubjectSnapshotVo();
+        User user = userService.findOne(id);
 
+        try {
+            FormHelper formHelper = FormHelper.getInstance();
+            formHelper.notNull(csPhone, "csPhone");
+            formHelper.notNull(csQQ, "csQQ");
+            formHelper.hasError();
+        } catch (FormException e) {
+            redirectAttributes.addFlashAttribute("fele", e.getForm());
+            redirectAttributes.addFlashAttribute("ferror", e.getErrorField());
+            return "redirect:/admin/user/" + user.getId() + "/cost_subject";
+        }
+
+        user.getUserCsVo().setCsQQ(csQQ);
+        user.getUserCsVo().setCsPhone(csPhone);
+        userService.update(user);
+
+        CostSubjectSnapshotVo costSubjectSnapshotVo = new CostSubjectSnapshotVo();
         costSubjectSnapshotVo.setRkt(rkt);
         costSubjectSnapshotVo.setRkv(rkv);
         costSubjectSnapshotVo.setSjt(sjt);
         costSubjectSnapshotVo.setSjv(sjv);
         costSubjectSnapshotVo.setDdt(ddt);
         costSubjectSnapshotVo.setDdv(ddv);
-        log.info("{}", JSONMapper.toJSON(costSubjectSnapshotVo));
+        costSubjectSnapshotVo.setThrkt(thrkt);
+        costSubjectSnapshotVo.setThrkv(thrkv);
+        costSubjectSnapshotVo.setThsjt(thsjt);
+        costSubjectSnapshotVo.setThsjv(thsjv);
 
         userService.storeCostSubject(user, costSubjectSnapshotVo);
         redirectAttributes.addFlashAttribute("SUCCESS", "设置费用成功！");

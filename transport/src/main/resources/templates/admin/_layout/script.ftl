@@ -1,6 +1,6 @@
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<#--<script src="https://cdn.bootcss.com/moment.js/2.18.1/moment.min.js"></script>-->
+<script src="https://cdn.bootcss.com/moment.js/2.18.1/moment.min.js"></script>
 <#--<script src="//cdn.bootcss.com/metisMenu/2.7.0/metisMenu.min.js"></script>-->
 <#--<script src="//cdn.bootcss.com/startbootstrap-sb-admin-2/3.3.7+1/js/sb-admin-2.min.js"></script>-->
 <script src="//cdn.bootcss.com/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
@@ -15,5 +15,12 @@
     $(".xn-form").submit(function(event) {
         event.preventDefault();
         submitAsJSON(this);
+    });
+    $(document).ready(function () {
+        var msgContainer = $('.message-container');
+
+        if (msgContainer.length > 0) {
+            msgContainer.fadeOut(3000);
+        }
     });
 </script>

@@ -1,5 +1,7 @@
 package me.rubick.transport.app.model;
 
+import me.rubick.transport.app.constants.ProductStatusEnum;
+import me.rubick.transport.app.constants.ProductTypeEnum;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -20,19 +22,20 @@ public class Product {
     private BigDecimal length;
     private BigDecimal width;
     private BigDecimal height;
-    private ProductStatus status;
+    private ProductStatusEnum status;
     private long imageId;
     private Date deadline;
     private boolean isDanger;
-    private BigDecimal quotedPrice;
+    private String quotedPrice;
     private String quotedName;
     private String comment = "";
     private String reason = "";
-    private boolean isDeleted;
+    private boolean isDeleted = false;
     private Date createdAt;
     private Date updatedAt;
     private boolean businessType;
     private BigDecimal vol;
+    private ProductTypeEnum type;
 
     private Document image;
     private User user;
@@ -140,11 +143,11 @@ public class Product {
 
     @Basic
     @Column(name = "status", nullable = false)
-    public ProductStatus getStatus() {
+    public ProductStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(ProductStatus status) {
+    public void setStatus(ProductStatusEnum status) {
         this.status = status;
     }
 
@@ -170,11 +173,11 @@ public class Product {
 
     @Basic
     @Column(name = "quoted_price", nullable = false, precision = 2)
-    public BigDecimal getQuotedPrice() {
+    public String getQuotedPrice() {
         return quotedPrice;
     }
 
-    public void setQuotedPrice(BigDecimal quotedPrice) {
+    public void setQuotedPrice(String quotedPrice) {
         this.quotedPrice = quotedPrice;
     }
 
@@ -284,5 +287,14 @@ public class Product {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Column
+    public ProductTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(ProductTypeEnum type) {
+        this.type = type;
     }
 }

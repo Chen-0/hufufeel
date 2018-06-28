@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
-<#assign TITLE = "货品管理">
+<#if TYPE==0>
+    <#assign TITLE = "货品管理">
+<#else>
+    <#assign TITLE = "退货货品管理">
+</#if>
+
 <#include "*/_layout/head.ftl" />
 
 <body class="hold-transition skin-black-light sidebar-mini">
@@ -12,7 +17,7 @@
     <div class="content-wrapper">
         <section class="content-header">
             <h1>
-                货品管理
+            ${TITLE}
             </h1>
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -33,12 +38,18 @@
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">搜索</button>
+                        <#if TYPE==0>
                             <a href="/product/index" class="btn btn-default">重置</a>
+                        <#else>
+                            <a href="/product/index?type=${TYPE}" class="btn btn-default">重置</a>
+                        </#if>
+
                         </div>
                     </form>
 
                     <form id="selectForm" action="/product/select" method="post">
                         <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
+                        <input type="hidden" name="type" value="${TYPE}">
                         <table class="table table-bordered table-striped table-condensed table-hover">
                             <thead>
                             <tr>
@@ -98,7 +109,7 @@
                                 <td>
                                     <a href="/product/${e.id}/show">查看</a>
                                     <#if e.status.ordinal() != 1>
-                                        <a href="/product/${e.id}/update">更新</a>
+                                        <a href="/product/${e.id}/update">修改</a>
                                     </#if>
                                     <a class="x-remove" href="/product/${e.id}/remove">删除</a>
                                 </td>
@@ -110,10 +121,17 @@
                 </div>
 
                 <div class="box-footer clearfix">
-                <#if _STATUS?exists && ( _STATUS == 1) >
-                    <button id="addToSend" class="btn btn-primary">添加到入库单</button>
+                <#if TYPE==0>
+                    <#if _STATUS?exists && ( _STATUS == 1) >
+                        <button id="addToSend" class="btn btn-primary">添加到入库单</button>
+                    </#if>
+                    <#assign BASEURL="/product/index?keyword=${keyword}&status=${_STATUS!}&page="/>
+                <#else>
+                    <a class="btn btn-success" href="/product/reject/create">创建退货货品</a>
+                    <button id="addToSend" class="btn btn-primary">添加到退货单</button>
+                    <#assign BASEURL="/product/index?type=${TYPE}&keyword=${keyword}&status=${_STATUS!}&page="/>
                 </#if>
-                <#assign BASEURL="/product/index?keyword=${keyword}&status=${_STATUS!}&page="/>
+
                 <#include "*/_layout/v2.0/components/pages.ftl">
                 </div>
             </div>

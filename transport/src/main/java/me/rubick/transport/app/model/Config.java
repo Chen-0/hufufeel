@@ -22,7 +22,7 @@ public class Config {
     }
 
     @Basic
-    @Column(name = "key", nullable = false, length = 32)
+    @Column(name = "`key`", nullable = false, length = 32)
     public String getKey() {
         return key;
     }

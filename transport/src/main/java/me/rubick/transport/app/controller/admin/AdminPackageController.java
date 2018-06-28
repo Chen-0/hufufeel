@@ -1,8 +1,8 @@
 package me.rubick.transport.app.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
-import me.rubick.common.app.utils.JSONMapper;
-import me.rubick.common.app.utils.TextUtils;
+import me.rubick.transport.app.constants.PackageStatusEnum;
+import me.rubick.transport.app.constants.StatementTypeEnum;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
@@ -29,6 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -65,10 +66,24 @@ public class AdminPackageController extends AbstractController {
             @RequestParam(required = false, defaultValue = "") String keyword,
             @RequestParam(required = false) Integer status
     ) {
-        Page<Package> packages = packageService.searchPackage(keyword, null, status, pageable);
+        Page<Package> packages = packageService.searchPackage(keyword, null, status, -1, pageable);
         model.addAttribute("elements", packages);
         model.addAttribute("status", status);
         return "/admin/package/index";
+    }
+
+    @RequestMapping(value = "/package/{id}/show", method = RequestMethod.GET)
+    public String adminPackageShow(
+            @PathVariable long id,
+            Model model
+    ) {
+        Package p = packageRepository.findOne(id);
+        List<Statements> statements = payService.findByUserIdAndTypeIn(
+                p.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK)
+        );
+        model.addAttribute("statements", statements);
+        model.addAttribute("ele", p);
+        return "/admin/package/show";
     }
 
     //--------------------------- 查看库存 ---------------------------------------
@@ -100,10 +115,6 @@ public class AdminPackageController extends AbstractController {
 
     /**
      * 入库
-     *
-     * @param model
-     * @param id
-     * @return
      */
     @RequestMapping(value = "/package/{id}/inbound", method = RequestMethod.GET)
     public String getPackageInbound(
@@ -148,7 +159,7 @@ public class AdminPackageController extends AbstractController {
                 );
             } else {
                 p.setNextStatus(p.getStatus());
-                p.setStatus(PackageStatus.FREEZE);
+                p.setStatus(PackageStatusEnum.FREEZE);
                 packageRepository.save(p);
 
                 messageService.send(
@@ -199,8 +210,8 @@ public class AdminPackageController extends AbstractController {
             );
             stockService.addStock(p);
         } else {
-            p.setNextStatus(PackageStatus.FINISH);
-            p.setStatus(PackageStatus.FREEZE);
+            p.setNextStatus(PackageStatusEnum.FINISH);
+            p.setStatus(PackageStatusEnum.FREEZE);
             packageRepository.save(p);
 
             messageService.send(

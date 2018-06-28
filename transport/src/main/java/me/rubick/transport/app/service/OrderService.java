@@ -5,7 +5,8 @@ import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.DateUtils;
 import me.rubick.common.app.utils.JSONMapper;
-import me.rubick.common.app.utils.TextUtils;
+import me.rubick.transport.app.constants.OrderStatusEnum;
+import me.rubick.transport.app.constants.ProductStatusEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.*;
 import me.rubick.transport.app.vo.CostSnapshotVo;
@@ -273,7 +274,7 @@ public class OrderService {
         Set<String> set = new HashSet<>();
 
         for (String s : skus) {
-            Product product = productRepository.findTopByProductSkuAndUserIdAndStatus(s, user.getId(), ProductStatus.READY_CHECK);
+            Product product = productRepository.findTopByProductSkuAndUserIdAndStatus(s, user.getId(), ProductStatusEnum.READY_CHECK);
 
             if (ObjectUtils.isEmpty(product)) {
                 throw new BusinessException("错误！SKU：" + s + "不存在！");

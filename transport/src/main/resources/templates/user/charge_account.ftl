@@ -36,7 +36,7 @@
 
                         <div class="form-group">
                             <div class="form-group">
-                                <label class="col-xs-2 control-label charge-font" for="total">充值金额（USD）：</label>
+                                <label class="col-xs-2 control-label charge-font" for="total">充值金额(USD)：</label>
                                 <div class="col-xs-4">
                                     <input class="form-control" id="total" type="text" placeholder="5">
                                 <#if nu?exists && nu?length gt 0>

@@ -150,6 +150,10 @@
 
                             <form role="form" action="/admin/order/${ele.id}/logistics" method="post">
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+
+                                <@formGroup label="快递公司" name="express"></@formGroup>
+                                <@formGroup label="快递号" name="express_no"></@formGroup>
+
                                 <div class="form-group">
                                     <label for="comment">物流信息</label>
                                     <textarea id="comment" class="form-control" rows="3" name="comment">${lg.comment!}</textarea>

@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xml:lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
     <meta content="text/html;charset=UTF-8" http-equiv="Content-Type"/>
-    <title>批量打印条形码 - 惟客惟尊-虎芙大客户</title>
+    <title>批量打印条形码</title>
     <meta content="none" name="msapplication-config"/>
     <meta content="authenticity_token" name="csrf-param"/>
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">

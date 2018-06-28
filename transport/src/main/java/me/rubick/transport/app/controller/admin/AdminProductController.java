@@ -6,11 +6,9 @@ import me.rubick.common.app.exception.CommonException;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.DateUtils;
 import me.rubick.common.app.utils.FormUtils;
-import me.rubick.common.app.utils.TextUtils;
 import me.rubick.transport.app.controller.AbstractController;
-import me.rubick.transport.app.model.Document;
 import me.rubick.transport.app.model.Product;
-import me.rubick.transport.app.model.ProductStatus;
+import me.rubick.transport.app.constants.ProductStatusEnum;
 import me.rubick.transport.app.repository.ProductRepository;
 import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.vo.ProductFormVo;
@@ -59,7 +57,7 @@ public class AdminProductController extends AbstractController {
             @RequestParam(required = false) Integer status,
             @ModelAttribute("productStatus") Integer productStatus
     ) {
-        Page<Product> products = productService.findProduct(null, keyword, status, pageable);
+        Page<Product> products = productService.findProduct(null, keyword, status, -1, pageable);
 
         model.addAttribute("elements", products);
         model.addAttribute("keyword", keyword);
@@ -91,9 +89,9 @@ public class AdminProductController extends AbstractController {
         }
 
         if (name.equals("success")) {
-            product.setStatus(ProductStatus.READY_CHECK);
+            product.setStatus(ProductStatusEnum.READY_CHECK);
         } else if (name.equals("fail")) {
-            product.setStatus(ProductStatus.FAIL_CHECK);
+            product.setStatus(ProductStatusEnum.FAIL_CHECK);
             product.setReason(comment);
         } else {
             return "redirect:/admin/product/index";
@@ -155,14 +153,14 @@ public class AdminProductController extends AbstractController {
 
         BeanMapperUtils.copy(productFormVo, product);
         //设置时间
-        try {
-            product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
-        } catch (CommonException e) {
-            redirectAttributes.addFlashAttribute("felements", productFormVo);
-            Map<String, String> map = new HashMap<>();
-            map.put("deadline", "时间格式错误");
-            redirectAttributes.addFlashAttribute("errors", map);
-        }
+//        try {
+//            product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
+//        } catch (CommonException e) {
+//            redirectAttributes.addFlashAttribute("felements", productFormVo);
+//            Map<String, String> map = new HashMap<>();
+//            map.put("deadline", "时间格式错误");
+//            redirectAttributes.addFlashAttribute("errors", map);
+//        }
 
         product.setVol(product.getLength().multiply(product.getHeight().multiply(product.getWidth())).divide(new BigDecimal(1000000), 12, ROUND_HALF_DOWN));
         productRepository.save(product);

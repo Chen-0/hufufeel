@@ -1,12 +1,11 @@
 package me.rubick.transport.app.model;
 
-import lombok.Cleanup;
-import org.hibernate.annotations.DynamicInsert;
+import me.rubick.transport.app.constants.PackageStatusEnum;
+import me.rubick.transport.app.constants.PackageTypeEnum;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class Package {
     private String referenceNumber;
     private long userId;
     private String nickname;
-    private PackageStatus status;
+    private PackageStatusEnum status;
     private long warehouseId;
     private Date createdAt;
     private Date updatedAt;
@@ -26,8 +25,9 @@ public class Package {
     private String comment;
     private String sn;
     private int expectQuantity;
-    private PackageStatus nextStatus = PackageStatus.NULL;
+    private PackageStatusEnum nextStatus = PackageStatusEnum.NULL;
     private String cn;
+    private PackageTypeEnum type;
 
     private List<PackageProduct> packageProducts;
     private User user;
@@ -65,11 +65,11 @@ public class Package {
 
     @Basic
     @Column(name = "status", nullable = false)
-    public PackageStatus getStatus() {
+    public PackageStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(PackageStatus status) {
+    public void setStatus(PackageStatusEnum status) {
         this.status = status;
     }
 
@@ -211,11 +211,11 @@ public class Package {
     }
 
     @Column(name = "next_status")
-    public PackageStatus getNextStatus() {
+    public PackageStatusEnum getNextStatus() {
         return nextStatus;
     }
 
-    public void setNextStatus(PackageStatus nextStatus) {
+    public void setNextStatus(PackageStatusEnum nextStatus) {
         this.nextStatus = nextStatus;
     }
 
@@ -226,5 +226,14 @@ public class Package {
 
     public void setCn(String cn) {
         this.cn = cn;
+    }
+
+    @Column
+    public PackageTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(PackageTypeEnum type) {
+        this.type = type;
     }
 }

@@ -4,20 +4,20 @@ import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.excel.ExcelConverter;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.CommonException;
+import me.rubick.common.app.exception.HttpNoFoundException;
 import me.rubick.common.app.response.RestResponse;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.ExcelHepler;
-import me.rubick.common.app.utils.HashUtils;
 import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.transport.app.constants.PackageStatusEnum;
+import me.rubick.transport.app.constants.PackageTypeEnum;
 import me.rubick.transport.app.constants.StatementTypeEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
-import me.rubick.transport.app.repository.DistributionChannelRepository;
 import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.*;
 import me.rubick.transport.app.vo.PackageExcelVo;
-import me.rubick.transport.app.vo.ProductContainer;
 import me.rubick.transport.app.vo.ProductWarehouseVo;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.data.domain.Page;
@@ -55,19 +55,21 @@ public class PackageController extends AbstractController {
     @RequestMapping(value = "/package/index", method = RequestMethod.GET)
     public String packageIndex(
             @PageableDefault(size = 10, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
-            Model model,
             @RequestParam(required = false, defaultValue = "") String keyword,
-            @RequestParam(required = false) Integer status
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false, defaultValue = "0") int type,
+            Model model
     ) {
         User user = userService.getByLogin();
-        Page<Package> packages = packageService.searchPackage(keyword, user, status, pageable);
+        Page<Package> packages = packageService.searchPackage(keyword, user, status, type, pageable);
         model.addAttribute("elements", packages);
         model.addAttribute("_STATUS", status);
         model.addAttribute("keyword", keyword);
         model.addAttribute("MENU", "RUKUGUANLI");
+        model.addAttribute("TYPE", type);
 
 
-        if (status != null && status == PackageStatus.FREEZE.ordinal()) {
+        if (status != null && status == PackageStatusEnum.FREEZE.ordinal()) {
             Map<String, Statements> map = payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK));
             log.info("{}", JSONMapper.toJSON(map));
             model.addAttribute("smap", map);
@@ -79,9 +81,13 @@ public class PackageController extends AbstractController {
     public String showPackage(
             @PathVariable long id,
             Model model
-    ) {
+    ) throws HttpNoFoundException {
         Package p = packageRepository.findOne(id);
         User user = userService.getByLogin();
+
+        if (p.getUserId() != user.getId()) {
+            throw new HttpNoFoundException();
+        }
 
         List<Statements> statements = payService.findByUserIdAndTypeIn(
                 p.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK)
@@ -93,12 +99,6 @@ public class PackageController extends AbstractController {
 
     /**
      * 提交发货清单
-     *
-     * @param wId
-     * @param qtys
-     * @param pids
-     * @param redirectAttributes
-     * @return
      */
     @RequestMapping(value = "/package/create", method = RequestMethod.POST)
     public String createPackage(
@@ -107,8 +107,13 @@ public class PackageController extends AbstractController {
             @RequestParam(required = false, defaultValue = "") String comment,
             @RequestParam("qty[]") List<Integer> qtys,
             @RequestParam("p[]") List<Long> pids,
+            @RequestParam int type,
             RedirectAttributes redirectAttributes
     ) throws BusinessException {
+        if (!(type == 0 || type == 1)) {
+            throw new BusinessException("无效的参数");
+        }
+
         Warehouse warehouse = warehouseRepository.findOne(wId);
 
         if (ObjectUtils.isEmpty(warehouse)) {
@@ -117,16 +122,19 @@ public class PackageController extends AbstractController {
 
         User user = userService.getByLogin();
 
-        // TODO validate
         List<Product> products = productService.findProducts(pids);
 
         if (products.size() != qtys.size()) {
             throw new BusinessException("[A001] 禁止访问");
         }
 
-        packageService.create(user, warehouse, referenceNumber, comment, qtys, pids);
+        packageService.create(user, warehouse, referenceNumber, comment, qtys, pids, PackageTypeEnum.valueOf(type));
 
         redirectAttributes.addFlashAttribute("SUCCESS", "入库单创建成功！");
+
+        if (type == 1) {
+            return "redirect:/package/index?type=1";
+        }
         return "redirect:/package/index";
     }
 
@@ -147,11 +155,11 @@ public class PackageController extends AbstractController {
             throw new BusinessException("");
         }
 
-        if (!p.getStatus().equals(PackageStatus.READY)) {
+        if (!p.getStatus().equals(PackageStatusEnum.READY)) {
             throw new BusinessException("");
         }
 
-        p.setStatus(PackageStatus.CANCEL);
+        p.setStatus(PackageStatusEnum.CANCEL);
         packageRepository.save(p);
 
         redirectAttributes.addFlashAttribute("SUCCESS", "取消入库单成功！");
@@ -317,6 +325,23 @@ public class PackageController extends AbstractController {
         } else {
             throw new BusinessException("");
         }
+    }
+
+    @RequestMapping("/package/{id}/print_package")
+    public String printPackage(
+            @PathVariable long id,
+            Model model
+    ) throws HttpNoFoundException {
+        Package p = packageService.findOne(id);
+        User user = userService.getByLogin();
+
+        if (p.getUserId() != user.getId()) {
+            throw new HttpNoFoundException();
+        }
+
+        model.addAttribute("ele", p);
+
+        return "/package/print_package";
     }
 }
 

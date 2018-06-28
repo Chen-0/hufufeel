@@ -1,11 +1,13 @@
 package me.rubick.transport.app.controller.admin;
 
+import me.rubick.common.app.utils.BeanMapperUtils;
+import me.rubick.transport.app.constants.OrderStatusEnum;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.*;
-import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.OrderRepository;
 import me.rubick.transport.app.service.OrderService;
 import me.rubick.transport.app.service.PayService;
+import me.rubick.transport.app.vo.admin.OrderFormVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -193,6 +195,7 @@ public class AdminOrderController extends AbstractController {
         OrderLogistics orderLogistics = orderService.findOrNewOrderLogistics(id);
 
         model.addAttribute("ele", order);
+        model.addAttribute("fele", BeanMapperUtils.map(order, OrderFormVo.class).toMap());
         model.addAttribute("lg", orderLogistics);
 
         return "/admin/order/logistics";
@@ -202,9 +205,16 @@ public class AdminOrderController extends AbstractController {
     public String postUpdateLogistics(
             @PathVariable long id,
             @RequestParam String comment,
+            @RequestParam(required = false, defaultValue = "") String express,
+            @RequestParam(required = false, defaultValue = "", name = "express_no") String expressNo,
             RedirectAttributes redirectAttributes,
             @ModelAttribute("orderStatus") Integer status
     ) {
+        Order order = orderService.findOne(id);
+        order.setExpressNo(expressNo);
+        order.setExpress(express);
+        orderRepository.save(order);
+
         OrderLogistics orderLogistics = orderService.findOrNewOrderLogistics(id);
         orderLogistics.setComment(comment);
         orderService.storeOrderLogistics(orderLogistics);

@@ -1,11 +1,11 @@
 package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.transport.app.constants.PackageStatusEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.repository.ProductWarehouseRepository;
-import me.rubick.transport.app.repository.WarehouseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,10 +16,8 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -97,7 +95,7 @@ public class StockService {
     }
 
     public void addStock(Package p) {
-        p.setStatus(PackageStatus.FINISH);
+        p.setStatus(PackageStatusEnum.FINISH);
         packageRepository.save(p);
         List<PackageProduct> products = p.getPackageProducts();
 

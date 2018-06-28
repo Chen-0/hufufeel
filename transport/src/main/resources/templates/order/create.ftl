@@ -662,7 +662,7 @@
                     console.log(resp);
                 }
             });
-        } // functi
+        }
     });
 </script>
 </body>

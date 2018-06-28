@@ -1,5 +1,7 @@
 package me.rubick.transport.app.model;
 
+import me.rubick.transport.app.constants.PaymentStatusEnum;
+import me.rubick.transport.app.constants.PaymentTypeEnum;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -14,8 +16,8 @@ public class Payment {
     private long userId;
     private String outTradeNo;
     private String extendsInfo;
-    private PaymentType type;
-    private PaymentStatus status;
+    private PaymentTypeEnum type;
+    private PaymentStatusEnum status;
     private BigDecimal totalFee;
     private Date createdAt;
     private Date successAt;
@@ -64,21 +66,21 @@ public class Payment {
     @Basic
     @Column(name = "type", nullable = false, length = 255)
     @Enumerated(EnumType.STRING)
-    public PaymentType getType() {
+    public PaymentTypeEnum getType() {
         return type;
     }
 
-    public void setType(PaymentType type) {
+    public void setType(PaymentTypeEnum type) {
         this.type = type;
     }
 
     @Basic
     @Column(name = "status", nullable = false)
-    public PaymentStatus getStatus() {
+    public PaymentStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(PaymentStatus status) {
+    public void setStatus(PaymentStatusEnum status) {
         this.status = status;
     }
 

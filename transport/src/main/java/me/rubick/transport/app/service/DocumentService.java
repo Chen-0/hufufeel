@@ -2,6 +2,7 @@ package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.BusinessException;
+import me.rubick.common.app.exception.NotFoundException;
 import me.rubick.common.app.utils.HashUtils;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.model.Document;
@@ -240,5 +241,19 @@ public class DocumentService {
         public void setOriginalFilename(String originalFilename) {
             this.originalFilename = originalFilename;
         }
+    }
+
+    public Document findOne(Long id) throws NotFoundException {
+        if (ObjectUtils.isEmpty(id)) {
+            throw new NotFoundException();
+        }
+
+        Document document = documentRepository.findOne(id);
+
+        if (ObjectUtils.isEmpty(document)) {
+            throw new NotFoundException();
+        }
+
+        return document;
     }
 }

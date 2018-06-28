@@ -5,6 +5,7 @@ import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.model.Config;
 import me.rubick.transport.app.repository.ConfigRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional
+@Transactional(isolation = Isolation.REPEATABLE_READ)
 @Slf4j
 public class ConfigService {
 
@@ -35,7 +36,6 @@ public class ConfigService {
             list.add(config.getValue());
         }
 
-        log.info("{}", JSONMapper.toJSON(list));
         return list;
     }
 
@@ -51,5 +51,9 @@ public class ConfigService {
 
         log.info("{}", JSONMapper.toJSON(map));
         return map;
+    }
+
+    public void update(String key, String value) {
+        configRepository.update(key, value);
     }
 }

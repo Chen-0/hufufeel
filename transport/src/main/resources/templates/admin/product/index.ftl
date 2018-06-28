@@ -67,7 +67,7 @@
                     <#list elements.getContent() as o>
                     <tr>
                         <td>${o.id}</td>
-                        <td>${o.user.name}</td>
+                        <td>${o.user.name} NO.${o.user.hwcSn}</td>
                         <td>${o.productName}</td>
                         <td>${o.productSku}</td>
                         <td>${o.isBattery?string("是", "否")}</td>

@@ -57,8 +57,10 @@ public class UserService {
     @Resource
     private CostSubjectRepository costSubjectRepository;
 
-    public User get(long id) {
-        return userRepository.getOne(id);
+    public User findOne(long id) {
+        User user = userRepository.findOne(id);
+        user.setUserCsVo(JSONMapper.fromJson(user.getCsInfo(), UserCsVo.class));
+        return user;
     }
 
     public List<User> findByIdIn(Collection<Long> collection) {
@@ -115,6 +117,7 @@ public class UserService {
     }
 
     public User update(User user) {
+        user.setCsInfo(JSONMapper.toJSON(user.getUserCsVo()));
         return userRepository.save(user);
     }
 

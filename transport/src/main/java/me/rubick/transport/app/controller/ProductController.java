@@ -3,17 +3,25 @@ package me.rubick.transport.app.controller;
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.CommonException;
+import me.rubick.common.app.exception.FormException;
+import me.rubick.common.app.exception.NotFoundException;
+import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.response.RestResponse;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.DateUtils;
 import me.rubick.common.app.utils.FormUtils;
 import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.transport.app.constants.ProductBatteryTypeEnum;
+import me.rubick.transport.app.constants.ProductBusinessTypeEnum;
+import me.rubick.transport.app.constants.ProductDangerTypeEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.ProductRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.ProductService;
+import me.rubick.transport.app.vo.DocumentVo;
 import me.rubick.transport.app.vo.ProductContainer;
 import me.rubick.transport.app.vo.ProductFormVo;
+import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +39,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.text.MessageFormat;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +58,9 @@ public class ProductController extends AbstractController {
     private ProductRepository productRepository;
 
     @ModelAttribute("productContainer")
-    public ProductContainer productController() {
-        return new ProductContainer();
+    public ProductContainer[] productController() {
+        ProductContainer[] productContainers = {new ProductContainer(), new ProductContainer()};
+        return productContainers;
     }
 
     @RequestMapping(value = "/product/index")
@@ -60,19 +68,23 @@ public class ProductController extends AbstractController {
             Model model,
             @PageableDefault(size = 10, direction = Sort.Direction.DESC, sort = {"id"}) Pageable pageable,
             @RequestParam(required = false, defaultValue = "") String keyword,
-            @RequestParam(required = false) Integer status) throws BusinessException {
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false, defaultValue = "0") int type
+    ) throws BusinessException {
         User user = userService.getByLogin();
         if (ObjectUtils.isEmpty(user)) {
             throw new BusinessException("");
         }
-        Page<Product> products = productService.findProduct(user, keyword, status, pageable);
+        Page<Product> products = productService.findProduct(user, keyword, status, type, pageable);
 
         model.addAttribute("elements", products);
         model.addAttribute("keyword", keyword);
         model.addAttribute("_STATUS", status);
-        model.addAttribute("MENU", "HUOPINGUANLI");
+        model.addAttribute("TYPE", type);
 
-        log.info("{}", products.getNumberOfElements());
+        if (type == 0) {
+            model.addAttribute("MENU", "HUOPINGUANLI");
+        }
 
         return "product/index";
     }
@@ -82,7 +94,7 @@ public class ProductController extends AbstractController {
             @PathVariable("id") long id,
             Model model
     ) throws BusinessException {
-        Product product = productRepository.findOne(id);
+        Product product = productService.findOne(id);
 
         if (ObjectUtils.isEmpty(product)) {
             //TODO no found
@@ -95,10 +107,15 @@ public class ProductController extends AbstractController {
     }
 
     @RequestMapping(value = "/product/create", method = RequestMethod.GET)
-    public String getCreateProduct(Model model) {
+    public String getCreateProduct(
+            Model model
+    ) throws BusinessException {
         model.addAttribute("bts", ProductBusinessTypeEnum.values());
-        if (ObjectUtils.isEmpty(model.asMap().get("felements"))) {
-            model.asMap().put("felements", new ProductFormVo());
+        model.addAttribute("ibs", ProductBatteryTypeEnum.values());
+        model.addAttribute("ids", ProductDangerTypeEnum.values());
+
+        if (ObjectUtils.isEmpty(model.asMap().get("fele"))) {
+            model.asMap().put("fele", new ProductFormVo());
         }
 
         return "product/create";
@@ -106,60 +123,66 @@ public class ProductController extends AbstractController {
 
     @RequestMapping(value = "/product/post_create", method = RequestMethod.POST)
     public String postCreateProduct(
-            @Valid ProductFormVo productFormVo,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
-            @RequestParam(name = "p_file", required = false) MultipartFile image
-    ) throws CommonException {
-        if (bindingResult.hasErrors()) {
+            @RequestParam String json,
+            RedirectAttributes redirectAttributes
+    ) throws BusinessException {
+        ProductFormVo productFormVo = JSONMapper.fromJson(json, ProductFormVo.class);
 
-            log.info("-------------------- form has error ----------------");
-            log.info("{}", JSONMapper.toJSON(productFormVo));
-            redirectAttributes.addFlashAttribute("felements", productFormVo);
-            Map<String, String> map = FormUtils.toMap(bindingResult);
-
-            if (ObjectUtils.isEmpty(image) || image.isEmpty()) {
-                map.put("p_file", "请上传货品图片");
-            }
-            redirectAttributes.addFlashAttribute("errors", map);
-
-            return "redirect:/product/create";
-        }
-
-        if (ObjectUtils.isEmpty(image) || image.isEmpty()) {
-            Map<String, String> map = new HashMap<>();
-            map.put("p_file", "请上传货品图片");
-            redirectAttributes.addFlashAttribute("felements", productFormVo);
-            redirectAttributes.addFlashAttribute("errors", map);
-
+        try {
+            validateProduct(productFormVo);
+        } catch (FormException e) {
+            throwForm(redirectAttributes, e.getErrorField(), productFormVo);
             return "redirect:/product/create";
         }
 
         //store the product
         Product product = BeanMapperUtils.map(productFormVo, Product.class);
 
-        //更新图片
-        if (!ObjectUtils.isEmpty(image) && !image.isEmpty()) {
-            try {
-                Document document = documentService.uploadProductImage(image);
-                if (!ObjectUtils.isEmpty(document)) {
-                    product.setImageId(document.getId());
-                }
-            } catch (BusinessException e) {
-                Map<String, String> map = new HashMap<>();
-                map.put("p_file", e.getMessage());
-                redirectAttributes.addFlashAttribute("felements", productFormVo);
-                redirectAttributes.addFlashAttribute("errors", map);
-                return "redirect:/product/create";
-            }
-        }
-
         if (StringUtils.hasText(productFormVo.getDeadline())) {
             product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
         }
+
         productService.createProduct(product);
         redirectAttributes.addFlashAttribute("SUCCESS", "添加货品成功！");
         return "redirect:/product/index";
+    }
+
+    private void validateProduct(ProductFormVo productFormVo) throws FormException {
+        FormHelper formHelper = FormHelper.getInstance();
+        formHelper.validateDefault0("businessType", productFormVo.getBusinessType());
+        formHelper.validateDefault0("productName", productFormVo.getProductName());
+        formHelper.validate("productSku", productFormVo.getProductSku()).notNull().maxLength(12);
+        formHelper.validateDefault0("isBattery", productFormVo.getIsBattery());
+        formHelper.validateDefault0("weight", productFormVo.getWeight()).mustDecimal0();
+        formHelper.validateDefault0("length", productFormVo.getLength()).mustDecimal0();
+        formHelper.validateDefault0("width", productFormVo.getWidth()).mustDecimal0();
+        formHelper.validateDefault0("height", productFormVo.getHeight()).mustDecimal0();
+        formHelper.validateDefault0("isDanger", productFormVo.getIsDanger());
+        formHelper.validateDefault0("quotedName", productFormVo.getQuotedName());
+        formHelper.validate("quotedPrice", productFormVo.getQuotedPrice()).notNull().mustDecimal0();
+
+        try {
+            productFormVo.setImageName(documentService.findOne(productFormVo.getImageId()).getOriginalFilename());
+        } catch (NotFoundException e) {
+            formHelper.addError("image", "请上传货品图片");
+        }
+
+        if (!ObjectUtils.isEmpty(productFormVo.getDeadline())) {
+            formHelper.mustDate0("deadline", productFormVo.getDeadline());
+        }
+
+        formHelper.hasError();
+    }
+
+    private void validateRejectProduct(ProductFormVo productFormVo) throws FormException {
+        FormHelper formHelper = FormHelper.getInstance();
+        formHelper.validateDefault0("productName", productFormVo.getProductName());
+        formHelper.validate("productSku", productFormVo.getProductSku()).notNull().maxLength(32);
+        if (!ObjectUtils.isEmpty(productFormVo.getDeadline())) {
+            formHelper.mustDate0("deadline", productFormVo.getDeadline());
+        }
+
+        formHelper.hasError();
     }
 
     /**
@@ -173,63 +196,79 @@ public class ProductController extends AbstractController {
     @RequestMapping(value = "/product/{id}/update", method = RequestMethod.GET)
     public String getUpdateProduct(
             Model model,
-            @PathVariable("id") long id) throws BusinessException {
-        Product product = productRepository.findOne(id);
+            @PathVariable long id
+    ) throws BusinessException {
+        Product product = productService.findOne(id);
 
         if (ObjectUtils.isEmpty(product)) {
             // TODO 错误提示
             throw new BusinessException("");
         }
 
-        model.addAttribute("felements", product);
+        model.addAttribute("bts", ProductBusinessTypeEnum.values());
+        model.addAttribute("ibs", ProductBatteryTypeEnum.values());
+        model.addAttribute("ids", ProductDangerTypeEnum.values());
+
+        if (ObjectUtils.isEmpty(model.asMap().get("fele"))) {
+            ProductFormVo productFormVo = BeanMapperUtils.map(product, ProductFormVo.class);
+            try {
+                productFormVo.setImageName(documentService.findOne(productFormVo.getImageId()).getOriginalFilename());
+                productFormVo.setImageId(productFormVo.getImageId());
+
+                System.out.println(product.getDeadline());
+                System.out.println(productFormVo.getDeadline());
+                if (!ObjectUtils.isEmpty(product.getDeadline())) {
+                    productFormVo.setDeadline(DateUtils.date2String1(product.getDeadline()));
+                } else {
+                    productFormVo.setDeadline("");
+                }
+                productFormVo.setProductSku(productFormVo.getProductSku().substring(7));
+            } catch (NotFoundException e) {
+                ;
+            }
+            System.out.println(JSONMapper.toJSON(productFormVo.toMap()));
+            model.addAttribute("fele", productFormVo.toMap());
+        }
+
+        model.addAttribute("id", product.getId());
 
         return "/product/update";
     }
 
 
-    @RequestMapping(value = "/product/{id}/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/product/{id}/post_update", method = RequestMethod.POST)
     public String postUpdateProduct(
-            @Valid ProductFormVo productFormVo,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
-            @PathVariable("id") long id,
-            @RequestParam(name = "p_file", required = false) MultipartFile image
+            @PathVariable long id,
+            @RequestParam String json,
+            RedirectAttributes redirectAttributes
     ) throws BusinessException {
-        Product product = productRepository.findOne(id);
-
+        Product product = productService.findOne(id);
         if (ObjectUtils.isEmpty(product)) {
             // TODO 错误提示
             throw new BusinessException("");
         }
 
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("felements", productFormVo);
-            redirectAttributes.addFlashAttribute("errors", FormUtils.toMap(bindingResult));
+        ProductFormVo productFormVo = JSONMapper.fromJson(json, ProductFormVo.class);
 
-            return MessageFormat.format("redirect:/product/{0}/update", id);
-        }
-
-        BeanMapperUtils.copy(productFormVo, product);
-        //设置时间
         try {
-            product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
-        } catch (CommonException e) {
-            redirectAttributes.addFlashAttribute("felements", productFormVo);
-            Map<String, String> map = new HashMap<>();
-            map.put("deadline", "时间格式错误");
-            redirectAttributes.addFlashAttribute("errors", map);
+            validateProduct(productFormVo);
+        } catch (FormException e) {
+            throwForm(redirectAttributes, e.getErrorField(), productFormVo);
+            return "redirect:/product/" + id + "/update";
         }
 
-        //更新图片
-        if (!image.isEmpty()) {
-            Document document = documentService.uploadProductImage(image);
-            if (!ObjectUtils.isEmpty(document)) {
-                product.setImageId(document.getId());
-            }
+        //store the product
+        BeanMapperUtils.copy(productFormVo, product);
+
+        if (StringUtils.hasText(productFormVo.getDeadline())) {
+            product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
+        } else {
+            product.setDeadline(null);
         }
+
+        log.info("{}", JSONMapper.toJSON(product));
 
         productService.createProduct(product);
-
         redirectAttributes.addFlashAttribute("SUCCESS", "修改货品成功！");
         return "redirect:/product/index";
     }
@@ -260,42 +299,45 @@ public class ProductController extends AbstractController {
 
     /**
      * 添加商品至发货清单中
-     *
-     * @param trackingNumbers
-     * @param productContainer
-     * @param redirectAttributes
-     * @param model
-     * @return
      */
     @RequestMapping(value = "/product/select", method = RequestMethod.POST)
     public String selectProduct(
             @RequestParam("trackingNumber[]") List<Long> trackingNumbers,
-            @ModelAttribute("productContainer") ProductContainer productContainer,
+            @ModelAttribute("productContainer") ProductContainer[] productContainers,
+            @RequestParam int type,
             RedirectAttributes redirectAttributes,
-            Model model) {
+            Model model) throws BusinessException {
+        if (!(type == 0 || type == 1)) {
+            throw new BusinessException("无效的参数");
+        }
+        productContainers[type].getProducts().addAll(trackingNumbers);
 
-        productContainer.getProducts().addAll(trackingNumbers);
-        redirectAttributes.addFlashAttribute("SUCCESS", "商品已经成功添加至发货清单");
-        return "redirect:/product/ready_to_send";
+        if (type == 0) {
+            redirectAttributes.addFlashAttribute("SUCCESS", "货品已经成功添加至发货单中");
+        } else if (type == 1) {
+            redirectAttributes.addFlashAttribute("SUCCESS", "退货货品已经成功添加至退货单中");
+        }
+
+        return MessageFormat.format("redirect:/product/ready_to_send?type={0}", type);
     }
 
     /**
      * 发货清单
-     *
-     * @param productContainer
-     * @return
      */
-    @RequestMapping(value = "/product/ready_to_send", method = RequestMethod.GET)
+    @RequestMapping(value = "/product/ready_to_send")
     public String readyToSend(
-            @ModelAttribute("productContainer") ProductContainer productContainer,
+            @ModelAttribute("productContainer") ProductContainer[] productContainers,
+            @RequestParam(required = false, defaultValue = "0") int type,
             Model model
-    ) {
-        List<Product> products = productService.findProducts(productContainer.getProducts());
-
+    ) throws BusinessException {
+        if (!(type == 0 || type == 1)) {
+            throw new BusinessException("无效的参数");
+        }
+        List<Product> products = productService.findProducts(productContainers[type].getProducts());
         List<Warehouse> warehouses = warehouseRepository.findAll();
-
         model.addAttribute("warehouses", warehouses);
         model.addAttribute("elements", products);
+        model.addAttribute("TYPE", type);
         return "/product/ready_to_send";
     }
 
@@ -303,11 +345,15 @@ public class ProductController extends AbstractController {
     @ResponseBody
     public RestResponse<String> removeProductFromPackage(
             @PathVariable("id") long id,
-            @ModelAttribute("productContainer") ProductContainer productContainer,
+            @RequestParam int type,
+            @ModelAttribute("productContainer") ProductContainer[] productContainers,
             RedirectAttributes redirectAttributes
-    ) {
-        if (productContainer.getProducts().contains(id)) {
-            productContainer.getProducts().remove(id);
+    ) throws BusinessException {
+        if (!(type == 0 || type == 1)) {
+            throw new BusinessException("无效的参数");
+        }
+        if (productContainers[type].getProducts().contains(id)) {
+            productContainers[type].getProducts().remove(id);
         }
 
         return new RestResponse<>();
@@ -315,30 +361,77 @@ public class ProductController extends AbstractController {
 
     @RequestMapping("/product/package/remove_all")
     public String removeAllProductFromPackage(
-            @ModelAttribute("productContainer") ProductContainer productContainer
-    ) {
-        productContainer.getProducts().clear();
+            @RequestParam int type,
+            @ModelAttribute("productContainer") ProductContainer[] productContainers
+    ) throws BusinessException {
+        if (!(type == 0 || type == 1)) {
+            throw new BusinessException("无效的参数");
+        }
 
-        return "redirect:/product/ready_to_send";
+        productContainers[type].getProducts().clear();
+
+        return MessageFormat.format("redirect:/product/ready_to_send?type={0}", type);
     }
 
-//    /**
-//     * 根据仓库筛选渠道
-//     *
-//     * @param id
-//     * @return
-//     */
-//    @RequestMapping("/channel/select")
-//    @ResponseBody
-//    public RestResponse<List<DistributionChannel>> getChannelByWarehouse(
-//            @RequestParam long id
-//    ) {
-//        Warehouse warehouse = warehouseRepository.findOne(id);
-//
-//        if (ObjectUtils.isEmpty(warehouse)) {
-//            return new RestResponse<>(Collections.emptyList());
-//        }
-//
-//        return new RestResponse<>(warehouse.getDistributionChannels());
-//    }
+    @RequestMapping("/product/image/upload")
+    @ResponseBody
+    public RestResponse<DocumentVo> uploadImage(
+            @RequestParam MultipartFile image
+    ) {
+        try {
+            Document document = documentService.uploadProductImage(image);
+            return new RestResponse<>(BeanMapperUtils.map(document, DocumentVo.class));
+        } catch (BusinessException e) {
+            e.printStackTrace();
+        }
+
+        return new RestResponse<>("error");
+    }
+
+    @RequestMapping("/product/reject/create")
+    public String rejectProductCreate(Model model) {
+        model.addAttribute("bts", ProductBusinessTypeEnum.values());
+        model.addAttribute("ibs", ProductBatteryTypeEnum.values());
+        model.addAttribute("ids", ProductDangerTypeEnum.values());
+
+        if (ObjectUtils.isEmpty(model.asMap().get("fele"))) {
+            model.asMap().put("fele", new ProductFormVo());
+        }
+
+        return "product/reject/create";
+    }
+
+    @RequestMapping(value = "/product/reject/post_create")
+    public String rejectProductCreatePost(
+            @RequestParam String json,
+            RedirectAttributes redirectAttributes
+    ) throws BusinessException {
+        ProductFormVo productFormVo = JSONMapper.fromJson(json, ProductFormVo.class);
+
+        try {
+            validateRejectProduct(productFormVo);
+        } catch (FormException e) {
+            throwForm(redirectAttributes, e.getErrorField(), productFormVo);
+            return "redirect:/product/reject/create";
+        }
+
+        //store the product
+        Product product = BeanMapperUtils.map(productFormVo, Product.class);
+        BeanMapperUtils.setDefault(product, "weight");
+        BeanMapperUtils.setDefault(product, "length");
+        BeanMapperUtils.setDefault(product, "width");
+        BeanMapperUtils.setDefault(product, "height");
+
+        if (ObjectUtils.isEmpty(product.getImageId()) || product.getImageId() == 0) {
+            product.setImageId(1L);
+        }
+
+        if (StringUtils.hasText(productFormVo.getDeadline())) {
+            product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
+        }
+
+        productService.createRejectProduct(product);
+        redirectAttributes.addFlashAttribute("SUCCESS", "添加退货货品成功！");
+        return "redirect:/product/index?type=1";
+    }
 }

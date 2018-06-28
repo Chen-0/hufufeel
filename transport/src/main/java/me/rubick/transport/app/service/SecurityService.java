@@ -31,12 +31,12 @@ public class SecurityService implements UserDetailsService {
             throw new UsernameNotFoundException("用户名或密码错误");
         } else {
 
-            CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(user.getId());
-
-            if (ObjectUtils.isEmpty(costSubjectSnapshotVo)) {
-                log.error("账号：{} - 该用户没完成设置，请联系管理员。", s);
-                throw new UsernameNotFoundException("该用户没完成设置，请联系管理员。");
-            }
+//            CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(user.getId());
+//
+//            if (ObjectUtils.isEmpty(costSubjectSnapshotVo)) {
+//                log.error("账号：{} - 该用户没完成设置，请联系管理员。", s);
+//                throw new UsernameNotFoundException("该用户没完成设置，请联系管理员。");
+//            }
 
             return user;
         }

@@ -1,5 +1,6 @@
 package me.rubick.transport.app.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.utils.Steam;
 import me.rubick.transport.app.service.DocumentService;
 import me.rubick.transport.app.model.Document;
@@ -15,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Controller
+@Slf4j
 public class FileController {
 
     @Resource
@@ -43,12 +45,8 @@ public class FileController {
             FileInputStream fileInputStream = new FileInputStream(file);
 
             response.getOutputStream().write(Steam.readStream(fileInputStream));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("{}", e.getMessage());
         }
     }
 }

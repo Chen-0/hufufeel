@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
-<#assign TITLE="入库单详情">
+<#if ele.type.ordinal() == 0>
+    <#assign TITLE="入库单详情">
+<#else>
+    <#assign TITLE="退货单详情">
+</#if>
+
 <#include "*/_layout/head.ftl" />
 
 <body class="hold-transition skin-black-light sidebar-mini">
@@ -10,7 +15,7 @@
     <div class="content-wrapper">
         <section class="content-header">
             <h1>
-            ${TITLE}
+            ${TITLE} <small>${ele.sn}</small>
             </h1>
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -117,7 +122,9 @@
                                     </#if>
                                     </td>
                                     <td>
-                                        <a href="/user/statements/${e.id}/pay">立即支付</a>
+                                        <#if e.status.ordinal() == 0>
+                                            <a href="/user/statements/${e.id}/pay">立即支付</a>
+                                        </#if>
                                     </td>
                                 </tr>
                                 </#list>
@@ -128,6 +135,7 @@
 
                     <div class="box-footer clearfix">
                         <a class="btn btn-primary" href="/package/${ele.id}/print?type=sku" target="_blank">打印SKU</a>
+                        <a class="btn btn-primary" href="/package/${ele.id}/print_package" target="_blank">打印运单</a>
                     </div>
                 </div>
             </div>

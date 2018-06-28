@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
-<#assign TITLE="新建入库单">
+<#if TYPE == 0>
+    <#assign TITLE="创建入库单">
+<#else>
+    <#assign TITLE="创建退货单">
+</#if>
 <#include "*/_layout/head.ftl" />
 
 <body class="hold-transition skin-black-light sidebar-mini">
@@ -21,8 +25,24 @@
 
         <!-- Main content -->
         <section class="content">
+
+            <#if TYPE == 1>
+                <div class="callout callout-info">
+                    <h4>虎芙管家收货地址</h4>
+                    <ul>
+                        <li>收件人：${USER.hwcSn}</li>
+                        <li>电话：951-314-8768 或 951-310-7615</li>
+                        <li>街道：2260 S ARCHIBALD AVE STE D</li>
+                        <li>州：CA</li>
+                        <li>城市：ONTARIO</li>
+                    </ul>
+                </div>
+            </#if>
+
+
             <form id="mainForm" action="/package/create" method="post">
                 <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
+                <input type="hidden" name="type" value="${TYPE}">
                 <div class="box">
                     <div class="box-header with-border">
                         <h3 class="box-title">1.选择货品</h3>
@@ -71,8 +91,8 @@
                     </div>
 
                     <div class="box-footer clearfix">
-                        <a href="/product/index?status=1" class="btn btn-primary">添加货品</a>
-                        <a href="/product/package/remove_all" class="btn btn-danger">移除全部</a>
+                        <a href="/product/index?status=1&type=${TYPE}" class="btn btn-primary">添加货品</a>
+                        <a href="/product/package/remove_all?type=${TYPE}" class="btn btn-danger">移除全部</a>
                     </div>
                 </div>
 
@@ -191,6 +211,9 @@
 
             $.ajax({
                 url: '/product/package/' + id + '/remove',
+                data: {
+                    type: ${TYPE}
+                },
                 success: function (data) {
                     console.log(data);
 

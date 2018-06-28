@@ -1,5 +1,6 @@
 package me.rubick.transport.app.model;
 
+import me.rubick.transport.app.constants.OrderStatusEnum;
 import me.rubick.transport.app.vo.CostSnapshotVo;
 import me.rubick.transport.app.vo.OrderSnapshotVo;
 import org.hibernate.annotations.Generated;

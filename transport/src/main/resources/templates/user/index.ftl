@@ -186,6 +186,42 @@
                                     </#switch>
                                     </td>
                                 </tr>
+
+                                <tr>
+                                    <td>退货入库费</td>
+                                    <td>
+                                    <#switch cc.thrkt>
+                                        <#case "TH_RK_AD">
+                                            按单收费
+                                            <#break>
+                                    </#switch>
+                                    </td>
+                                    <td>
+                                    <#switch cc.thrkt>
+                                        <#case "TH_RK_AD">
+                                            每单 ${cc.thrkv?string} USD
+                                            <#break>
+                                    </#switch>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>退货上架费</td>
+                                    <td>
+                                        <#switch cc.thsjt>
+                                            <#case "TH_SJ_SL">
+                                                按件收费
+                                                <#break>
+                                        </#switch>
+                                    </td>
+                                    <td>
+                                    <#switch cc.thsjt>
+                                        <#case "TH_SJ_SL">
+                                            每单的总件数 * ${cc.thsjv?string} USD （件数无封顶）
+                                            <#break>
+                                    </#switch>
+                                    </td>
+                                </tr>
                             </table>
                         </div>
                         <!-- /.box-body -->

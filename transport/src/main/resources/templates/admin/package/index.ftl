@@ -46,6 +46,7 @@
                         <th>参考号</th>
                         <th>客户</th>
                         <th>仓库</th>
+                        <th>类型</th>
                         <th>状态</th>
                         <th>提交时间</th>
                         <th>备注</th>
@@ -56,14 +57,16 @@
                     <tbody>
                     <#list elements.getContent() as o>
                     <tr>
-                        <td>${o.id}</td>
+                        <td><a href="/admin/package/${o.id}/show">${o.sn}</a></td>
                         <td>${o.referenceNumber}</td>
-                        <td>${o.nickname}</td>
+                        <td>${o.nickname} NO.${o.user.hwcSn}</td>
                         <td>${o.warehouseName}</td>
-                        <td>${o.status.getValue()}</td>
+                        <td>${o.type.value}</td>
+                        <td>${o.status.value}</td>
                         <td>${o.createdAt?string}</td>
                         <td>${o.comment!}</td>
                         <td>
+                            <a href="/admin/package/${o.id}/show">详情</a>
                             <#switch o.status.ordinal()>
                                 <#case 0>
                                     <a href="/admin/package/${o.id}/inbound">入库</a>

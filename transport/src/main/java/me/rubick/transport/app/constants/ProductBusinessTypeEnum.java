@@ -1,4 +1,4 @@
-package me.rubick.transport.app.model;
+package me.rubick.transport.app.constants;
 
 public enum ProductBusinessTypeEnum {
 

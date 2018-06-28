@@ -1,7 +1,7 @@
 package me.rubick.transport.app.repository;
 
 import me.rubick.transport.app.model.Order;
-import me.rubick.transport.app.model.OrderStatusEnum;
+import me.rubick.transport.app.constants.OrderStatusEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

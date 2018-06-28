@@ -2,12 +2,11 @@ package me.rubick.transport.app.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.BusinessException;
+import me.rubick.transport.app.constants.OrderStatusEnum;
+import me.rubick.transport.app.constants.PackageStatusEnum;
 import me.rubick.transport.app.model.*;
-import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.OrderRepository;
 import me.rubick.transport.app.repository.PackageRepository;
-import me.rubick.transport.app.service.OrderService;
-import me.rubick.transport.app.service.PackageService;
 import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import org.springframework.data.domain.Page;
@@ -103,7 +102,7 @@ public class UserController extends AbstractController {
         CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(user.getId());
 
         long oc = orderRepository.countByUserIdAndStatus(user.getId(), OrderStatusEnum.FREEZE);
-        long pc = packageRepository.countByUserIdAndStatus(user.getId(), PackageStatus.FREEZE);
+        long pc = packageRepository.countByUserIdAndStatus(user.getId(), PackageStatusEnum.FREEZE);
 
         model.addAttribute("oc", oc);
         model.addAttribute("pc", pc);

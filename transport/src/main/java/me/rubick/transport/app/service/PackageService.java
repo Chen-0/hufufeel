@@ -2,6 +2,9 @@ package me.rubick.transport.app.service;
 
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.utils.HashUtils;
+import me.rubick.transport.app.constants.PackageStatusEnum;
+import me.rubick.transport.app.constants.PackageTypeEnum;
+import me.rubick.transport.app.constants.ProductStatusEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.PackageProductRepository;
@@ -14,7 +17,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -22,7 +24,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,6 +50,7 @@ public class PackageService {
             final String keyword,
             final User user,
             final Integer status,
+            final int type,
             final Pageable pageable
     ) {
         return packageRepository.findAll(new Specification<Package>() {
@@ -62,6 +64,10 @@ public class PackageService {
                     predicates.add(criteriaBuilder.or(
                             criteriaBuilder.like(root.get("referenceNumber"), _keyword)
                     ));
+                }
+
+                if (type > -1) {
+                    predicates.add(criteriaBuilder.equal(root.get("type"), type));
                 }
 
                 if (!ObjectUtils.isEmpty(user)) {
@@ -105,7 +111,7 @@ public class PackageService {
 
         Package p = packageRepository.findOne(packageId);
         p.setQuantity(t);
-        p.setStatus(PackageStatus.RECEIVED);
+        p.setStatus(PackageStatusEnum.RECEIVED);
         return packageRepository.save(p);
     }
 
@@ -137,11 +143,11 @@ public class PackageService {
         }
     }
 
-    public void create(User user, Warehouse warehouse, String referenceNumber, String comment, List<Integer> qtys, List<Long> pids) {
+    public void create(User user, Warehouse warehouse, String referenceNumber, String comment, List<Integer> qtys, List<Long> pids, PackageTypeEnum type) {
         Package p = new Package();
         p.setUserId(user.getId());
         p.setWarehouseId(warehouse.getId());
-        p.setStatus(PackageStatus.READY);
+        p.setStatus(PackageStatusEnum.READY);
         if (!StringUtils.hasText(referenceNumber)) {
             referenceNumber = HashUtils.generateString();
         }
@@ -150,6 +156,7 @@ public class PackageService {
         p.setNickname(user.getName());
         p.setComment(comment);
         p.setCn(generateCN(user));
+        p.setType(type);
 
         List<PackageProduct> packageProducts = new ArrayList<>(qtys.size());
 
@@ -173,17 +180,21 @@ public class PackageService {
         List<Long> pids = new ArrayList<>();
 
         for (String s : skus) {
-            Product product = productRepository.findTopByProductSkuAndUserIdAndStatus(s, user.getId(), ProductStatus.READY_CHECK);
+            Product product = productRepository.findTopByProductSkuAndUserIdAndStatus(s, user.getId(), ProductStatusEnum.READY_CHECK);
             if (ObjectUtils.isEmpty(product)) {
                 throw new BusinessException("货品SKU: " + s + " 不存在，请检查");
             }
             pids.add(product.getId());
         }
 
-        create(user, warehouse, HashUtils.generateString(), "", qtys, pids);
+        create(user, warehouse, HashUtils.generateString(), "", qtys, pids, PackageTypeEnum.NORMAL);
     }
 
     public List<Warehouse> findAllWarehouse() {
         return warehouseRepository.findAllByVisible(true);
+    }
+
+    public Package findOne(long id) {
+        return packageRepository.findOne(id);
     }
 }

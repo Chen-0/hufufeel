@@ -1,8 +1,7 @@
 package me.rubick.transport.app.repository;
 
-import me.rubick.transport.app.model.OrderStatusEnum;
 import me.rubick.transport.app.model.Package;
-import me.rubick.transport.app.model.PackageStatus;
+import me.rubick.transport.app.constants.PackageStatusEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -15,5 +14,5 @@ public interface PackageRepository extends JpaRepository<Package, Long>, JpaSpec
     @Query("select max(p.cn) from Package p where p.cn like %?1%")
     public String getMaxCN(String date);
 
-    long countByUserIdAndStatus(long userId, PackageStatus packageStatus);
+    long countByUserIdAndStatus(long userId, PackageStatusEnum packageStatus);
 }

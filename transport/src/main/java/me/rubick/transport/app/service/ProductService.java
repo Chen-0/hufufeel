@@ -1,20 +1,21 @@
 package me.rubick.transport.app.service;
 
 import me.rubick.common.app.exception.BusinessException;
+import me.rubick.transport.app.constants.ProductTypeEnum;
 import me.rubick.transport.app.model.Product;
-import me.rubick.transport.app.model.ProductStatus;
+import me.rubick.transport.app.constants.ProductStatusEnum;
 import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import javax.persistence.Transient;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -40,16 +41,25 @@ public class ProductService {
     public void createProduct(Product product) {
         User user = userService.getByLogin();
         product.setVol(product.getLength().multiply(product.getHeight().multiply(product.getWidth())).divide(new BigDecimal(1000000), 12, ROUND_HALF_DOWN));
-        product.setStatus(ProductStatus.TO_CHECK);
+        product.setStatus(ProductStatusEnum.TO_CHECK);
         product.setUserId(user.getId());
-
+        product.setType(ProductTypeEnum.NORMAL);
         if (!product.getProductSku().startsWith(user.getHwcSn() + "-")) {
             product.setProductSku(user.getHwcSn() + "-" + product.getProductSku());
         }
         productRepository.save(product);
     }
 
-    public Page<Product> findProduct(User user, String keyword, Integer status, Pageable pageable) {
+    public void createRejectProduct(Product product) {
+        User user = userService.getByLogin();
+        product.setVol(product.getLength().multiply(product.getHeight().multiply(product.getWidth())).divide(new BigDecimal(1000000), 12, ROUND_HALF_DOWN));
+        product.setStatus(ProductStatusEnum.READY_CHECK);
+        product.setUserId(user.getId());
+        product.setType(ProductTypeEnum.REJECT);
+        productRepository.save(product);
+    }
+
+    public Page<Product> findProduct(User user, String keyword, Integer status, int type, Pageable pageable) {
         Page<Product> products = productRepository.findAll(new Specification<Product>() {
             @Override
             public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -63,6 +73,10 @@ public class ProductService {
 
                 if (!ObjectUtils.isEmpty(status)) {
                     predicates.add(criteriaBuilder.equal(root.get("status"), status));
+                }
+
+                if (type > -1) {
+                    predicates.add(criteriaBuilder.equal(root.get("type"), type));
                 }
 
                 predicates.add(criteriaBuilder.equal(root.get("isDeleted"), 0));
@@ -102,6 +116,11 @@ public class ProductService {
     }
 
     public List<Product> findProducts(Collection<Long> collection) {
-        return productRepository.findByIdInAndStatusIn(collection, Arrays.asList(ProductStatus.READY_CHECK));
+        return productRepository.findByIdInAndStatusIn(collection, Arrays.asList(ProductStatusEnum.READY_CHECK));
+    }
+
+    @Transactional(readOnly = true)
+    public Product findOne(long id) {
+        return productRepository.findOne(id);
     }
 }

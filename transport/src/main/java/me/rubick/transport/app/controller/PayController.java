@@ -5,11 +5,9 @@ import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.alipay.AlipayNotify;
 import me.rubick.transport.app.alipay.AlipayService;
-import me.rubick.transport.app.alipay.AlipaySubmit;
 import me.rubick.transport.app.model.Payment;
-import me.rubick.transport.app.model.PaymentType;
+import me.rubick.transport.app.constants.PaymentTypeEnum;
 import me.rubick.transport.app.model.User;
-import me.rubick.transport.app.repository.PaymentRepository;
 import me.rubick.transport.app.service.PayService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,13 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @Slf4j
@@ -51,7 +46,7 @@ public class PayController extends AbstractController {
 
         Map<String, String> params = new HashMap<>();
 
-        if (payment.getType().equals(PaymentType.ACCOUNT)) {
+        if (payment.getType().equals(PaymentTypeEnum.ACCOUNT)) {
             params = alipayService.pay(
                     payment.getOutTradeNo(),
                     payment.getUserId(),

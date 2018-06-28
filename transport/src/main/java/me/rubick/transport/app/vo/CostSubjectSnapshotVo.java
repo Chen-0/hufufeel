@@ -16,4 +16,8 @@ public class CostSubjectSnapshotVo implements Serializable {
     private BigDecimal sjv;
     private String ddt;
     private List<BigDecimal> ddv;
+    private String thrkt;
+    private BigDecimal thrkv;
+    private String thsjt;
+    private BigDecimal thsjv;
 }

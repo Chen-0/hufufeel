@@ -1,9 +1,7 @@
 package me.rubick.transport.app.vo;
 
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import me.rubick.transport.app.model.ProductBusinessTypeEnum;
-import me.rubick.transport.app.model.ProductStatus;
+import me.rubick.transport.app.constants.ProductStatusEnum;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -21,7 +19,7 @@ public class ProductSnapshotVo implements Serializable {
     private BigDecimal length;
     private BigDecimal width;
     private BigDecimal height;
-    private ProductStatus status;
+    private ProductStatusEnum status;
     private long imageId;
     private Date deadline;
     private boolean isDanger;

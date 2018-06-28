@@ -16,3 +16,5 @@
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="icon" href="/static/favicon.ico" type="image/vnd.microsoft.icon">
 </head>
+
+<#include "*/_layout/v2.0/components/form.ftl">
