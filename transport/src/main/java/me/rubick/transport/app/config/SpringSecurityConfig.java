@@ -41,10 +41,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/pay/alipay/notify").permitAll()
                 .antMatchers("/", "/index", "/contact_us","/strategy", "/qa", "/cost", "/about_us").permitAll()
 
-                .antMatchers("/**")
-                .hasAnyAuthority("ROLE_ADMIN", "ROLE_USERS", "ROLE_HWC")
                 .antMatchers("/admin/**")
                 .hasAnyAuthority("ROLE_ADMIN")
+                
+                .antMatchers("/**")
+                .hasAnyAuthority("ROLE_ADMIN", "ROLE_USERS", "ROLE_HWC")
+
 
                 .and().formLogin()
                 .loginPage("/login")
