@@ -55,7 +55,7 @@
                 <li><a href="/index">首页</a></li>
                 <li><a href="/about_us">关于我们</a></li>
                 <#--<li><a href="{:U('News/index')}">特惠公告</a></li>-->
-                <li><a href="">使用教程</a></li>
+                <#--<li><a href="">使用教程</a></li>-->
                 <li><a href="/cost">服务费用</a></li>
                 <li><a href="/qa">常见问题</a></li>
                 <li><a href="/strategy">海淘攻略</a></li>

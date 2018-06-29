@@ -22,5 +22,11 @@
         if (msgContainer.length > 0) {
             msgContainer.fadeOut(3000);
         }
+
+        $('#logoutBtn').click(function (e) {
+            e.preventDefault();
+
+            $('#logoutForm').submit();
+        })
     });
 </script>

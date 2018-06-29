@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<#assign title="新增用户"/>
+<#assign title="修改密码"/>
 <#include "*/admin/_layout/head.ftl" />
 
 <body>
@@ -9,25 +9,20 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">${title}</h1>
+            <h1 class="page-header">${title} <small>${user.name}</small></h1>
         </div>
     </div>
 
     <div class="row">
         <div class="col-lg-offset-2 col-lg-8">
-            <form class="xn-form" role="form" method="post" action="/admin/user/create">
+            <form role="form" method="post" action="/admin/user/${user.id}/password">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">${title}</h3>
                     </div>
                     <div class="panel-body">
-                        <@formGroup label="登陆账号" name="username"></@formGroup>
-                        <@formGroup label="登陆密码" name="password"></@formGroup>
-                        <@formGroup label="客户昵称" name="name"></@formGroup>
-                        <@formGroup label="客服电话" name="csPhone"></@formGroup>
-                        <@formGroup label="客服QQ" name="csQQ"></@formGroup>
-                        <@formGroup label="客户编号" name="hwcSn"></@formGroup>
+                        <@formGroup label="新密码" name="password"></@formGroup>
                     </div>
 
                     <div class="panel-footer clearfix">

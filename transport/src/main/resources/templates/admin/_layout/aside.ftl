@@ -74,7 +74,7 @@
 
                 <ul class="nav navbar-nav navbar-right">
                     <li><a class="active" href="javascript:void(0);">管理员：${USER.username}</a></li>
-                    <li><a id="logout" href="javascript:void(0);">退出登录</a></li>
+                    <li><a id="logoutBtn" href="javascript:void(0);">退出登录</a></li>
                 </ul>
             </form>
         </div>

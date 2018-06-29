@@ -69,6 +69,11 @@ public class UserService {
 
     public User getByUsername(String name) {
         User user = userRepository.findByUsername(name);
+
+        if (ObjectUtils.isEmpty(user)) {
+            return null;
+        }
+
         user.setUserCsVo(JSONMapper.fromJson(user.getCsInfo(), UserCsVo.class));
         return user;
     }
@@ -91,6 +96,11 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
+    }
+
+    public void resetPassword(User user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
     }
 
     public String generateSn() {

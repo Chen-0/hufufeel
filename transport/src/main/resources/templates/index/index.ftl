@@ -133,55 +133,6 @@
 </div>
 
 
-<div class="fix-modal hide">
-    <div class="panel panel-user">
-        <div class="panel-heading" style="background: #fc6;">
-            <h3 class="panel-title" style="display: inline-block">货物订制</h3>
-            <button type="button" id="close-tijiao" class="close" data-dismiss="modal"
-                    style="color: white; z-index: 999; opacity: 1;display: inline-block;"><span
-                    aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-        </div>
-        <div class="panel-body" style="background: white;">
-            <form id="custom" class="form-user" role="form" method="post"
-                  action="/Logistics/index.php/UserGoods/diysub">
-                <div class="form-group">
-                    <label for="brandname">英文品牌名</label>
-                    <input type="text" class="form-control" id="brandname" name="brandname">
-                </div>
-
-                <div class="form-group">
-                    <label for="name">型号</label>
-                    <input type="text" class="form-control" id="name" name="name">
-                </div>
-
-                <div class="form-group">
-                    <label for="color">颜色</label>
-                    <input type="text" class="form-control" id="color" name="color">
-                </div>
-
-                <div class="form-group">
-                    <label for="email">电子邮箱</label>
-                    <input type="text" class="form-control" id="email" name="email">
-                </div>
-
-                <div class="form-group">
-                    <label for="weixin">微信</label>
-                    <input type="text" name="weixin" class="form-control" id="weixin" style="width: 50%;">
-                    <button id="save" type="button" class="btn btn-primary" style="margin-left: 2em;">确定</button>
-                </div>
-
-                <div class="form-group text-center">
-                    <p>订制前请联系我们，QQ号：2465957191；3398425679</p>
-                </div>
-
-                <div class="text-danger" id="goods_msg"></div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
-
 <#include "*/_layout/v1.0/footer.ftl"/>
 </body>
 </html>

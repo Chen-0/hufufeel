@@ -2,6 +2,7 @@ package me.rubick.transport.app.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.FormException;
+import me.rubick.common.app.exception.HttpNoFoundException;
 import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.JSONMapper;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -227,7 +229,7 @@ public class AdminUserController extends AbstractController {
     ) {
         List<User> users = userService.findByIdIn(ids);
 
-        for (User user: users) {
+        for (User user : users) {
             Statements statements = payService.createSTORECOST(user, total);
 
             boolean flag = payService.payStatements(statements.getId());
@@ -251,6 +253,52 @@ public class AdminUserController extends AbstractController {
         }
 
         redirectAttributes.addFlashAttribute("success", "仓租费批量扣费成功！");
+        return "redirect:/admin/user/index";
+    }
+
+
+    @RequestMapping(value = "/{id}/password", method = RequestMethod.GET)
+    public String getPassword(
+            @PathVariable long id,
+            Model model
+    ) {
+        User user = userService.findOne(id);
+
+        model.addAttribute("user", user);
+
+        if (ObjectUtils.isEmpty(model.asMap().get("fele"))) {
+            model.addAttribute("fele", new HashMap<String, String>());
+        }
+
+        return "/admin/user/password";
+    }
+
+    @RequestMapping(value = "/{id}/password", method = RequestMethod.POST)
+    public String postPassword(
+            @PathVariable long id,
+            @RequestParam String password,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) throws HttpNoFoundException {
+        User user = userService.findOne(id);
+
+        if (ObjectUtils.isEmpty(user)) {
+            throw new HttpNoFoundException();
+        }
+
+        try {
+            FormHelper formHelper = FormHelper.getInstance();
+            formHelper.validateDefault0("password", password);
+            formHelper.hasError();
+        } catch (FormException e) {
+            throwForm(redirectAttributes, e.getErrorField(), e.getForm());
+            return "redirect:/admin/user" + user.getId() + "/password";
+        }
+
+        model.addAttribute("user", user);
+
+        userService.resetPassword(user, password);
+        redirectAttributes.addFlashAttribute("success", "重置密码成功！");
         return "redirect:/admin/user/index";
     }
 }

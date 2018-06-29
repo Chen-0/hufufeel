@@ -40,4 +40,17 @@ public abstract class AbstractController {
         redirectAttributes.addFlashAttribute("fele", errorForm.toMap());
         redirectAttributes.addFlashAttribute("ferror", errorField);
     }
+
+    protected <T extends AbstractVo> void throwForm(
+            RedirectAttributes redirectAttributes,
+            Map<String, String> errorField,
+            Map<String, Object> errorForm) {
+
+        log.info("=============== ERROR FORM ===============");
+        log.info("ERROR ---- {}", JSONMapper.toJSON(errorField));
+        log.info("ERROR ---- {}", JSONMapper.toJSON(errorForm));
+        log.info("==========================================");
+        redirectAttributes.addFlashAttribute("fele", errorForm);
+        redirectAttributes.addFlashAttribute("ferror", errorField);
+    }
 }

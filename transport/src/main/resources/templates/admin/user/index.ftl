@@ -54,6 +54,7 @@
                             <td>${o.arrearage?string("冻结", "正常")}</td>
                             <td>
                                 <a href="/admin/user/${o.id}/cost_subject">用户设置</a>
+                                <a href="/admin/user/${o.id}/password">修改密码</a>
                             </td>
                         </tr>
                         </#list>
