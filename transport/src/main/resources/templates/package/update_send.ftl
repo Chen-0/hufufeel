@@ -647,7 +647,7 @@
         }
 
         $('#CKF-1').change(function () {
-            setCon(ele);
+            setCon($(this));
         });
 
         setCon($('#CKF-1'));

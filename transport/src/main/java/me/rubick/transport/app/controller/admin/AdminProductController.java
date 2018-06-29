@@ -3,12 +3,15 @@ package me.rubick.transport.app.controller.admin;
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.CommonException;
+import me.rubick.common.app.exception.FormException;
+import me.rubick.common.app.exception.NotFoundException;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.DateUtils;
 import me.rubick.common.app.utils.FormUtils;
+import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.transport.app.constants.*;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.Product;
-import me.rubick.transport.app.constants.ProductStatusEnum;
 import me.rubick.transport.app.repository.ProductRepository;
 import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.vo.ProductFormVo;
@@ -19,6 +22,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -117,14 +121,29 @@ public class AdminProductController extends AbstractController {
             @PathVariable long id,
             Model model
     ) throws BusinessException {
-        Product product = productRepository.findOne(id);
+        Product product = productService.findOne(id);
 
         if (ObjectUtils.isEmpty(product)) {
             // TODO 错误提示
-            throw new BusinessException("找不到货品");
+            throw new BusinessException("");
         }
 
-        model.addAttribute("felements", product);
+        model.addAttribute("bts", ProductBusinessTypeEnum.values());
+        model.addAttribute("ibs", ProductBatteryTypeEnum.values());
+        model.addAttribute("ids", ProductDangerTypeEnum.values());
+
+        if (ObjectUtils.isEmpty(model.asMap().get("fele"))) {
+            ProductFormVo productFormVo = BeanMapperUtils.map(product, ProductFormVo.class);
+            productFormVo.setImageId(productFormVo.getImageId());
+            if (!ObjectUtils.isEmpty(product.getDeadline())) {
+                productFormVo.setDeadline(DateUtils.date2String1(product.getDeadline()));
+            } else {
+                productFormVo.setDeadline("");
+            }
+            model.addAttribute("fele", productFormVo.toMap());
+        }
+
+        model.addAttribute("id", product.getId());
 
         return "/admin/product/update";
     }
@@ -133,36 +152,29 @@ public class AdminProductController extends AbstractController {
     public String postUpdateProduct(
             @PathVariable long id,
             @ModelAttribute("productStatus") Integer status,
-            @Valid ProductFormVo productFormVo,
-            BindingResult bindingResult,
+            @RequestParam String json,
             RedirectAttributes redirectAttributes
     ) throws BusinessException {
-        Product product = productRepository.findOne(id);
-
+        Product product = productService.findOne(id);
         if (ObjectUtils.isEmpty(product)) {
             // TODO 错误提示
             throw new BusinessException("");
         }
 
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("felements", productFormVo);
-            redirectAttributes.addFlashAttribute("errors", FormUtils.toMap(bindingResult));
+        ProductTypeEnum tp = product.getType();
 
-            return MessageFormat.format("redirect:/product/{0}/update", id);
-        }
+        ProductFormVo productFormVo = JSONMapper.fromJson(json, ProductFormVo.class);
 
         BeanMapperUtils.copy(productFormVo, product);
-        //设置时间
-//        try {
-//            product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
-//        } catch (CommonException e) {
-//            redirectAttributes.addFlashAttribute("felements", productFormVo);
-//            Map<String, String> map = new HashMap<>();
-//            map.put("deadline", "时间格式错误");
-//            redirectAttributes.addFlashAttribute("errors", map);
-//        }
 
-        product.setVol(product.getLength().multiply(product.getHeight().multiply(product.getWidth())).divide(new BigDecimal(1000000), 12, ROUND_HALF_DOWN));
+        if (StringUtils.hasText(productFormVo.getDeadline())) {
+            product.setDeadline(DateUtils.stringToDate(productFormVo.getDeadline()));
+        } else {
+            product.setDeadline(null);
+        }
+
+
+        product.setType(tp);
         productRepository.save(product);
 
         redirectAttributes.addFlashAttribute("success", "修改货品成功！");

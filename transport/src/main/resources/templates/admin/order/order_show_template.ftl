@@ -41,10 +41,18 @@
                                         </#if>
                 </td>
                 <td>第三方派送方式</td>
-                <td>
-                    <strong>${ele.express!}（${ele.expressNo!}）</strong>
+                <td class="text-primary">
+                    <strong>${ele.express!} <#if ele.expressNo??>（${ele.expressNo!}）</#if></strong>
                 </td>
             </tr>
+            <#if ele.surcharge gt 0>
+                <tr class="text-primary">
+                    <td>额外费用</td>
+                    <td>${ele.surcharge} USD</td>
+                    <td>额外费用说明</td>
+                    <td colspan="3">${ele.surchargeComment}</td>
+                </tr>
+            </#if>
             <tr>
                 <td>备注</td>
                 <td colspan="5">${ele.comment!}</td>
@@ -64,8 +72,11 @@
             <tr>
                 <td>姓名</td>
                 <td>${ele.orderSnapshotVo.ckf2!}</td>
-                <td colspan="2">
-                    电话：${ele.orderSnapshotVo.ckf4!} Email：${ele.orderSnapshotVo.ckf6!}
+                <td>
+                    电话：${ele.orderSnapshotVo.ckf4!}
+                </td>
+                <td>
+                    Email：${ele.orderSnapshotVo.ckf6!}
                 </td>
                 <td>身份证</td>
                 <td>${ele.orderSnapshotVo.ckf8!}</td>
@@ -139,5 +150,43 @@
             </tbody>
         </table>
 
+    <#if statements?exists && statements?size gt 0 >
+        <table class="table table-bordered" style="margin-top: 25px;">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>费用类型</th>
+                <th>费用说明</th>
+                <th>总额</th>
+                <th>状态</th>
+                <th>创建时间</th>
+                <th>交易时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+                <#list statements as e>
+                <tr>
+                    <td>${e_index + 1}</td>
+                    <td>${e.type.getValue()}</td>
+                    <td>${e.comment!}</td>
+                    <td>${e.total} USD</td>
+                    <td>${e.status.getValue()}</td>
+                    <td>${e.createdAt?string}</td>
+                    <td>
+                        <#if e.payAt??>
+                                        ${e.payAt?string}
+                                    </#if>
+                    </td>
+                    <td>
+                        <#if e.status.ordinal() == 0 && !sShow?exists>
+                            <a href="/user/statements/${e.id}/pay">立即支付</a>
+                        </#if>
+                    </td>
+                </tr>
+                </#list>
+            </tbody>
+        </table>
+    </#if>
     </div>
 </div>

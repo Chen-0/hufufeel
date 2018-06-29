@@ -22,7 +22,7 @@
                         <h3 class="panel-title">${title}</h3>
                     </div>
                     <div class="panel-body">
-                        <@formGroup key="美元汇率" name="u2r"></@formGroup>
+                        <@formGroup label="美元汇率（最多4位小数）" name="u2r"></@formGroup>
                     </div>
 
                     <div class="panel-footer clearfix">

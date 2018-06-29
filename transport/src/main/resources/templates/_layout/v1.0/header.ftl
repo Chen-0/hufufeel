@@ -37,7 +37,7 @@
                     <a class="white-text brand-anchor" href="/login">登录</a>
                 </div>
                 <div style="display: inline-block;margin-left: 2em;">
-                    <a class="white-text brand-anchor" href="javascript:void(0);">注册</a>
+                    <a class="white-text brand-anchor" href="javascript:void(0);" onclick="showCustom()">注册</a>
                 </div>
                 <div style="display: inline-block;margin-left: 2em;">
                     <a class="white-text brand-anchor company_login" href="http://admin.hufufeel.com/">大客户进入通道</a>

@@ -25,6 +25,7 @@
 
     <div class="row">
         <div class="col-xs-12">
+        <#assign sShow=true>
         <#include "*/admin/order/order_show_template.ftl">
         </div>
     </div>
@@ -41,10 +42,28 @@
 
                         <div class="form-group">
                             <div class="col-sm-4">
-                                <label>总费用</label>
+                                <label>订单费用</label>
                             </div>
                             <div class="col-sm-6">
                                 <input name="total" class="form-control" type="text" value="${ss.total}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label>额外费用</label>
+                            </div>
+                            <div class="col-sm-6">
+                                <input name="surcharge" class="form-control" type="text" value="0">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label>额外费用说明</label>
+                            </div>
+                            <div class="col-sm-6">
+                                <input name="surchargeComment" class="form-control" type="text">
                             </div>
                         </div>
 

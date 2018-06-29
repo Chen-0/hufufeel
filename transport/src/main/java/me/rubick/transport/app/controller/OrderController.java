@@ -94,6 +94,11 @@ public class OrderController extends AbstractController {
         OrderLogistics orderLogistics = orderService.findOrNewOrderLogistics(id);
         model.addAttribute("lg", orderLogistics);
         model.addAttribute("ele", order);
+
+        List<Statements> statements = payService.findByUserIdAndTypeIn(
+                order.getId(), Arrays.asList(StatementTypeEnum.ORDER)
+        );
+        model.addAttribute("statements", statements);
         return "/order/show";
     }
 

@@ -56,11 +56,10 @@
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
 
-
                 <li class="dropdown notifications-menu">
                     <#if MSG_COUNT?exists && MSG_COUNT gt 0>
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-bell-o"></i>
+                        消息中心<i class="fa fa-bell-o"></i>
                         <span class="label label-warning">${MSG_COUNT}</span>
                     </a>
                     <ul class="dropdown-menu">

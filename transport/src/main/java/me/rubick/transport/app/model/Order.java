@@ -41,6 +41,8 @@ public class Order implements Serializable {
     private OrderStatusEnum nextStatus = OrderStatusEnum.NULL;
     private String cType;
     private Long documentId;
+    private BigDecimal surcharge = BigDecimal.ZERO;
+    private String surchargeComment = "";
 
     @Transient
     private OrderSnapshotVo orderSnapshotVo;
@@ -341,5 +343,23 @@ public class Order implements Serializable {
 
     public void setDoc(Document doc) {
         this.doc = doc;
+    }
+
+    @Column
+    public BigDecimal getSurcharge() {
+        return surcharge;
+    }
+
+    public void setSurcharge(BigDecimal surcharge) {
+        this.surcharge = surcharge;
+    }
+
+    @Column(name = "surcharge_comment")
+    public String getSurchargeComment() {
+        return surchargeComment;
+    }
+
+    public void setSurchargeComment(String surchargeComment) {
+        this.surchargeComment = surchargeComment;
     }
 }

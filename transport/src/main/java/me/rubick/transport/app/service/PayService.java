@@ -123,6 +123,14 @@ public class PayService {
         return statementsRepository.findByUserId(userId, pageable);
     }
 
+    public Statements saveStatements(Statements statements, BigDecimal total, BigDecimal surcharge) {
+        log.info("系统自动生成 = {}, 提交={}", statements.getTotal(), total);
+        if (!ObjectUtils.isEmpty(total)) {
+            statements.setTotal(total);
+        }
+        statements.setTotal(statements.getTotal().add(surcharge));
+        return statementsRepository.save(statements);
+    }
 
     public Statements saveStatements(Statements statements, BigDecimal total) {
         log.info("系统自动生成 = {}, 提交={}", statements.getTotal(), total);
@@ -225,7 +233,7 @@ public class PayService {
         BigDecimal total = BigDecimal.ZERO;
 
         switch (costSubjectSnapshotVo.getThsjt()) {
-            case "TH_SJ_SL":       //按单收费
+            case "TH_SJ_SL":       //按件收费
                 total = total.add(costSubjectSnapshotVo.getThsjv().multiply(new BigDecimal(p.getQuantity())));
                 break;
         }
@@ -379,6 +387,18 @@ public class PayService {
         return statementsRepository.findByTargetAndTypeIn(String.valueOf(target), statementTypeEnum);
     }
 
+    public Statements createORDER_S(Order order, BigDecimal surcharge, String surchargeComment) {
+        Statements statements = new Statements();
+        statements.setUserId(order.getUserId());
+        statements.setStatus(StatementStatusEnum.UNPAY);
+        statements.setType(StatementTypeEnum.ORDER);
+        statements.setTarget(String.valueOf(order.getId()));
+        statements.setPayAt(null);
+        statements.setComment("运单额外收费原因：" + surchargeComment);
+        statements.setTotal(surcharge);
+        return statements;
+    }
+
     public Statements createORDER(Order order) {
         CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(order.getUserId());
 
@@ -404,24 +424,23 @@ public class PayService {
         }
 
         log.info("orderId={}, count={}, total weight={}", order.getId(), count, tWeight);
-        String comment = MessageFormat.format("出库单：{0}，一共 {1} 件货品，总重量 {2}", order.getSn(), count, tWeight);
+        String comment = MessageFormat.format("出库单：{0}，一共 {1} 件货品，总重量 {2} KG", order.getSn(), count, tWeight);
         log.info(comment);
         switch (costSubjectSnapshotVo.getDdt()) {
-            case "DD-AZ":       //按体积
+            case "DD-AZ":       //按重
                 count = count >= 10 ? 10 : count;
+                count -= 1;
 
                 if (tWeight.compareTo(new BigDecimal("1")) <= 0) {
                     //1kg 内含 1kg
-                    total = total.add(tWeight.multiply(costSubjectSnapshotVo.getDdv().get(0)));
+                    total = total.add(costSubjectSnapshotVo.getDdv().get(0));
                     total = total.add(costSubjectSnapshotVo.getDdv().get(1).multiply(new BigDecimal(count)));
-                    log.info("----- 1kg 内含 1kg");
+                    log.info("----- 1kg 内含 --- order id={} weight={}, total={}", order.getId(), tWeight, total);
                 } else {
                     //超过1kg
-                    tWeight = tWeight.subtract(new BigDecimal("1"));
-                    total = new BigDecimal("0.3");
                     total = total.add(costSubjectSnapshotVo.getDdv().get(2).multiply(tWeight));
                     total = total.add(costSubjectSnapshotVo.getDdv().get(3).multiply(new BigDecimal(count)));
-                    log.info("----- 超过1kg");
+                    log.info("----- 超过1kg --- order id={} weight={}, total={}", order.getId(), tWeight, total);
                 }
 
                 break;

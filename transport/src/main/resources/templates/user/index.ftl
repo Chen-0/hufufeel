@@ -133,7 +133,7 @@
                                 </tr>
 
                                 <tr>
-                                    <td>入库费用</td>
+                                    <td>上架费用</td>
                                     <td>
                                     <#switch cc.sjt>
                                         <#case "SJ-AS">
@@ -177,8 +177,8 @@
                                     <td>
                                     <#switch cc.ddt>
                                         <#case "DD-AZ">
-                                            <p>出库总重在1公斤内：总重 * ${cc.ddv[0]} + 每件 * ${cc.ddv[1]} （10件封顶）</p>
-                                            <p>出库总重超过1公斤：0.3USD + ${cc.ddv[2]} + 每件 * ${cc.ddv[3]} （10件封顶）</p>
+                                            <p>出库总重在1公斤内：${cc.ddv[0]}USD + 每件 * ${cc.ddv[1]} USD（第1件不计算，10件封顶）</p>
+                                            <p>出库总重超过1公斤：总重（公斤） * ${cc.ddv[2]} USD + 每件 * ${cc.ddv[3]} USD （第1件不计算，10件封顶）</p>
                                             <#break>
                                         <#case "DD-AJ">
                                             每件 ${cc.ddv[0]} USD
@@ -192,14 +192,14 @@
                                     <td>
                                     <#switch cc.thrkt>
                                         <#case "TH_RK_AD">
-                                            按单收费
+                                            按箱收费
                                             <#break>
                                     </#switch>
                                     </td>
                                     <td>
                                     <#switch cc.thrkt>
                                         <#case "TH_RK_AD">
-                                            每单 ${cc.thrkv?string} USD
+                                            每箱 ${cc.thrkv} USD
                                             <#break>
                                     </#switch>
                                     </td>
@@ -217,7 +217,7 @@
                                     <td>
                                     <#switch cc.thsjt>
                                         <#case "TH_SJ_SL">
-                                            每单的总件数 * ${cc.thsjv?string} USD （件数无封顶）
+                                            每单的总件数 * ${cc.thsjv} USD （件数无封顶）
                                             <#break>
                                     </#switch>
                                     </td>

@@ -23,8 +23,10 @@
     </div>
 </#if>
 
+
     <div class="row">
         <div class="col-xs-12">
+        <#assign sShow=true>
             <#include "*/admin/order/order_show_template.ftl">
         </div>
     </div>

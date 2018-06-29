@@ -65,6 +65,8 @@
                         <li><a href="/admin/user/index">查看所有</a></li>
                     </ul>
                 </li>
+
+                <li><a href="/admin/setting">系统设置</a></li>
             </ul>
 
             <form action="/logout" method="post" id="logoutForm">

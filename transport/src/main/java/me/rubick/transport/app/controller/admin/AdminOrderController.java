@@ -2,6 +2,7 @@ package me.rubick.transport.app.controller.admin;
 
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.transport.app.constants.OrderStatusEnum;
+import me.rubick.transport.app.constants.StatementTypeEnum;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.OrderRepository;
@@ -21,6 +22,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
@@ -69,6 +72,10 @@ public class AdminOrderController extends AbstractController {
         OrderLogistics orderLogistics = orderService.findOrNewOrderLogistics(id);
         model.addAttribute("lg", orderLogistics);
         model.addAttribute("ele", order);
+        List<Statements> statements = payService.findByUserIdAndTypeIn(
+                order.getId(), Arrays.asList(StatementTypeEnum.ORDER)
+        );
+        model.addAttribute("statements", statements);
         return "/admin/order/show";
     }
 
@@ -142,6 +149,8 @@ public class AdminOrderController extends AbstractController {
             @RequestParam(required = false) BigDecimal total,
             @RequestParam(required = false, defaultValue = "") String express,
             @RequestParam(required = false, defaultValue = "", name = "express_no") String expressNo,
+            @RequestParam(required = false, defaultValue = "0") BigDecimal surcharge,
+            @RequestParam(required = false, defaultValue = "") String surchargeComment,
             RedirectAttributes redirectAttributes,
             @ModelAttribute("orderStatus") Integer status
     ) {
@@ -155,11 +164,19 @@ public class AdminOrderController extends AbstractController {
         Statements statements = payService.createORDER(order);
         statements = payService.saveStatements(statements, total);
 
-        order = orderService.outbound(order, statements.getTotal(), express, expressNo);
 
-        boolean flag = payService.payStatements(statements.getId());
+        boolean flag2 = true;
+        if (surcharge.compareTo(BigDecimal.ZERO) > 0) {
+            Statements statements2 = payService.createORDER_S(order, surcharge, surchargeComment);
+            statements2 = payService.saveStatements(statements2, surcharge);
+            flag2 = payService.payStatements(statements2.getId());
+        }
 
-        if (flag) {
+        order = orderService.outbound(order, statements.getTotal(), express, expressNo, surcharge, surchargeComment);
+
+        boolean flag1 = payService.payStatements(statements.getId());
+
+        if (flag1 && flag2) {
             messageService.send(
                     order.getUserId(),
                     MessageFormat.format("/order/{0}/show", order.getId()),

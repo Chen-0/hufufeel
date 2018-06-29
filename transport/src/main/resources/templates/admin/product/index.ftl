@@ -42,6 +42,7 @@
                     <tr>
                         <th>#</th>
                         <th>所属用户</th>
+                        <th>类型</th>
                         <th>货品名称</th>
                         <th>货品SKU</th>
                         <th>电池类型</th>
@@ -68,6 +69,7 @@
                     <tr>
                         <td>${o.id}</td>
                         <td>${o.user.name} NO.${o.user.hwcSn}</td>
+                        <td>${o.type.value}</td>
                         <td>${o.productName}</td>
                         <td>${o.productSku}</td>
                         <td>${o.isBattery?string("是", "否")}</td>

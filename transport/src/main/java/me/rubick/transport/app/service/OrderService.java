@@ -352,12 +352,14 @@ public class OrderService {
         }
     }
 
-    public Order outbound(Order order, BigDecimal total, String express, String expressNo) {
+    public Order outbound(Order order, BigDecimal total, String express, String expressNo, BigDecimal surcharge, String surchargeComment) {
         order.setStatus(OrderStatusEnum.SEND);
-        order.setTotal(total);
+        order.setTotal(total.add(surcharge));
         order.setExpress(express);
         order.setExpressNo(expressNo);
         order.setOutTime(new Date());
+        order.setSurcharge(surcharge);
+        order.setSurchargeComment(surchargeComment);
         return orderRepository.save(order);
     }
 
