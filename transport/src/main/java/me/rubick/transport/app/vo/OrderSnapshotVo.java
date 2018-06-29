@@ -25,4 +25,5 @@ public class OrderSnapshotVo implements Serializable {
     private String ckf9 = "";
     private String ckf10 = "";
     private String ckf11 = "";
+    private String ckf12 = "";
 }

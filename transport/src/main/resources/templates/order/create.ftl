@@ -244,7 +244,6 @@
                                                 <#else>
                                                     <option value="${c}">${c}</option>
                                                 </#if>
-
                                             </#list>
                                             </select>
                                         </div>
@@ -663,6 +662,11 @@
                 }
             });
         }
+
+        $('#CKF-1').change(function () {
+            alert(111);
+            console.log($(this).val());
+        });
     });
 </script>
 </body>

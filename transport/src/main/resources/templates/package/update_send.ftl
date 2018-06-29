@@ -544,6 +544,7 @@
                 data.ckf9 = getValue('#CKF-9');
                 data.ckf10 = getValue('#CKF-10');
                 data.ckf11 = getValue('#CKF-11');
+                data.ckf12 = getValue('#CKF-12');
             }
 
 
@@ -643,7 +644,30 @@
                     console.log(resp);
                 }
             });
-        } // functi
+        }
+
+        $('#CKF-1').change(function () {
+            setCon(ele);
+        });
+
+        setCon($('#CKF-1'));
+
+        function setCon(ele) {
+            var v = $(ele).val();
+            console.log(v);
+
+            if(v === '其它') {
+
+                $(ele).parent().attr("class", "col-xs-2");
+
+                var box = '<div class="col-xs-3"><input class="form-control" id="CKF-12" name="CKF-12" value="${sp.ckf12!}"></div>';
+
+                $(ele).parent().after(box);
+            } else {
+                $('#CKF-12').parent().remove();
+                $(ele).parent().attr("class", "col-xs-5");
+            }
+        }
     });
 </script>
 </body>

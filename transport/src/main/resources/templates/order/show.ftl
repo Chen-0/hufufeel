@@ -95,7 +95,7 @@
                                 </tr>
                                 <tr>
                                     <td>国家</td>
-                                    <td>${ele.orderSnapshotVo.ckf1!}</td>
+                                    <td>${ele.orderSnapshotVo.ckf1!} <#if ele.orderSnapshotVo.ckf12?exists && ele.orderSnapshotVo.ckf12?length gt 0> - <strong class="text-danger">${ele.orderSnapshotVo.ckf12}</strong></#if></td>
                                     <td>州/省</td>
                                     <td>
                                     ${ele.orderSnapshotVo.ckf3!}
