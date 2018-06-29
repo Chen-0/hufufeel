@@ -75,7 +75,7 @@ public class PayController extends AbstractController {
                 Payment payment = payService.successForPayment(params.get("out_trade_no"));
                 messageService.send(
                         payment.getUserId(),
-                        "/user/center",
+                        "/user/index",
                         MessageFormat.format("{0}元充值成功！", payment.getTotalFee()));
             } catch (Exception e) {
                 log.info("", e);
@@ -93,8 +93,7 @@ public class PayController extends AbstractController {
     }
 
     @RequestMapping("/pay/success")
-    @ResponseBody
     public String paySuccess() {
-        return "SUCCESS - FOR PAY";
+        return "redirect:/user/index";
     }
 }
