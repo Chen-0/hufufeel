@@ -309,7 +309,7 @@
                     </div>
                     <div class="panel-body">
                     <@formGroup label="客服电话" name="csPhone"></@formGroup>
-                        <@formGroup label="客服QQ" name="csQQ"></@formGroup>
+                        <@formGroup label="客服邮箱" name="csQQ"></@formGroup>
                     </div>
                     <div class="panel-footer">
                         <button id="submit" class="btn btn-primary" type="button">提交</button>

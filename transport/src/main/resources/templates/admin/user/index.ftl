@@ -22,12 +22,12 @@
     </div>
 </#if>
 
-    <div class="row">
+    <div class="row" style="padding-bottom: 50px;">
         <div class="col-xs-12">
 
 
             <div class="table-responsive">
-                <form method="get" action="/admin/user/store_cost">
+                <form method="get" action="/admin/user/store_cost" id="main">
                     <table class="bordered">
                         <thead>
                         <tr>
@@ -67,33 +67,6 @@
                         <a class="btn btn-primary margin" href="/admin/user/create">新建用户</a>
                     </div>
                 </form>
-
-            <#--<nav aria-label="Page navigation" style="text-align: center;">-->
-            <#--<ul class="pagination">-->
-            <#--<#if elements.isFirst() != true >-->
-            <#--<li>-->
-            <#--<a href="/admin/product/index?page=${elements.previousPageable().pageNumber}&status=${status!}"-->
-            <#--aria-label="Previous">-->
-            <#--<span aria-hidden="true">&laquo;</span>-->
-            <#--</a>-->
-            <#--</li>-->
-            <#--</#if>-->
-
-
-            <#--<#if elements.isLast() != true>-->
-            <#--<li>-->
-            <#--<a href="/admin/product/index?page=${elements.nextPageable().pageNumber}&status=${status!}"-->
-            <#--aria-label="Previous">-->
-            <#--<span aria-hidden="true">&raquo;</span>-->
-            <#--</a>-->
-            <#--</li>-->
-            <#--</#if>-->
-            <#--</ul>-->
-
-            <#--<p>-->
-            <#--当前第${elements.getNumber() + 1}页，一共${elements.getTotalPages()}页，一共${elements.getTotalElements()}条数据</p>-->
-            <#--</nav>-->
-
             </div>
         </div>
     </div>
@@ -114,7 +87,7 @@
             $('.x-checkbox').prop("checked", value);
         }
 
-        $("#submit").submit(function () {
+        $("#main").submit(function () {
 
             if($(".x-checkbox:checked").length === 0) {
                 alert("请选择一件或多件货品");

@@ -26,7 +26,7 @@
                         <@formGroup label="登陆密码" name="password"></@formGroup>
                         <@formGroup label="客户昵称" name="name"></@formGroup>
                         <@formGroup label="客服电话" name="csPhone"></@formGroup>
-                        <@formGroup label="客服QQ" name="csQQ"></@formGroup>
+                        <@formGroup label="客服邮箱" name="csQQ"></@formGroup>
                         <@formGroup label="客户编号" name="hwcSn"></@formGroup>
                     </div>
 
