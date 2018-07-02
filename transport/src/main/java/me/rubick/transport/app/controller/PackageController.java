@@ -70,11 +70,10 @@ public class PackageController extends AbstractController {
         model.addAttribute("TYPE", type);
 
 
-        if (status != null && status == PackageStatusEnum.FREEZE.ordinal()) {
-            Map<String, Statements> map = payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK));
-            log.info("{}", JSONMapper.toJSON(map));
-            model.addAttribute("smap", map);
-        }
+//        if (status != null && status == PackageStatusEnum.FREEZE.ordinal()) {
+        Map<String, Statements> map = payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK));
+        model.addAttribute("smap", map);
+//        }
         return "/package/index";
     }
 

@@ -90,7 +90,7 @@
         $("#main").submit(function () {
 
             if($(".x-checkbox:checked").length === 0) {
-                alert("请选择一件或多件货品");
+                alert("请选择用户");
                 return false;
             }
 
