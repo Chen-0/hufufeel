@@ -64,7 +64,7 @@
                                             <td>重量（KG）</td>
                                             <td>${ele.weight}</td>
                                             <td>体积（立方米）</td>
-                                            <td>${ele.vol}</td>
+                                            <td>${ele.vol?string("0.########")}</td>
                                             <td colspan="2"></td>
                                         </tr>
 

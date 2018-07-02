@@ -64,9 +64,31 @@ public class PayService {
         payment.setOutTradeNo(generateOutTradeNo());
         payment.setStatus(PaymentStatusEnum.FALSE);
         payment.setTotalFee(totalFee);
-        payment.setType(PaymentTypeEnum.ACCOUNT);
+        payment.setType(PaymentTypeEnum.ALIPAY);
 
         return paymentRepository.save(payment);
+    }
+
+    public Payment createPaymentForSystem(User user, BigDecimal totalFee) throws BusinessException {
+        totalFee = totalFee.setScale(2, RoundingMode.FLOOR);
+        if (totalFee.compareTo(new BigDecimal("0.01")) < 0) {
+            throw new BusinessException("支付金额必须大于0.01元");
+        }
+
+        if (ObjectUtils.isEmpty(user)) {
+            throw new BusinessException("[A001] 禁止访问！");
+        }
+
+        Payment payment = new Payment();
+        payment.setUserId(user.getId());
+        payment.setExtendsInfo("");
+        payment.setOutTradeNo(generateOutTradeNo());
+        payment.setStatus(PaymentStatusEnum.TRUE);
+        payment.setSuccessAt(new Date());
+        payment.setTotalFee(totalFee);
+        payment.setType(PaymentTypeEnum.SYSTEM);
+        return paymentRepository.save(payment);
+
     }
 
     private String generateOutTradeNo() {
@@ -91,10 +113,8 @@ public class PayService {
         paymentRepository.save(payment);
 
         switch (payment.getType()) {
-            case ACCOUNT:
+            case ALIPAY:
                 successForAccount(payment);
-                break;
-            case ORDER:
                 break;
             default:
                 ;

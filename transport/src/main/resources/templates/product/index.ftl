@@ -60,7 +60,7 @@
                                 <th>电池类型</th>
                                 <th>原产地</th>
                                 <th>重量</th>
-                                <th>体积</th>
+                                <th>体积（立方米）</th>
                                 <th>有效期</th>
                                 <th>危险品</th>
                                 <th>申报价值</th>
@@ -87,8 +87,8 @@
                                 <td>${e.productSku}</td>
                                 <td>${e.isBattery?string("是", "否")}</td>
                                 <td>${e.origin}</td>
-                                <td>${e.weight}kg</td>
-                                <td>${e.vol} 立方米</td>
+                                <td>${e.weight} KG</td>
+                                <td>${e.vol?string("0.########")} </td>
                                 <td>
                                     <#if e.deadline??>
                                 ${e.deadline?date}

@@ -97,15 +97,14 @@ public class OrderService {
             totalQty += item.getQuantity();
         }
 
-        String timestamp = DateUtils.getTimestamp0();
         OrderSnapshotVo orderSnapshotVo = getOrderSnapshotVo(params);
 
         if (! StringUtils.hasText(orderSnapshotVo.getCkt4())) {
-            orderSnapshotVo.setCkt4(timestamp);
+            orderSnapshotVo.setCkt4("");
         }
 
         if (! StringUtils.hasText(orderSnapshotVo.getCkt5())) {
-            orderSnapshotVo.setCkt5(timestamp);
+            orderSnapshotVo.setCkt5("");
         }
 
         Order order = new Order();

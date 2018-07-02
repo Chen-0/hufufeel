@@ -292,13 +292,59 @@ public class AdminUserController extends AbstractController {
             formHelper.hasError();
         } catch (FormException e) {
             throwForm(redirectAttributes, e.getErrorField(), e.getForm());
-            return "redirect:/admin/user" + user.getId() + "/password";
+            return "redirect:/admin/user/" + user.getId() + "/password";
         }
 
         model.addAttribute("user", user);
 
         userService.resetPassword(user, password);
         redirectAttributes.addFlashAttribute("success", "重置密码成功！");
+        return "redirect:/admin/user/index";
+    }
+
+    @RequestMapping(value = "/{id}/charge", method = RequestMethod.GET)
+    public String getCharge(
+            @PathVariable long id,
+            Model model
+    ) {
+        User user = userService.findOne(id);
+
+        model.addAttribute("user", user);
+
+        if (ObjectUtils.isEmpty(model.asMap().get("fele"))) {
+            model.addAttribute("fele", new HashMap<String, String>());
+        }
+
+        return "/admin/user/charge";
+    }
+
+    @RequestMapping(value = "/{id}/charge", method = RequestMethod.POST)
+    public String postCharge(
+            @PathVariable long id,
+            @RequestParam String delta,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) throws HttpNoFoundException {
+        User user = userService.findOne(id);
+
+        if (ObjectUtils.isEmpty(user)) {
+            throw new HttpNoFoundException();
+        }
+
+        try {
+            FormHelper formHelper = FormHelper.getInstance();
+            formHelper.validateDefault0("delta", delta);
+            formHelper.mustDecimal(delta, "delta");
+            formHelper.hasError();
+        } catch (FormException e) {
+            throwForm(redirectAttributes, e.getErrorField(), e.getForm());
+            return "redirect:/admin/user/" + user.getId() + "/charge";
+        }
+
+        model.addAttribute("user", user);
+
+        userService.chargeUser(user, new BigDecimal(delta));
+        redirectAttributes.addFlashAttribute("success", "修改余额成功！");
         return "redirect:/admin/user/index";
     }
 }

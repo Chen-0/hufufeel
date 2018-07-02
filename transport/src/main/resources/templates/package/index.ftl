@@ -14,7 +14,7 @@
     <div class="content-wrapper">
         <section class="content-header">
             <h1>
-               ${TITLE}
+            ${TITLE}
             </h1>
             <ol class="breadcrumb">
                 <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -50,10 +50,10 @@
                             <th>总重量</th>
                             <th>状态</th>
 
-                            <#if _STATUS?exists && _STATUS == 5>
+                        <#if _STATUS?exists && _STATUS == 5>
                             <th>费用类型</th>
                             <th>费用</th>
-                            </#if>
+                        </#if>
 
                             <th>创建时间</th>
                             <th>备注</th>
@@ -62,12 +62,16 @@
                         </thead>
                         <tbody>
                         <#list elements.getContent() as e>
-                        <#assign tw = 0>
-                        <#list e.packageProducts as pp>
-                            <#assign tw = tw + pp.quantity * pp.product.weight>
-                        </#list>
+                            <#assign tw = 0>
+                            <#assign qty = e.quantity>
+                            <#if e.status.ordinal() == 0 || e.status.ordinal() == 3 || e.status.ordinal() == 5>
+                                <#assign qty = e.expectQuantity>
+                            </#if>
+                            <#list e.packageProducts as pp>
+                                <#assign tw = tw + qty * pp.product.weight>
+                            </#list>
                         <tr>
-                            <td>${e.sn}</td>
+                            <td>${e.cn}</td>
                             <td>${e.referenceNumber}</td>
                             <td>${e.warehouseName}</td>
                             <td>${e.packageProducts?size}</td>

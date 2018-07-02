@@ -46,7 +46,7 @@ public class PayController extends AbstractController {
 
         Map<String, String> params = new HashMap<>();
 
-        if (payment.getType().equals(PaymentTypeEnum.ACCOUNT)) {
+        if (payment.getType().equals(PaymentTypeEnum.ALIPAY)) {
             params = alipayService.pay(
                     payment.getOutTradeNo(),
                     payment.getUserId(),

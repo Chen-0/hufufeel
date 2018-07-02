@@ -195,7 +195,7 @@
                         </div>
 
                         <div class="form-group">
-                            <div class="col-sm-2 col-sm-offset-4">超1公斤=0.3USD+</div>
+                            <div class="col-sm-2 col-sm-offset-4">超1公斤=重量 * </div>
                             <div class="col-sm-2">
                                 <select class="form-control" id="INP_DD_AZ_3">
                                 <#list INP_DD_AZ_3 as v>
@@ -308,7 +308,7 @@
                         客服设置
                     </div>
                     <div class="panel-body">
-                        <@formGroup label="客服电话" name="csPhone"></@formGroup>
+                    <@formGroup label="客服电话" name="csPhone"></@formGroup>
                         <@formGroup label="客服QQ" name="csQQ"></@formGroup>
                     </div>
                     <div class="panel-footer">

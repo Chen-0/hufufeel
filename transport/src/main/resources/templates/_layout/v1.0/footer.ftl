@@ -132,9 +132,8 @@
         </div>
     </div>
     <div class="container" style="padding: 20px 0; position: relative;">
-        <img class="qrcode" src="/static/assets/images/qrcode.png">
-        <p>友情链接：亚马逊</p>
-        <p>联系方式：电话：9513148768；客户邮箱：849030578@qq.com；微信公众号：虎芙FEEL货运管家</p>
+        <p>友情链接：<a href="http://www.amazon.com">Amazon</a></p>
+        <p>联系方式：电话：9513148768；客服邮箱：hufuinc@hufufeel.com</p>
         <p>关于我们：虎芙Feel货运管家</p>
     </div>
 </footer>

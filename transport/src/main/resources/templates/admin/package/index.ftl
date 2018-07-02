@@ -57,7 +57,7 @@
                     <tbody>
                     <#list elements.getContent() as o>
                     <tr>
-                        <td><a href="/admin/package/${o.id}/show">${o.sn}</a></td>
+                        <td><a href="/admin/package/${o.id}/show">${o.cn}</a></td>
                         <td>${o.referenceNumber}</td>
                         <td>${o.nickname} NO.${o.user.hwcSn}</td>
                         <td>${o.warehouseName}</td>

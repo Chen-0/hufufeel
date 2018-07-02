@@ -23,7 +23,7 @@
             <div class="box">
                 <div class="box-body charge-padding">
 
-                    <form class="form-horizontal" role="form" method="post" action="/user/charge_account">
+                    <form id="main" class="form-horizontal" role="form" method="post" action="/user/charge_account">
                         <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
 
                         <div class="form-group">
@@ -106,7 +106,7 @@
 
         });
 
-        $('form').submit(function () {
+        $('#main').submit(function () {
             var v = $('#tt').val();
             if (isEmpty(v)) {
                 alert("请输入充值金额！");

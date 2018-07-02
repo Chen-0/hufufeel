@@ -45,11 +45,17 @@
                             </thead>
                             <tbody>
                             <#assign tw = 0>
+
+                            <#assign qty = ele.quantity>
+                            <#if ele.status.ordinal() == 0 || ele.status.ordinal() == 3 || ele.status.ordinal() == 5>
+                                <#assign qty = ele.expectQuantity>
+                            </#if>
+
                             <#list ele.packageProducts as pp>
-                                <#assign tw = tw + pp.quantity * pp.product.weight>
+                                <#assign tw = tw + qty * pp.product.weight>
                             </#list>
                             <tr>
-                                <td>${ele.sn}</td>
+                                <td>${ele.cn}</td>
                                 <td>${ele.referenceNumber}</td>
                                 <td>${ele.warehouseName}</td>
                                 <td>${ele.packageProducts?size}</td>

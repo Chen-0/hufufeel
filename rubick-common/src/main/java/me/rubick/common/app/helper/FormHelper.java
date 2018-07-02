@@ -102,7 +102,7 @@ public class FormHelper implements Serializable {
     }
 
     //小数或数字的表达式
-    private final static String DECIMAL_PATTERN = "^[0-9]{1,9}([.]{1}[0-9]{1,4}){0,1}$";
+    private final static String DECIMAL_PATTERN = "^\\-?[0-9]{1,9}([.]{1}[0-9]{1,4}){0,1}$";
 
     private FormHelper() {
     }

@@ -60,30 +60,32 @@
 <div class="container-fluid light-grey" style="padding: 15px 0;">
     <div class="container">
         <div class="row" style="text-align: center;">
-            <div style="display: inline-block; margin-right: 15px;vertical-align:middle;">服务时间：中国时间上午9:00-下午3:00</div>
-            <div style="display: inline-block; margin-right: 15px;vertical-align:center;">
-                <img src="/static/assets/images/qq_icon.png">
-                <a class="black-text" style="display: inline-block;vertical-align: middle;"
-                   href="http://wpa.qq.com/msgrd?v=3&amp;uin=3398425679&amp;site=qq&amp;menu=yes"
-                   target="_blank">中国客服</a>
-            </div>
-            <div style="display: inline-block; margin-right: 15px;vertical-align:middle;">
-                <img src="/static/assets/images/qq_icon.png">
-                <a class="black-text" style="display: inline-block;vertical-align: middle;"
-                   href="http://wpa.qq.com/msgrd?v=3&amp;uin=3398425679&amp;site=qq&amp;menu=yes"
-                   target="_blank">美国客服</a>
-            </div>
-            <div style="display: inline-block; vertical-align:middle;">虎芙QQ群号：595439326</div>
+            <#--<div style="display: inline-block; margin-right: 15px;vertical-align:middle;">服务时间：中国时间上午9:00-下午3:00</div>-->
+            <#--<div style="display: inline-block; margin-right: 15px;vertical-align:center;">-->
+                <#--<img src="/static/assets/images/qq_icon.png">-->
+                <#--<a class="black-text" style="display: inline-block;vertical-align: middle;"-->
+                   <#--href="http://wpa.qq.com/msgrd?v=3&amp;uin=3398425679&amp;site=qq&amp;menu=yes"-->
+                   <#--target="_blank">中国客服</a>-->
+            <#--</div>-->
+            <#--<div style="display: inline-block; margin-right: 15px;vertical-align:middle;">-->
+                <#--<img src="/static/assets/images/qq_icon.png">-->
+                <#--<a class="black-text" style="display: inline-block;vertical-align: middle;"-->
+                   <#--href="http://wpa.qq.com/msgrd?v=3&amp;uin=3398425679&amp;site=qq&amp;menu=yes"-->
+                   <#--target="_blank">美国客服</a>-->
+            <#--</div>-->
+            <#--<div style="display: inline-block; vertical-align:middle;">虎芙QQ群号：595439326</div>-->
+
+            <p style="font-size: 18px; font-weight: bold;">客服邮箱：hufuinc@hufufeel.com</p>
         </div>
         <div class="row">
             <div style="margin: 15px auto; width: 960px">
                 <div class="notice-bar">
                     <h3>公告栏</h3>
                     <ul>
-                        <volist name="news_list" id="vo">
-                            <li><a class="white-text" href="javascript:void(0);" data-id="{$vo['id']}"
-                                   data-type="affiche">【公告】&nbsp; {$vo['subject']}</a></li>
-                        </volist>
+                        <#--<volist name="news_list" id="vo">-->
+                            <#--<li><a class="white-text" href="javascript:void(0);" data-id="{$vo['id']}"-->
+                                   <#--data-type="affiche">【公告】&nbsp; {$vo['subject']}</a></li>-->
+                        <#--</volist>-->
                     </ul>
                 </div>
 

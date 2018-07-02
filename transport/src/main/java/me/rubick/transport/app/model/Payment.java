@@ -64,8 +64,7 @@ public class Payment {
     }
 
     @Basic
-    @Column(name = "type", nullable = false, length = 255)
-    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
     public PaymentTypeEnum getType() {
         return type;
     }

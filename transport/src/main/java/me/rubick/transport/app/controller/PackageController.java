@@ -2,9 +2,8 @@ package me.rubick.transport.app.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.excel.ExcelConverter;
-import me.rubick.common.app.exception.BusinessException;
-import me.rubick.common.app.exception.CommonException;
-import me.rubick.common.app.exception.HttpNoFoundException;
+import me.rubick.common.app.exception.*;
+import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.response.RestResponse;
 import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.ExcelHepler;
@@ -15,10 +14,12 @@ import me.rubick.transport.app.constants.StatementTypeEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.PackageRepository;
+import me.rubick.transport.app.repository.SwitchSkuRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.*;
 import me.rubick.transport.app.vo.PackageExcelVo;
 import me.rubick.transport.app.vo.ProductWarehouseVo;
+import me.rubick.transport.app.vo.SwitchSkuFormVo;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -342,6 +343,63 @@ public class PackageController extends AbstractController {
         model.addAttribute("ele", p);
 
         return "/package/print_package";
+    }
+
+    @RequestMapping(value = "/stock/switch_sku", method = RequestMethod.GET)
+    public String switchSku(Model model) {
+
+        if (ObjectUtils.isEmpty(model.asMap().get("fele"))) {
+            model.addAttribute("fele", new SwitchSkuFormVo());
+        }
+
+        return "/stock/switch_sku";
+    }
+
+    @Resource
+    private SwitchSkuRepository switchSkuRepository;
+
+
+    @RequestMapping(value = "/stock/switch_sku", method = RequestMethod.POST)
+    public String postSwitchSku(
+            @RequestParam String json,
+            RedirectAttributes redirectAttributes
+    ) {
+        SwitchSkuFormVo formVo = JSONMapper.fromJson(json, SwitchSkuFormVo.class);
+        User user = userService.getByLogin();
+
+        try {
+            FormHelper formHelper = FormHelper.getInstance();
+            formHelper.validateDefault0("sku", formVo.getSku());
+
+            try {
+                formVo.setUploadfileName(documentService.findOne(formVo.getUploadfileId()).getOriginalFilename());
+            } catch (NotFoundException e) {
+                formHelper.addError("uploadfile", "请上传货品图片");
+            }
+
+            formHelper.hasError();
+        } catch (FormException e) {
+            throwForm(redirectAttributes, e.getErrorField(), formVo);
+            return "redirect:/stock/switch_sku";
+        }
+
+        SwitchSku switchSku = BeanMapperUtils.map(formVo, SwitchSku.class);
+        switchSku.setDocId(formVo.getUploadfileId());
+        switchSku.setUserId(user.getId());
+        switchSkuRepository.save(switchSku);
+
+        redirectAttributes.addFlashAttribute("SUCCESS", "提交换标信息成功！");
+        return "redirect:/switch_sku/index";
+    }
+
+    @RequestMapping(value = "/switch_sku/index", method = RequestMethod.GET)
+    public String indexSwitchSku(Model model) {
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        List<SwitchSku> switchSkus = switchSkuRepository.findAll(sort);
+
+        model.addAttribute("elements", switchSkus);
+
+        return "/stock/switch_sku_index";
     }
 }
 

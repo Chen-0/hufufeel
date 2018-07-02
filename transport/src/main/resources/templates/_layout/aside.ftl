@@ -23,7 +23,15 @@
                     <li><a href="/package/index">入库单管理</a></li>
                 </ul>
             </li>
-            <li><a href="/stock/index">库存管理</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">库存管理<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/stock/index">库存管理</a></li>
+                    <li><a href="/switch_sku/index">换标记录 & 提交</a></li>
+                </ul>
+            </li>
+
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                    aria-expanded="false">发货单管理<span class="caret"></span></a>

@@ -1,6 +1,7 @@
 package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.FormException;
 import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.utils.HashUtils;
@@ -101,6 +102,20 @@ public class UserService {
     public void resetPassword(User user, String password) {
         user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
+    }
+
+    @Resource
+    private PayService payService;
+
+    public void chargeUser(User user, BigDecimal b) {
+        user.setUsd(user.getUsd().add(b));
+        userRepository.save(user);
+
+        try {
+            payService.createPaymentForSystem(user, b);
+        } catch (BusinessException e) {
+            log.error("", e);
+        }
     }
 
     public String generateSn() {

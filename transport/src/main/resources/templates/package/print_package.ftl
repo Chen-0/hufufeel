@@ -22,8 +22,8 @@
             <TD width="50%">运单时间：${ele.createdAt?string}</TD>
         </TR>
         <TR>
-            <TD width="50%">入库单号：${ele.sn}</TD>
-            <TD width="50%">客户编号：${ele.user.name}(NO.${ele.user.hwcSn})</TD>
+            <TD width="50%">入库单号：${ele.cn}</TD>
+            <TD width="50%">客户 ：${ele.user.name}(NO.${ele.user.hwcSn})</TD>
         </TR>
         <TR>
             <TD>参考号：${ele.referenceNumber!}</TD>
@@ -86,7 +86,7 @@
         LODOP.PRINT_INIT("虎芙货运管家 - 打印入库清单");
 
         LODOP.ADD_PRINT_HTM(30, "5%", "90%", 109, document.getElementById("tt").innerHTML);
-        LODOP.ADD_PRINT_BARCODE(80, "%10", 270, 60, "128A", "${ele.sn}");
+        LODOP.ADD_PRINT_BARCODE(80, "%10", 270, 60, "128A", "${ele.cn}");
         LODOP.ADD_PRINT_HTM(160, "5%", "90%", 109, document.getElementById("div1").innerHTML);
 
         var strStyle = "<style> table,td,th {border-width: 1px;border-style: solid;border-collapse: collapse}</style>";

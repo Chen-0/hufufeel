@@ -62,7 +62,7 @@ public class PackageService {
                 if (StringUtils.hasText(keyword)) {
                     String _keyword = getKeyword(keyword);
                     predicates.add(criteriaBuilder.or(
-                            criteriaBuilder.like(root.get("referenceNumber"), _keyword)
+                            criteriaBuilder.like(root.get("cn"), _keyword)
                     ));
                 }
 
@@ -148,9 +148,6 @@ public class PackageService {
         p.setUserId(user.getId());
         p.setWarehouseId(warehouse.getId());
         p.setStatus(PackageStatusEnum.READY);
-        if (!StringUtils.hasText(referenceNumber)) {
-            referenceNumber = HashUtils.generateString();
-        }
         p.setReferenceNumber(referenceNumber);
         p.setWarehouseName(warehouse.getName());
         p.setNickname(user.getName());

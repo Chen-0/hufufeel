@@ -42,7 +42,7 @@
 
 <#macro fileFormGroup label name>
     <input type="hidden" id="${name}Id" name="${name}Id" value="${fele["${name}Id"]!}">
-    <#if ferror?exists && ferror[name]?exists>
+    <#if ferror?exists && ferror[name]?exists && ferror[name]?length gt 0>
     <div class="form-group has-error">
         <label for="${name}">${label}*：</label>
         <input type="file" id="${name}" name="${name}">
