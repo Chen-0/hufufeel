@@ -26,8 +26,8 @@ public class Product {
     private long imageId;
     private Date deadline;
     private boolean isDanger;
-    private String quotedPrice;
-    private String quotedName;
+    private String quotedPrice = "";
+    private String quotedName = "";
     private String comment = "";
     private String reason = "";
     private boolean isDeleted = false;

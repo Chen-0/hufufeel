@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<#assign title="入库单管理" />
+<#assign title="入库单 & 退货单管理" />
 <#include "*/admin/_layout/head.ftl" />
 
 <body>

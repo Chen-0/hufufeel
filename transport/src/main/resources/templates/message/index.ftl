@@ -23,7 +23,7 @@
 
             <div class="box">
                 <div class="box-body">
-                    <a class="pull-right margin-bottom" href="/message/read/all">全部已读</a>
+                    <a class="pull-right margin-bottom" href="/message/read/all" style="margin-right: 25px;">全部已读</a>
                     <table class="table table-bordered table-striped table-condensed table-hover">
                         <thead>
                         <tr>
@@ -50,6 +50,7 @@
                 <!-- /.box-body -->
 
                 <div class="box-footer clearfix">
+                    <a class="btn btn-success" href="/message/read/all">全部已读</a>
                 <#assign BASEURL="/message/index?page="/>
                 <#include "*/_layout/v2.0/components/pages.ftl">
                 </div>

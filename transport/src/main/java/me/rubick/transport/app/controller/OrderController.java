@@ -88,9 +88,10 @@ public class OrderController extends AbstractController {
             return "redirect:/order/index";
         }
 
-        if (user.getId() == order.getId()) {
+        if (user.getId() != order.getUserId()) {
             return "redirect:/order/index";
         }
+
         OrderLogistics orderLogistics = orderService.findOrNewOrderLogistics(id);
         model.addAttribute("lg", orderLogistics);
         model.addAttribute("ele", order);
@@ -115,6 +116,10 @@ public class OrderController extends AbstractController {
 
         if (ObjectUtils.isEmpty(model.asMap().get("sp"))) {
             model.addAttribute("sp", new OrderSnapshotVo());
+        }
+
+        if (ObjectUtils.isEmpty(model.asMap().get("cType"))) {
+            model.addAttribute("cType", "w");
         }
 
         List<Long> pids = (List<Long>) model.asMap().get("pids");
@@ -185,7 +190,7 @@ public class OrderController extends AbstractController {
         } else if (cType.equals("u")) {
 
             if (ObjectUtils.isEmpty(documentId) || documentId == -1) {
-                map.put("did", "请上传PDF文件");
+                map.put("did", "请上传PDF格式的文件！");
                 hasError = true;
             }
         }

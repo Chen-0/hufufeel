@@ -76,6 +76,7 @@
                     <th>用户</th>
                     <th>货品SKU</th>
                     <th>货品名称</th>
+                    <th>货品类型</th>
                     <th>仓库</th>
                     <th>数量</th>
                     <th>总重量</th>
@@ -86,8 +87,9 @@
                 <tr>
                     <td>${e_index + 1}</td>
                     <th>${e.user.name}</th>
-                    <td><a href="/admin/product/${e.id}/show">${e.product.productSku}</a></td>
-                    <td><a href="/admin/product/${e.id}/show">${e.product.productName}</a></td>
+                    <td><a href="/admin/product/${e.product.id}/show">${e.product.productSku}</a></td>
+                    <td><a href="/admin/product/${e.product. id}/show">${e.product.productName}</a></td>
+                    <td>${e.product.type.value}</td>
                     <td>${e.warehouse.name}</td>
                     <td>${e.quantity}</td>
                     <td>${e.quantity * e.product.weight}</td>

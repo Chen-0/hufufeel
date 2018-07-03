@@ -57,7 +57,7 @@
                                     <#if warn ??>
                                         <p class="text-danger margin">${warn!}</p>
                                     <#else>
-                                        <p class="margin">导入发货单模板：<a href="/static/hwc/package_template.xls" download="入库单模板.xls">点击下载</a></p>
+                                        <p class="margin">导入入库单模板：<a href="/static/hwc/package_template.xls" download="入库单模板.xls">点击下载</a></p>
                                     </#if>
 
                                 </div>

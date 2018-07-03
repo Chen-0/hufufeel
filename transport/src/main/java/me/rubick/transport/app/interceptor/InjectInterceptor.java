@@ -35,7 +35,7 @@ public class InjectInterceptor extends HandlerInterceptorAdapter {
             }
 
             //注入菜单
-            injectMenu(modelAndView);
+            injectMenu(request, modelAndView);
         } catch (Exception e) {
             log.error("", e);
         }
@@ -44,7 +44,7 @@ public class InjectInterceptor extends HandlerInterceptorAdapter {
     @Resource
     private MenuService menuService;
 
-    private void injectMenu(ModelAndView modelAndView) {
+    private void injectMenu(HttpServletRequest request, ModelAndView modelAndView) {
         if (ObjectUtils.isEmpty(modelAndView)) {
             return;
         }
@@ -59,6 +59,12 @@ public class InjectInterceptor extends HandlerInterceptorAdapter {
         } else {
             List<Menu> menuList = menuService.getMenu("DEFAULT");
             modelAndView.getModelMap().addAttribute("MENU", menuList);
+        }
+
+        if (request.getRequestURI().startsWith("/admin/")) {
+            modelAndView.getModelMap().addAttribute("AFLAG", true);
+        } else {
+            modelAndView.getModelMap().addAttribute("AFLAG", false);
         }
     }
 

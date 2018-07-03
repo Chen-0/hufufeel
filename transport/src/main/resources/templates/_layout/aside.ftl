@@ -45,7 +45,7 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                    aria-expanded="false">退货单管理<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li><a href="/product/index?type=1">退货商品管理</a></li>
+                    <li><a href="/product/index?type=1">退货入库</a></li>
                     <li><a href="/package/index?type=1">退货单管理</a></li>
                 </ul>
             </li>

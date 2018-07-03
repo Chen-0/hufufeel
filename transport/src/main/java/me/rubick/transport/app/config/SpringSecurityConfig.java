@@ -34,6 +34,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 //        http.authorizeRequests().anyRequest().permitAll();
         http.authorizeRequests()
+                .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/static/**", "/file/**").permitAll()
                 .antMatchers("/login", "/register").anonymous()
 
@@ -55,7 +56,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordParameter("password")
                 .and().logout().logoutSuccessUrl("/")
                 .and()
-                .rememberMe().rememberMeParameter("remember_me").key("F_enjsmyrh").rememberMeCookieName("F_werbuzemcihrn").rememberMeCookieDomain("hufufeel.com");
+//                .rememberMe().rememberMeParameter("remember_me").key("F_enjsmyrh").rememberMeCookieName("F_werbuzemcihrn").rememberMeCookieDomain("hufufeel.com");
+                .rememberMe().rememberMeParameter("remember_me").key("QWTtvidaThAmnBgn").rememberMeCookieName("zVaWBuPrLlDfXHlc").rememberMeCookieDomain("hufufeel.com");
     }
 
     @Override

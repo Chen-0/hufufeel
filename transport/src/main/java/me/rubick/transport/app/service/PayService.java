@@ -43,6 +43,9 @@ public class PayService {
     @Resource
     private OrderRepository orderRepository;
 
+    @Resource
+    private OrderService orderService;
+
 
     public Payment findPayment(long paymentId, User user) {
         return paymentRepository.findTopByIdAndUserIdAndStatus(paymentId, user.getId(), PaymentStatusEnum.FALSE);
@@ -71,10 +74,7 @@ public class PayService {
 
     public Payment createPaymentForSystem(User user, BigDecimal totalFee) throws BusinessException {
         totalFee = totalFee.setScale(2, RoundingMode.FLOOR);
-        if (totalFee.compareTo(new BigDecimal("0.01")) < 0) {
-            throw new BusinessException("支付金额必须大于0.01元");
-        }
-
+        log.info("createPaymentForSystem - total={}", totalFee);
         if (ObjectUtils.isEmpty(user)) {
             throw new BusinessException("[A001] 禁止访问！");
         }
@@ -284,7 +284,7 @@ public class PayService {
         return true;
     }
 
-    public void secPayStatements(long id) throws BusinessException {
+    public Statements secPayStatements(long id) throws BusinessException {
         Statements statements = statementsRepository.findOne(id);
 
         if (statements.getStatus().equals(StatementStatusEnum.UNPAY)) {
@@ -316,13 +316,23 @@ public class PayService {
                         break;
                     }
                     case ORDER: {
-                        Order order = orderRepository.findOne(Long.valueOf(statements.getTarget()));
-                        if (order.getNextStatus() != OrderStatusEnum.NULL) {
-                            order.setStatus(order.getNextStatus());
-                            order.setNextStatus(OrderStatusEnum.NULL);
-                            order.setOutTime(new Date());
-                            orderRepository.save(order);
+                        int count = statementsRepository.countByUserIdAndStatusAndTypeInAndTarget(
+                                statements.getUserId(),
+                                StatementStatusEnum.UNPAY,
+                                Arrays.asList(StatementTypeEnum.ORDER),
+                                statements.getTarget()
+                        );
+
+                        if (count == 0) {
+                            Order order = orderRepository.findOne(Long.valueOf(statements.getTarget()));
+                            if (order.getNextStatus() != OrderStatusEnum.NULL) {
+                                order.setStatus(order.getNextStatus());
+                                order.setNextStatus(OrderStatusEnum.NULL);
+                                order.setOutTime(new Date());
+                                orderRepository.save(order);
+                            }
                         }
+
                     }
                     case STORE: {
                         userService.updateUserFreeze(statements.getUserId());
@@ -332,6 +342,7 @@ public class PayService {
                 throw new BusinessException("余额不足");
             }
         }
+        return statements;
     }
 
     /**

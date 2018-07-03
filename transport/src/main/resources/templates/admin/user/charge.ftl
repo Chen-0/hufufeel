@@ -22,6 +22,8 @@
                         <h3 class="panel-title">${title}</h3>
                     </div>
                     <div class="panel-body">
+                        <p class="margin-bottom">用户：${user.name} （NO.${user.hwcSn}）</p>
+                        <p class="margin-bottom">余额：${user.usd}</p>
                         <@formGroup label="修改余额（正数充值，负数为减扣）" name="delta"></@formGroup>
                     </div>
 

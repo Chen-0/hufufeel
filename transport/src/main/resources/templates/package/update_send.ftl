@@ -177,13 +177,13 @@
                     <div class="form-group">
                         <p class="charge-font inline-block">选择填写信息方式：</p>
                         <label class="select-label">
+                            <input type="radio" name="c_type" value="w" class="x-radio flat-red"
+                                   data-id="x-tab-2" ${foo?string("", "checked")}> 填写
+                        </label>
+                        <label class="select-label">
                             <input type="radio" name="c_type" value="u" class="x-radio flat-red"
                                    data-id="x-tab-1" ${foo?string("checked", "")}> 上传
                             <input type="hidden" name="did" value="-1" id="did">
-                        </label>
-                        <label class="select-label">
-                            <input type="radio" name="c_type" value="w" class="x-radio flat-red"
-                                   data-id="x-tab-2" ${foo?string("", "checked")}> 填写
                         </label>
                     </div>
 

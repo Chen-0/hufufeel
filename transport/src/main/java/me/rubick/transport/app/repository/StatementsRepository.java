@@ -16,4 +16,6 @@ public interface StatementsRepository extends JpaRepository<Statements, Long> {
     List<Statements> findByUserIdAndStatusAndTypeIn(long userId, StatementStatusEnum statementStatusEnum, List<StatementTypeEnum> statementTypeEnum);
 
     List<Statements> findByTargetAndTypeIn(String target, List<StatementTypeEnum> statementTypeEnum);
+
+    int countByUserIdAndStatusAndTypeInAndTarget(long userId, StatementStatusEnum statementStatusEnum, List<StatementTypeEnum> statementTypeEnum, String target);
 }

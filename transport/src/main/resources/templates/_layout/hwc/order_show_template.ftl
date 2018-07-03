@@ -42,17 +42,18 @@
                 </td>
                 <td>第三方派送方式</td>
                 <td class="text-primary">
-                    <strong>${ele.express!} <#if ele.expressNo??>（${ele.expressNo!}）</#if></strong>
+                    <strong>${ele.express!} <#if ele.expressNo?? && ele.expressNo?length gt 0>（${ele.expressNo!}
+                        ）</#if></strong>
                 </td>
             </tr>
-            <#if ele.surcharge gt 0>
-                <tr class="text-primary">
-                    <td>额外费用</td>
-                    <td>${ele.surcharge} USD</td>
-                    <td>额外费用说明</td>
-                    <td colspan="3">${ele.surchargeComment}</td>
-                </tr>
-            </#if>
+        <#if ele.surcharge gt 0>
+            <tr class="text-primary">
+                <td>额外费用</td>
+                <td>${ele.surcharge} USD</td>
+                <td>额外费用说明</td>
+                <td colspan="3">${ele.surchargeComment}</td>
+            </tr>
+        </#if>
             <tr>
                 <td>备注</td>
                 <td colspan="5">${ele.comment!}</td>
@@ -83,7 +84,8 @@
             </tr>
             <tr>
                 <td>国家</td>
-                <td>${ele.orderSnapshotVo.ckf1!} <#if ele.orderSnapshotVo.ckf12?exists && ele.orderSnapshotVo.ckf12?length gt 0> - <strong class="text-danger">${ele.orderSnapshotVo.ckf12}</strong></#if></td>
+                <td>${ele.orderSnapshotVo.ckf1!} <#if ele.orderSnapshotVo.ckf12?exists && ele.orderSnapshotVo.ckf12?length gt 0>
+                    - <strong class="text-danger">${ele.orderSnapshotVo.ckf12}</strong></#if></td>
                 <td>州/省</td>
                 <td>
                 ${ele.orderSnapshotVo.ckf3!}
@@ -105,7 +107,9 @@
             </tr>
         <#else>
             <tr>
-                <td colspan="6"><span>${ele.doc.originalFilename}</span> <a href="/file/${ele.doc.name}" download="${ele.doc.originalFilename}">点击下载</a></td>
+                <td colspan="6"><span>${ele.doc.originalFilename}</span> <a href="/file/${ele.doc.name}"
+                                                                            download="${ele.doc.originalFilename}">点击下载</a>
+                </td>
             </tr>
         </#if>
         <#if lg?exists && lg.comment?length gt 0 >
@@ -138,13 +142,24 @@
             <#list ele.orderItems as pp>
             <tr>
                 <td>${pp_index + 1}</td>
-                <td><a href="/product/${pp.productId}/show">${pp.productSnapshotVo.productName}</a>
+                <td>
+                    <#if AFLAG>
+                        <a href="/admin/product/${pp.productId}/show">${pp.productSnapshotVo.productName}</a>
+                    <#else>
+                        <a href="/product/${pp.productId}/show">${pp.productSnapshotVo.productName}</a>
+                    </#if>
                 </td>
                 <td>${pp.productSnapshotVo.productSku}</td>
                 <td>${pp.quantity}</td>
                 <td>${pp.productSnapshotVo.weight} KG</td>
                 <td>${pp.productSnapshotVo.weight * pp.quantity} KG</td>
-                <td><a href="/product/${pp.productId}/show">货品详情</a></td>
+                <td>
+                    <#if AFLAG>
+                        <a href="/admin/product/${pp.productId}/show">货品详情</a>
+                    <#else>
+                        <a href="/product/${pp.productId}/show">货品详情</a>
+                    </#if>
+                </td>
             </tr>
             </#list>
             </tbody>
@@ -179,7 +194,7 @@
                                     </#if>
                     </td>
                     <td>
-                        <#if e.status.ordinal() == 0 && !sShow?exists>
+                        <#if e.status.ordinal() == 0 && !AFLAG>
                             <a href="/user/statements/${e.id}/pay">立即支付</a>
                         </#if>
                     </td>

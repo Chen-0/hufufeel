@@ -111,7 +111,7 @@
                                     <#if e.status.ordinal() != 1>
                                         <a href="/product/${e.id}/update">修改</a>
                                     </#if>
-                                    <a class="x-remove" href="/product/${e.id}/remove">删除</a>
+                                    <a class="x-remove" href="/product/${e.id}/remove?type=${TYPE}">删除</a>
                                 </td>
                             </tr>
                             </#list>
@@ -171,7 +171,7 @@
 
             $('#selectForm').submit();
         });
-    })
+    });
 </script>
 </body>
 </html>

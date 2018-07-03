@@ -22,7 +22,7 @@
         <section class="content">
             <div class="row">
                 <div class="col-md-12 col-xs-12">
-                    <#include "*/admin/order/order_show_template.ftl">
+                    <#include "*/_layout/hwc/order_show_template.ftl">
                 </div>
             </div>
         </section>

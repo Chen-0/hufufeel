@@ -49,6 +49,9 @@ public class OrderService {
     private OrderLogisticsRepository orderLogisticsRepository;
 
     @Resource
+    private WarehouseRepository warehouseRepository;
+
+    @Resource
     private ProductRepository productRepository;
 
     public Page<Order> findAll(User user, String keyword, Integer status, Pageable pageable) {
@@ -93,8 +96,10 @@ public class OrderService {
         List<OrderItem> orderItems = createOrderItem(user, warehouse, products, quantities);
 
         int totalQty = 0;
+        BigDecimal totalWeight = BigDecimal.ZERO;
         for (OrderItem item : orderItems) {
             totalQty += item.getQuantity();
+            totalWeight = totalWeight.add(item.getProduct().getWeight());
         }
 
         OrderSnapshotVo orderSnapshotVo = getOrderSnapshotVo(params);
@@ -116,7 +121,7 @@ public class OrderService {
         order.setWarehouseId(warehouse.getId());
         order.setWarehouseName(warehouse.getName());
         order.setTotal(new BigDecimal(0));
-        order.setWeight(new BigDecimal(0));
+        order.setWeight(totalWeight);
         order.setOrderSnapshot(JSONMapper.toJSON(orderSnapshotVo));
         order.setQuantity(totalQty);
         order.setPhone(orderSnapshotVo.getCkf4());
@@ -169,7 +174,7 @@ public class OrderService {
             orderItem.setProductId(product.getId());
             orderItem.setQuantity(quantity);
             orderItem.setProductSnapshot(JSONMapper.toJSON(BeanMapperUtils.map(products.get(i), ProductSnapshotVo.class)));
-
+            orderItem.setProduct(product);
             orderItems.add(orderItem);
         }
 
@@ -222,9 +227,6 @@ public class OrderService {
         }
         return order;
     }
-
-    @Resource
-    private WarehouseRepository warehouseRepository;
 
     public void createOrder(List<OrderExcelVo> orderExcelVos, User user) throws BusinessException {
         for (OrderExcelVo orderExcelVo : orderExcelVos) {

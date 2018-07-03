@@ -275,24 +275,21 @@ public class ProductController extends AbstractController {
 
     /**
      * 删除商品
-     *
-     * @param id
-     * @param redirectAttributes
-     * @return
      */
     @RequestMapping("/product/{id}/remove")
     public String deleteProduct(
+            @RequestParam(defaultValue = "0", required = false) String type,
             @PathVariable("id") long id,
             RedirectAttributes redirectAttributes
     ) {
         try {
             productService.deleteProduct(id);
             redirectAttributes.addFlashAttribute("SUCCESS", "删除商品成功！");
-            return "redirect:/product/index";
+            return "redirect:/product/index?type="+type;
         } catch (BusinessException e) {
             log.error("", e);
             redirectAttributes.addFlashAttribute("ERROR", e.getMessage());
-            return "redirect:/product/index";
+            return "redirect:/product/index?type="+type;
         }
     }
 
@@ -421,6 +418,8 @@ public class ProductController extends AbstractController {
         BeanMapperUtils.setDefault(product, "length");
         BeanMapperUtils.setDefault(product, "width");
         BeanMapperUtils.setDefault(product, "height");
+        BeanMapperUtils.setDefault(product, "quotedName");
+        BeanMapperUtils.setDefault(product, "quotedPrice");
 
         if (ObjectUtils.isEmpty(product.getImageId()) || product.getImageId() == 0) {
             product.setImageId(1L);

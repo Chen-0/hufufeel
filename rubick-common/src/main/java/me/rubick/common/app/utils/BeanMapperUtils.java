@@ -42,7 +42,6 @@ public class BeanMapperUtils {
             if (ObjectUtils.isEmpty(getMethod.invoke(o))) {
                 Field field = o.getClass().getDeclaredField(fieldName);
                 Class clazz = field.getType();
-                System.out.println(clazz.getName());
                 if (BigDecimal.class == clazz) {
                     setMethod.invoke(o, new Object[]{BigDecimal.ZERO});
                 } else if (clazz == String.class ) {

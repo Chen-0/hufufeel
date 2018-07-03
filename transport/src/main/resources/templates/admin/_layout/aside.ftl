@@ -29,7 +29,7 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false">
-                        入库管理<span class="caret"></span>
+                        入库单 & 退货单管理<span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="/admin/package/index">查看所有</a></li>

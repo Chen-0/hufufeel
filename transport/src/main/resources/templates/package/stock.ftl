@@ -75,8 +75,8 @@
                         <#list elements.getContent() as e>
                         <tr>
                             <td>${e_index + 1}</td>
-                            <td>${e.product.productSku}</td>
-                            <td>${e.product.productName}</td>
+                            <td><a href="/product/${e.product.id}/show">${e.product.productSku}</a></td>
+                            <td><a href="/product/${e.product.id}/show">${e.product.productName}</a></td>
                             <td>${e.warehouse.name}</td>
                             <td>${e.quantity}</td>
                             <td>${e.quantity * e.product.weight}</td>

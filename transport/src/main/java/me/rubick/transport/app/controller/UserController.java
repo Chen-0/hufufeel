@@ -82,8 +82,17 @@ public class UserController extends AbstractController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            payService.secPayStatements(id);
+            Statements statements = payService.secPayStatements(id);
             redirectAttributes.addFlashAttribute("SUCCESS", "支付成功！");
+
+            switch (statements.getType()) {
+                case ORDER:
+                    return "redirect:/order/" +statements.getTarget()+ "/show";
+                case SJ:
+                    return "redirect:/package/" +statements.getTarget()+ "/show";
+                case RK:
+                    return "redirect:/package/" +statements.getTarget()+ "/show";
+            }
         } catch (BusinessException e) {
             redirectAttributes.addFlashAttribute("ERROR", e.getMessage());
         }
