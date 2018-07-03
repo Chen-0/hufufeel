@@ -53,7 +53,10 @@
                         <div class="form-group">
                             <p class="charge-font inline-block">支付方式：</p>
                             <label class="select-label">
-                                <input type="radio" name="pay_method" class="x-radio flat-red" checked> 支付宝
+                                <input type="radio" name="pay_method" class="x-radio flat-red" checked value="1"> 支付宝
+                            </label>
+                            <label class="select-label">
+                                <input type="radio" name="pay_method" class="x-radio flat-red" value="2"> 电汇支付
                             </label>
                             <label class="select-label">
                                 <input type="radio" name="pay_method" class="x-radio flat-red" disabled> 敬请期待
@@ -67,6 +70,36 @@
                 </div>
             </div>
 
+            <div class="box" style="display: none;" id="e2">
+                <div class="box-header with-border">
+                    <h3 class="box-title">电子汇款信息</h3>
+                </div>
+                <div class="box-body">
+                    <pre style="font-size: 16px;">
+（美国银行，BOA）
+BANK NAME : BANK OF AMERICA
+BANK ADDRESS: 14284 SCHLEISMAN RD, EASTVALE, CA 92880
+SWIFT CODE: BOFAUS3N
+ACCOUNT NUMBER : 3250 9075 4180
+ROUTING NUMBER : 121000358 (PAPER&ELECTRONIC)
+                 026009593 (WIRES)
+
+ACCOUNT  NAME : HUFU INC
+      (PAYPAL)
+ABBY20130223@GMAIL.COM
+      (Payoneer)
+Abbyyao@hufufeel.com
+                    </pre>
+                    <div class="alert alert-warning alert-dismissible">
+                        <h4><i class="icon fa fa-warning"></i> 提醒：</h4>
+                        <ul>
+                            <li>每笔汇款需在备注中填写您的客户编号，您的客户编号为：${USER.hwcSn}。</li>
+                            <li>汇款金额到账时间需1-3个工作日，最终HUFU账号显示金额以实际到款为标准。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
 
         </section>
     </div>
@@ -77,9 +110,21 @@
 <#include "*/_layout/script.ftl" />
 <script>
     $(function () {
-        $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-            checkboxClass: 'icheckbox_flat-green',
-            radioClass: 'iradio_flat-green'
+//        $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+//            checkboxClass: 'icheckbox_flat-green',
+//            radioClass: 'iradio_flat-green'
+//        });
+
+        $('input[type="radio"].flat-red').on('ifChecked', function(event){
+            var v = $(this).val();
+
+            if (v === "2") {
+                $('#e2').fadeIn();
+                $("#submit").fadeOut();
+            } else {
+                $('#e2').fadeOut();
+                $("#submit").fadeIn();
+            }
         });
 
         var u2r = ${U2R};
