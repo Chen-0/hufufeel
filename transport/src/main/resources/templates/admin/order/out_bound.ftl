@@ -51,6 +51,32 @@
 
                         <div class="form-group">
                             <div class="col-sm-4">
+                                <label>打包费</label>
+                            </div>
+                            <div class="col-sm-6">
+                                <select name="package_fee" class="form-control">
+                                <#list package_fee_list?keys as i>
+                                    <option value="${i}">${package_fee_list[i]}</option>
+                                </#list>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label>物料费</label>
+                            </div>
+                            <div class="col-sm-6">
+                                <select name="material_fee" class="form-control">
+                                    <#list material_fee_list?keys as i>
+                                        <option value="${i}">${material_fee_list[i]}</option>
+                                    </#list>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4">
                                 <label>额外费用</label>
                             </div>
                             <div class="col-sm-6">

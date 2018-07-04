@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -139,6 +140,8 @@ public class AdminOrderController extends AbstractController {
         Statements statements = payService.createORDER(order);
         model.addAttribute("ss", statements);
         model.addAttribute("ele", order);
+        model.addAttribute("material_fee_list", configService.findMapByKey("material_fee"));
+        model.addAttribute("package_fee_list", configService.findMapByKey("package_fee"));
         return "/admin/order/out_bound";
     }
 
@@ -151,6 +154,8 @@ public class AdminOrderController extends AbstractController {
             @RequestParam(required = false, defaultValue = "", name = "express_no") String expressNo,
             @RequestParam(required = false, defaultValue = "0") BigDecimal surcharge,
             @RequestParam(required = false, defaultValue = "") String surchargeComment,
+            @RequestParam BigDecimal package_fee,
+            @RequestParam BigDecimal material_fee,
             RedirectAttributes redirectAttributes,
             @ModelAttribute("orderStatus") Integer status
     ) {
@@ -160,23 +165,48 @@ public class AdminOrderController extends AbstractController {
             return "redirect:/admin/order/index";
         }
 
+        List<Statements> statementsList = new ArrayList<>();
+
 
         Statements statements = payService.createORDER(order);
-        statements = payService.saveStatements(statements, total);
+        statementsList.add(payService.saveStatements(statements, total));
 
 
-        boolean flag2 = true;
+        //额外费用
         if (surcharge.compareTo(BigDecimal.ZERO) > 0) {
-            Statements statements2 = payService.createORDER_S(order, surcharge, surchargeComment);
-            statements2 = payService.saveStatements(statements2, surcharge);
-            flag2 = payService.payStatements(statements2.getId());
+            statementsList.add(payService.createWithSave(
+                    order.getUserId(),
+                    String.valueOf(order.getId()),
+                    "运单额外收费原因：" + surchargeComment,
+                    surcharge
+            ));
+        }
+
+        //打包费
+        if (package_fee.compareTo(BigDecimal.ZERO) > 0) {
+            statementsList.add(payService.createWithSave(
+                    order.getUserId(),
+                    String.valueOf(order.getId()),
+                    "打包费",
+                    package_fee
+            ));
+        }
+
+        //物料费
+        if (material_fee.compareTo(BigDecimal.ZERO) > 0) {
+            statementsList.add(payService.createWithSave(
+                    order.getUserId(),
+                    String.valueOf(order.getId()),
+                    "物料费",
+                    material_fee
+            ));
         }
 
         order = orderService.outbound(order, statements.getTotal(), express, expressNo, surcharge, surchargeComment);
 
-        boolean flag1 = payService.payStatements(statements.getId());
+        boolean flag1 = payService.payStatements(statementsList);
 
-        if (flag1 && flag2) {
+        if (flag1) {
             messageService.send(
                     order.getUserId(),
                     MessageFormat.format("/order/{0}/show", order.getId()),

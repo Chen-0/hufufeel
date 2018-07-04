@@ -284,6 +284,25 @@ public class PayService {
         return true;
     }
 
+    public boolean  payStatements(Collection<Statements> items) {
+        boolean flag = true;
+
+        for (Statements statements : items) {
+            if (statements.getStatus().equals(StatementStatusEnum.UNPAY)) {
+                if (userService.payUSD(statements.getUserId(), statements.getTotal())) {
+                    //支付成功
+                    statements.setStatus(StatementStatusEnum.PAY);
+                    statements.setPayAt(new Date());
+                    statementsRepository.save(statements);
+                } else {
+                    flag = false;
+                }
+            }
+        }
+
+        return flag;
+    }
+
     public Statements secPayStatements(long id) throws BusinessException {
         Statements statements = statementsRepository.findOne(id);
 
@@ -428,6 +447,18 @@ public class PayService {
         statements.setComment("运单额外收费原因：" + surchargeComment);
         statements.setTotal(surcharge);
         return statements;
+    }
+
+    public Statements createWithSave(long userId, String target, String comment, BigDecimal total) {
+        Statements statements = new Statements();
+        statements.setUserId(userId);
+        statements.setStatus(StatementStatusEnum.UNPAY);
+        statements.setType(StatementTypeEnum.ORDER);
+        statements.setTarget(target);
+        statements.setPayAt(null);
+        statements.setComment(comment);
+        statements.setTotal(total);
+        return statementsRepository.save(statements);
     }
 
     public Statements createORDER(Order order) {

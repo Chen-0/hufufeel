@@ -54,6 +54,18 @@
                                 <#if e.status.ordinal() == 0>
                                     <a href="/user/statements/${e.id}/pay">立即支付</a>
                                 </#if>
+
+                                <#switch e.type.ordinal()>
+                                    <#case 0>
+                                        <a href="/package/${e.target}/show">详情</a>
+                                        <#break>
+                                    <#case 1>
+                                        <a href="/package/${e.target}/show">详情</a>
+                                        <#break>
+                                    <#case 2>
+                                        <a href="/order/${e.target}/show">详情</a>
+                                        <#break>
+                                </#switch>
                             </td>
                         </tr>
                         </#list>
