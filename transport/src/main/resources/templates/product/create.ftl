@@ -68,7 +68,7 @@
 <script src="https://cdn.bootcss.com/blueimp-file-upload/9.21.0/js/jquery.iframe-transport.min.js"></script>
 <script src="https://cdn.bootcss.com/blueimp-file-upload/9.21.0/js/jquery.fileupload.min.js"></script>
 <script>
-    $(function () {
+    $(document).ready(function () {
         $('#deadline').datepicker({
             format: 'yyyy-mm-dd',
             autoclose: true
@@ -112,7 +112,6 @@
             }
         });
     });
-
 </script>
 </body>
 </html>

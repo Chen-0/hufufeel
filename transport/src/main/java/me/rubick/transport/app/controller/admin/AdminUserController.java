@@ -1,10 +1,12 @@
 package me.rubick.transport.app.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.excel.ExcelWriter;
 import me.rubick.common.app.exception.FormException;
 import me.rubick.common.app.exception.HttpNoFoundException;
 import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.utils.BeanMapperUtils;
+import me.rubick.common.app.utils.DateUtils;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.Statements;
@@ -16,6 +18,10 @@ import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import me.rubick.transport.app.vo.UserCsVo;
 import me.rubick.transport.app.vo.admin.UserCreateVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -23,8 +29,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -346,5 +356,74 @@ public class AdminUserController extends AbstractController {
         userService.chargeUser(user, new BigDecimal(delta));
         redirectAttributes.addFlashAttribute("success", "修改余额成功！");
         return "redirect:/admin/user/index";
+    }
+
+    @RequestMapping(value = "/statements/index", method = RequestMethod.GET)
+    public String getStatements(
+            Model model,
+            @PageableDefault(size = 20, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String startAt,
+            @RequestParam(required = false) String endAt) {
+//        User user = userService.findOne(userId);
+
+        Date start = DateUtils.stringToDate(startAt);
+        Date end = DateUtils.stringToDate(endAt);
+        Page<Statements> statementsPage = payService.findAllStatements(userId, start, end, pageable);
+
+        model.addAttribute("users", userService.findAll());
+        model.addAttribute("elements", statementsPage);
+        model.addAttribute("startAt", startAt);
+        model.addAttribute("endAt", endAt);
+        model.addAttribute("userId", userId);
+
+        return "/admin/user/statements";
+    }
+
+    @RequestMapping(value = "/statements/export", method = RequestMethod.GET)
+    public void exportStatements(
+            Model model,
+            @PageableDefault(size = Integer.MAX_VALUE, sort = {"id"}, direction = Sort.Direction.DESC, page = 0) Pageable pageable,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String startAt,
+            @RequestParam(required = false) String endAt,
+            HttpServletResponse response) throws IOException {
+//        User user = userService.findOne(userId);
+        Date start = DateUtils.stringToDate(startAt);
+        Date end = DateUtils.stringToDate(endAt);
+        Page<Statements> statementsPage = payService.findAllStatements(userId, start, end, pageable);
+        List<Statements> statements = statementsPage.getContent();
+
+        int row = statements.size();
+        Object[][] context = new Object[row][8];
+        context[0][0] = "编号";
+        context[0][1] = "客户";
+        context[0][2] = "费用说明";
+        context[0][3] = "费用类型";
+        context[0][4] = "支付状态";
+        context[0][5] = "金额";
+        context[0][6] = "创建时间";
+        context[0][7] = "支付时间";
+
+        for (int i = 1; i < row; i++) {
+            Statements s = statements.get(i);
+
+            context[i][0] = i;
+            context[i][1] = s.getUser().getName() + "(NO."+s.getUser().getHwcSn()+")";
+            context[i][2] = s.getComment();
+            context[i][3] = s.getType().getValue();
+            context[i][4] = s.getStatus().getValue();
+            context[i][5] = s.getTotal().toString();
+            context[i][6] = DateUtils.date2StringYMDHMS(s.getCreatedAt());
+            context[i][7] = DateUtils.date2StringYMDHMS(s.getPayAt());
+        }
+
+        log.info("{}", JSONMapper.toJSON(context));
+
+        response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String fileName = "HUFU-管理员-费用明细.xlsx";
+        fileName = URLEncoder.encode(fileName, "utf-8");
+        response.setHeader("Content-Disposition", MessageFormat.format("attachment; filename*=\"{0}\"", fileName));
+        ExcelWriter.getExcelInputSteam(context, response.getOutputStream());
     }
 }

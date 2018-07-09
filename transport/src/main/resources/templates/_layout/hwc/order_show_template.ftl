@@ -40,10 +40,11 @@
                                             ${ele.outTime?string}
                                         </#if>
                 </td>
-                <td>第三方派送方式</td>
+                <td>快递单号</td>
                 <td class="text-primary">
-                    <strong>${ele.express!} <#if ele.expressNo?? && ele.expressNo?length gt 0>（${ele.expressNo!}
-                        ）</#if></strong>
+                    <strong>
+                        ${ele.express!} ${ele.expressNo!}
+                    </strong>
                 </td>
             </tr>
         <#if ele.surcharge gt 0>
@@ -79,8 +80,8 @@
                 <td>
                     Email：${ele.orderSnapshotVo.ckf6!}
                 </td>
-                <td>身份证</td>
-                <td>${ele.orderSnapshotVo.ckf8!}</td>
+                <td></td>
+                <td></td>
             </tr>
             <tr>
                 <td>国家</td>
@@ -98,8 +99,8 @@
                 <td>${ele.orderSnapshotVo.ckf5!}</td>
             </tr>
             <tr>
-                <td>公司</td>
-                <td>${ele.orderSnapshotVo.ckf9!}</td>
+                <td></td>
+                <td></td>
                 <td>街道</td>
                 <td>${ele.orderSnapshotVo.ckf10!}</td>
                 <td>门牌号</td>

@@ -6,7 +6,7 @@ import me.rubick.common.app.exception.*;
 import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.response.RestResponse;
 import me.rubick.common.app.utils.BeanMapperUtils;
-import me.rubick.common.app.utils.ExcelHepler;
+import me.rubick.common.app.utils.ExcelHelper;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.PackageStatusEnum;
 import me.rubick.transport.app.constants.PackageTypeEnum;
@@ -103,6 +103,7 @@ public class PackageController extends AbstractController {
     @RequestMapping(value = "/package/create", method = RequestMethod.POST)
     public String createPackage(
             @RequestParam("w") long wId,
+            @RequestParam(required = false, defaultValue = "") String contact,
             @RequestParam(required = false, defaultValue = "") String referenceNumber,
             @RequestParam(required = false, defaultValue = "") String comment,
             @RequestParam("qty[]") List<Integer> qtys,
@@ -128,7 +129,7 @@ public class PackageController extends AbstractController {
             throw new BusinessException("[A001] 禁止访问");
         }
 
-        packageService.create(user, warehouse, referenceNumber, comment, qtys, pids, PackageTypeEnum.valueOf(type));
+        packageService.create(user, warehouse, referenceNumber, contact, comment, qtys, pids, PackageTypeEnum.valueOf(type));
 
         redirectAttributes.addFlashAttribute("SUCCESS", "入库单创建成功！");
 
@@ -264,14 +265,14 @@ public class PackageController extends AbstractController {
         try {
             User user = userService.getByLogin();
             File file = documentService.multipartFile2File(multipartFile);
-            ExcelHepler<PackageExcelVo> excelHepler = new ExcelHepler<>();
+            ExcelHelper<PackageExcelVo> excelHepler = new ExcelHelper<>();
             List<PackageExcelVo> packageExcelVos = excelHepler.readToObject(file, new ExcelConverter<PackageExcelVo>() {
                 @Override
                 public PackageExcelVo read(Row row) throws BusinessException {
                     PackageExcelVo packageExcelVo = new PackageExcelVo();
-                    packageExcelVo.setSKU(ExcelHepler.getValue(row, 0, false));
+                    packageExcelVo.setSKU(ExcelHelper.getValue(row, 0, false));
                     try {
-                        packageExcelVo.setQuantity(new BigDecimal(ExcelHepler.getValue(row, 1, false)).intValue());
+                        packageExcelVo.setQuantity(new BigDecimal(ExcelHelper.getValue(row, 1, false)).intValue());
                     } catch (NumberFormatException e) {
                         throw new BusinessException("请检查SKU:" + packageExcelVo.getSKU() + "的数量，必须为整数！");
                     }

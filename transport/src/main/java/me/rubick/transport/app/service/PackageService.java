@@ -143,12 +143,13 @@ public class PackageService {
         }
     }
 
-    public void create(User user, Warehouse warehouse, String referenceNumber, String comment, List<Integer> qtys, List<Long> pids, PackageTypeEnum type) {
+    public void create(User user, Warehouse warehouse, String referenceNumber, String contact, String comment, List<Integer> qtys, List<Long> pids, PackageTypeEnum type) {
         Package p = new Package();
         p.setUserId(user.getId());
         p.setWarehouseId(warehouse.getId());
         p.setStatus(PackageStatusEnum.READY);
         p.setReferenceNumber(referenceNumber);
+        p.setContact(user.getHwcSn() + "-" + contact);
         p.setWarehouseName(warehouse.getName());
         p.setNickname(user.getName());
         p.setComment(comment);
@@ -184,7 +185,7 @@ public class PackageService {
             pids.add(product.getId());
         }
 
-        create(user, warehouse, HashUtils.generateString(), "", qtys, pids, PackageTypeEnum.NORMAL);
+        create(user, warehouse, "", "", "", qtys, pids, PackageTypeEnum.NORMAL);
     }
 
     public List<Warehouse> findAllWarehouse() {

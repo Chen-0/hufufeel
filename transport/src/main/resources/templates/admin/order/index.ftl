@@ -35,16 +35,36 @@
     </div>
 </#if>
 
+    <div class="row margin-bottom">
+        <div class="col-xs-8 col-xs-offset-2">
+            <form class="form-horizontal" action="/admin/order/index" method="get" role="form">
+                <div class="form-group">
+                    <label for="keyword" class="col-xs-6 control-label" style="text-align: center;">模糊搜索（出库单号、运单号）：</label>
+                    <div class="col-xs-6">
+                        <input class="form-control" id="keyword" name="keyword" value="${keyword!}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <button class="btn btn-primary" type="submit">搜索</button>
+                        <a class="btn btn-default" href="/admin/order/index">重置</a>
+                        <a class="btn btn-primary" href="/admin/order/import">导入</a>
+                        <a class="btn btn-primary" href="/admin/order/export">导出（导出的订单为待审核状态）</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-xs-12">
-
             <div class="table-responsive">
                 <table class="bordered">
                     <thead>
                     <tr>
                         <th>出库单号</th>
-                        <th>参考号</th>
-                        <th>销售交易号</th>
+                        <th>运单号</th>
+                        <th>客户</th>
                         <th>SKU数</th>
                         <th>总件数</th>
                         <th>实际总重量</th>
@@ -62,8 +82,8 @@
                     <#list elements.getContent() as e>
                     <tr>
                         <td>${e.sn}</td>
-                        <td>${e.referenceNumber}</td>
-                        <td>${e.tn}</td>
+                        <td>${e.expressNo}</td>
+                        <td>${e.user.name}</td>
                         <td>${e.skuQty}</td>
                         <td>${e.quantity}</td>
                         <td>
@@ -82,7 +102,7 @@
 
                             <#switch e.status.ordinal()>
                                 <#case 0>
-                                    <a href="/admin/order/${e.id}/change_status?name=success">通过</a>
+                                    <a href="/admin/order/${e.id}/check_out">通过</a>
                                     <a class="x-fail-check" href="javascript:void(0);" data-id="${e.id}"
                                        data-toggle="modal"
                                        data-target="#myModal">拒绝</a>

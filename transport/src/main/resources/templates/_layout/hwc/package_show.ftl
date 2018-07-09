@@ -8,6 +8,10 @@
             <tr>
                 <th>入库单号</th>
                 <th>参考号</th>
+            <#if ele.type.ordinal() == 1>
+                <th>收件人</th>
+            </#if>
+
                 <th>仓库</th>
                 <th>SKU数</th>
                 <th>总件数</th>
@@ -32,6 +36,9 @@
             <tr>
                 <td>${ele.cn}</td>
                 <td>${ele.referenceNumber}</td>
+            <#if ele.type.ordinal() == 1>
+                <td>${ele.contact}</td>
+            </#if>
                 <td>${ele.warehouseName}</td>
                 <td>${ele.packageProducts?size}</td>
                 <td>${ele.expectQuantity}</td>

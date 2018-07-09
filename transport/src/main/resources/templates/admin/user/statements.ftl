@@ -1,32 +1,52 @@
 <!DOCTYPE html>
-<html>
-<#assign TITLE="费用流水">
-<#include "*/_layout/head.ftl" />
+<html lang="en">
+<#assign title="货品管理" />
+<#include "*/admin/_layout/head.ftl" />
 
-<body class="hold-transition skin-black-light sidebar-mini">
-<div class="wrapper">
-<#include "*/_layout/aside.ftl" />
+<body>
+<#include "*/admin/_layout/aside.ftl" />
 
-    <div class="content-wrapper">
-        <section class="content-header">
-            <h1>
-            ${TITLE}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                费用流水
             </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                <li><a href="#">Examples</a></li>
-                <li class="active">Blank page</li>
-            </ol>
-        </section>
+        </div>
+    </div>
 
-        <section class="content">
+<#if success?? >
+    <div class="alert alert-success alert-dismissable alert-message">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    ${success}
+    </div>
+</#if>
+
+    <div class="row" style="padding-bottom: 50px;">
+        <div class="col-xs-12">
             <div class="box">
 
                 <div class="box-body">
 
-                    <form class="form-horizontal" action="/user/statements/index" method="get">
+                    <form class="form-horizontal" action="/admin/user/statements/index" method="get">
                         <div class="form-group">
                             <label for="" class="col-xs-1 control-label">筛选：</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="startAt" class="col-xs-1 control-label">客户</label>
+                            <div class="col-xs-3">
+                                <select name="userId" id="userId" class="form-control">
+                                    <option value="">所有</option>
+                                    <#list users as u>
+                                        <#if userId?exists && userId == u.id>
+                                            <option value="${u.id}" selected>${u.name}</option>
+                                        <#else>
+                                            <option value="${u.id}">${u.name}</option>
+                                        </#if>
+
+                                    </#list>
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="startAt" class="col-xs-1 control-label">从：</label>
@@ -44,7 +64,7 @@
                         <div class="form-group">
                             <div class="col-xs-6 col-xs-offset-1">
                                 <button type="submit" class="btn btn-primary">搜索</button>
-                                <a href="/user/statements/index" class="btn btn-default">重置</a>
+                                <a href="/admin/user/statements/index" class="btn btn-default">重置</a>
                             </div>
                         </div>
                     </form>
@@ -54,6 +74,7 @@
                         <thead>
                         <tr>
                             <th>编号</th>
+                            <th>客户</th>
                             <th>费用说明</th>
                             <th>费用类型</th>
                             <th>支付状态</th>
@@ -67,6 +88,7 @@
                         <#list elements.getContent() as e>
                         <tr>
                             <td>${e_index + 1}</td>
+                            <td>${e.user.name} (NO.${e.user.hwcSn})</td>
                             <td>${e.comment}</td>
                             <td>${e.type.getValue()}</td>
                             <td>${e.status.getValue()}</td>
@@ -101,17 +123,38 @@
                 </div>
 
                 <div class="box-footer clearfix">
-                    <a href="/user/statements/export?startAt=${startAt!}&endAt=${endAt!}" class="btn btn-primary" target="_blank" download="HUFU${USER.hwcSn}费用明细.xlsx">导出</a>
-                <#assign BASEURL="/user/statements/index?page="/>
-                <#include "*/_layout/v2.0/components/pages.ftl">
+                    <a href="/admin/user/statements/export?startAt=${startAt!}&endAt=${endAt!}&userId=${userId!}" class="btn btn-primary" target="_blank" download="HUFU${USER.hwcSn}费用明细.xlsx">导出</a>
+                    <nav aria-label="Page navigation" style="text-align: center;">
+                        <ul class="pagination">
+                        <#if elements.isFirst() != true >
+                            <li>
+                                <a href="/admin/user/statements/index?page=${elements.previousPageable().pageNumber}&startAt=${startAt!}&endAt=${endAt!}&userId=${userId!}"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        </#if>
+
+                        <#if elements.isLast() != true>
+                            <li>
+                                <a href="/admin/user/statements/index?page=${elements.nextPageable().pageNumber}&startAt=${startAt!}&endAt=${endAt!}&userId=${userId!}"
+                                   aria-label="Previous">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </#if>
+                        </ul>
+
+                        <p>
+                            当前第${elements.getNumber() + 1}页，一共${elements.getTotalPages()}页，一共${elements.getTotalElements()}条数据</p>
+                    </nav>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
-<#include "*/_layout/footer.ftl"/>
 </div>
 
-<#include "*/_layout/script.ftl" />
+<#include "*/admin/_layout/script.ftl"/>
 <script>
     $(function () {
         $('#startAt, #endAt').datepicker({

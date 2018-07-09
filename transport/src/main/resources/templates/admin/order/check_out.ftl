@@ -37,51 +37,33 @@
                     运单出库
                 </div>
                 <div class="panel-body">
-                    <form method="post" action="/admin/order/${ele.id}/out_bound" class="form-horizontal">
+                    <form method="post" action="/admin/order/${ele.id}/check_out" class="form-horizontal">
                         <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
 
-
                         <div class="form-group">
                             <div class="col-sm-4">
-                                <label>打包费</label>
+                                <label for="total">订单费用</label>
                             </div>
                             <div class="col-sm-6">
-                                <select name="package_fee" class="form-control">
-                                <#list package_fee_list?keys as i>
-                                    <option value="${i}">${package_fee_list[i]}</option>
-                                </#list>
-                                </select>
+                                <input id="total" name="total" class="form-control" type="text" value="${ss.total}">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="col-sm-4">
-                                <label>物料费</label>
+                                <label for="express">快递公司</label>
                             </div>
                             <div class="col-sm-6">
-                                <select name="material_fee" class="form-control">
-                                    <#list material_fee_list?keys as i>
-                                        <option value="${i}">${material_fee_list[i]}</option>
-                                    </#list>
-                                </select>
+                                <input id="express" name="express" class="form-control" type="text">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="col-sm-4">
-                                <label>额外费用</label>
+                                <label for="express_no">快递号</label>
                             </div>
                             <div class="col-sm-6">
-                                <input name="surcharge" class="form-control" type="text" value="0">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-4">
-                                <label>额外费用说明</label>
-                            </div>
-                            <div class="col-sm-6">
-                                <input name="surchargeComment" class="form-control" type="text">
+                                <input id="express_no" name="express_no" class="form-control" type="text">
                             </div>
                         </div>
 

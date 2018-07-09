@@ -12,4 +12,8 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     public String getMaxSN(String date);
 
     long countByUserIdAndStatus(long userId, OrderStatusEnum orderStatusEnum);
+
+    int countBySn(String sn);
+
+    Order findTopBySn(String sn);
 }

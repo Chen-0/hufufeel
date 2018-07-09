@@ -161,6 +161,11 @@ public class UserService {
         });
     }
 
+    @Transactional(readOnly = true)
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
     public void storeCostSubject(User user, CostSubjectSnapshotVo costSubjectSnapshotVo) {
         CostSubject costSubject = costSubjectRepository.findTopByUserId(user.getId());
 

@@ -2,6 +2,7 @@ package me.rubick.common.app.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.excel.ExcelConverter;
+import me.rubick.common.app.excel.ExcelRow;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.CommonException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -18,7 +19,28 @@ import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
-public class ExcelHepler<T> {
+public class ExcelHelper<T> {
+
+    public static List<ExcelRow> read(File file) throws CommonException, BusinessException {
+        ExcelHelper<ExcelRow> helper = new ExcelHelper<>();
+
+        List<ExcelRow> excelRows = helper.readToObject(file, new ExcelConverter<ExcelRow>() {
+            @Override
+            public ExcelRow read(Row row) throws BusinessException {
+                ExcelRow excelRow = new ExcelRow();
+
+                excelRow.setA(getValue(row, 0));
+                excelRow.setB(getValue(row, 1));
+                excelRow.setC(getValue(row, 2));
+                excelRow.setD(getValue(row, 3));
+
+                return excelRow;
+            }
+        });
+
+        return excelRows;
+    }
+
     private Workbook getWorkbook(File file) throws CommonException {
         log.info(file.getName());
         String[] strings = file.getName().split("\\.");
@@ -79,6 +101,10 @@ public class ExcelHepler<T> {
 
     }
 
+    public static String getValue(Row row, int i) throws BusinessException {
+        return getValue(row, i, true);
+    }
+
     public static String getValue(Row row, int i, boolean allowNull) throws BusinessException {
         Cell cell = row.getCell(i);
         String cellValue = "";
@@ -106,7 +132,7 @@ public class ExcelHepler<T> {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     cellValue = cell.getDateCellValue().toString();
                 } else {
-                    cellValue = Double.toString(cell.getNumericCellValue());
+                    cellValue = new BigDecimal(cell.getNumericCellValue()).toString();
                 }
                 break;
 

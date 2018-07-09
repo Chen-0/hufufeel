@@ -22,6 +22,8 @@ public class Statements {
     private Date createdAt;
     private Date payAt;
 
+    private User user;
+
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -112,5 +114,15 @@ public class Statements {
 
     public void setPayAt(Date payAt) {
         this.payAt = payAt;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

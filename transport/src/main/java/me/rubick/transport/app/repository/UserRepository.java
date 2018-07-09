@@ -27,4 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     List<User> findByIdIn(Collection<Long> collection);
 
     int countByHwcSn(String hwcSn);
+
+    User findTopByHwcSn(String hwcSn);
 }

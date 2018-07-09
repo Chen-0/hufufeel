@@ -9,12 +9,17 @@ import me.rubick.transport.app.repository.*;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.MessageFormat;
@@ -139,8 +144,29 @@ public class PayService {
     @Resource
     private UserService userService;
 
-    public Page<Statements> findAllStatements(long userId, Pageable pageable) {
-        return statementsRepository.findByUserId(userId, pageable);
+    public Page<Statements> findAllStatements(Long userId, Date start, Date end, Pageable pageable) {
+
+        return statementsRepository.findAll(new Specification<Statements>() {
+            @Override
+            public Predicate toPredicate(Root<Statements> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                ArrayList<Predicate> predicates = new ArrayList<>(10);
+
+                if (!ObjectUtils.isEmpty(userId)) {
+                    predicates.add(criteriaBuilder.equal(root.get("userId"), userId));
+                }
+
+                if (!ObjectUtils.isEmpty(start)) {
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdAt"), start));
+                }
+
+                if (!ObjectUtils.isEmpty(end)) {
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdAt"), end));
+                }
+
+                return criteriaBuilder.and(predicates.toArray(new Predicate[] {}));
+            }
+        }, pageable);
+//        return statementsRepository.findByUserId(userId, pageable);
     }
 
     public Statements saveStatements(Statements statements, BigDecimal total, BigDecimal surcharge) {

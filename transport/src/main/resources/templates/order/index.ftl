@@ -41,8 +41,7 @@
                         <thead>
                         <tr>
                             <th>出库单号</th>
-                            <th>参考号</th>
-                            <th>销售交易号</th>
+                            <th>运单号</th>
                             <th>SKU数</th>
                             <th>总件数</th>
                             <th>实际总重量</th>
@@ -56,8 +55,7 @@
                         <#list elements.getContent() as e>
                         <tr>
                             <td>${e.sn}</td>
-                            <td>${e.referenceNumber}</td>
-                            <td>${e.tn}</td>
+                            <td>${e.expressNo}</td>
                             <td>${e.skuQty}</td>
                             <td>${e.quantity}</td>
                             <td>

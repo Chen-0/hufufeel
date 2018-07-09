@@ -66,6 +66,7 @@
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">搜索</button>
                     <a href="/admin/stock/index" class="btn btn-default">重置</a>
+                    <a class="btn btn-primary" href="/admin/stock/import">库存导入</a>
                 </div>
             </form>
 

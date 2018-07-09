@@ -6,7 +6,7 @@ import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.CommonException;
 import me.rubick.common.app.response.RestResponse;
 import me.rubick.common.app.utils.BeanMapperUtils;
-import me.rubick.common.app.utils.ExcelHepler;
+import me.rubick.common.app.utils.ExcelHelper;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.OrderStatusEnum;
 import me.rubick.transport.app.constants.StatementTypeEnum;
@@ -356,37 +356,37 @@ public class OrderController extends AbstractController {
         try {
             User user = userService.getByLogin();
             File file = documentService.multipartFile2File(multipartFile);
-            ExcelHepler<OrderExcelVo> excelHepler = new ExcelHepler<>();
+            ExcelHelper<OrderExcelVo> excelHepler = new ExcelHelper<>();
             List<OrderExcelVo> orderExcelVos = excelHepler.readToObject(file, new ExcelConverter<OrderExcelVo>() {
                 @Override
                 public OrderExcelVo read(Row row) throws BusinessException {
                     OrderExcelVo orderExcelVo = new OrderExcelVo();
 
-                    orderExcelVo.setA(ExcelHepler.getValue(row, 0, false));
-                    orderExcelVo.setB(ExcelHepler.getValue(row, 1, false));
-                    orderExcelVo.setC(ExcelHepler.getValue(row, 2, false));
-                    orderExcelVo.setD(ExcelHepler.getValue(row, 3, true));
-                    orderExcelVo.setE(ExcelHepler.getValue(row, 4, true));
-                    orderExcelVo.setF(ExcelHepler.getValue(row, 5, false));
-                    orderExcelVo.setG(ExcelHepler.getValue(row, 6, false));
-                    orderExcelVo.setH(ExcelHepler.getValue(row, 7, false));
-                    orderExcelVo.setI(ExcelHepler.getValue(row, 8, false));
-                    orderExcelVo.setJ(ExcelHepler.getValue(row, 9, false));
-                    orderExcelVo.setK(ExcelHepler.getValue(row, 10, false));
-                    orderExcelVo.setL(ExcelHepler.getValue(row, 11, false));
-                    orderExcelVo.setM(ExcelHepler.getValue(row, 12, false));
-                    orderExcelVo.setN(ExcelHepler.getValue(row, 13, false));
-                    orderExcelVo.setO(ExcelHepler.getValue(row, 14, false));
-                    orderExcelVo.setP(ExcelHepler.getValue(row, 15, true));
-                    orderExcelVo.setQ(ExcelHepler.getValue(row, 16, true));
-                    orderExcelVo.setR(ExcelHepler.getValue(row, 17, true));
-                    orderExcelVo.setS(ExcelHepler.getValue(row, 18, true));
-                    orderExcelVo.setT(ExcelHepler.getValue(row, 19, true));
-                    orderExcelVo.setU(ExcelHepler.getValue(row, 20, true));
-                    orderExcelVo.setV(ExcelHepler.getValue(row, 21, true));
-                    orderExcelVo.setW(ExcelHepler.getValue(row, 22, true));
-                    orderExcelVo.setX(ExcelHepler.getValue(row, 23, true));
-                    orderExcelVo.setY(ExcelHepler.getValue(row, 24, true));
+                    orderExcelVo.setA(ExcelHelper.getValue(row, 0, false));
+                    orderExcelVo.setB(ExcelHelper.getValue(row, 1, false));
+                    orderExcelVo.setC(ExcelHelper.getValue(row, 2, false));
+                    orderExcelVo.setD(ExcelHelper.getValue(row, 3, true));
+                    orderExcelVo.setE(ExcelHelper.getValue(row, 4, true));
+                    orderExcelVo.setF(ExcelHelper.getValue(row, 5, false));
+                    orderExcelVo.setG(ExcelHelper.getValue(row, 6, false));
+                    orderExcelVo.setH(ExcelHelper.getValue(row, 7, false));
+                    orderExcelVo.setI(ExcelHelper.getValue(row, 8, false));
+                    orderExcelVo.setJ(ExcelHelper.getValue(row, 9, false));
+                    orderExcelVo.setK(ExcelHelper.getValue(row, 10, false));
+                    orderExcelVo.setL(ExcelHelper.getValue(row, 11, false));
+                    orderExcelVo.setM(ExcelHelper.getValue(row, 12, false));
+                    orderExcelVo.setN(ExcelHelper.getValue(row, 13, false));
+                    orderExcelVo.setO(ExcelHelper.getValue(row, 14, false));
+                    orderExcelVo.setP(ExcelHelper.getValue(row, 15, true));
+                    orderExcelVo.setQ(ExcelHelper.getValue(row, 16, true));
+                    orderExcelVo.setR(ExcelHelper.getValue(row, 17, true));
+                    orderExcelVo.setS(ExcelHelper.getValue(row, 18, true));
+                    orderExcelVo.setT(ExcelHelper.getValue(row, 19, true));
+                    orderExcelVo.setU(ExcelHelper.getValue(row, 20, true));
+                    orderExcelVo.setV(ExcelHelper.getValue(row, 21, true));
+                    orderExcelVo.setW(ExcelHelper.getValue(row, 22, true));
+                    orderExcelVo.setX(ExcelHelper.getValue(row, 23, true));
+                    orderExcelVo.setY(ExcelHelper.getValue(row, 24, true));
 
                     return orderExcelVo;
                 }

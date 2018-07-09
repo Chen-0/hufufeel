@@ -26,23 +26,22 @@
         <!-- Main content -->
         <section class="content">
 
-            <#if TYPE == 1>
-                <div class="callout callout-info">
-                    <h4>虎芙管家收货地址</h4>
-                    <ul>
-                        <li>收件人：${USER.hwcSn}</li>
-                        <li>电话：951-314-8768 或 951-310-7615</li>
-                        <li>街道：2260 S ARCHIBALD AVE STE D</li>
-                        <li>州：CA</li>
-                        <li>城市：ONTARIO</li>
-                    </ul>
-                </div>
-            </#if>
+        <#if TYPE == 1>
+            <div class="callout callout-warning">
+                <h4>虎芙管家收货地址</h4>
+                <ul>
+                    <li>电话：951-314-8768 或 951-310-7615</li>
+                    <li>街道：2260 S ARCHIBALD AVE STE D</li>
+                    <li>州：CA</li>
+                    <li>城市：ONTARIO</li>
+                </ul>
+            </div>
+        </#if>
 
 
             <form id="mainForm" action="/package/create" method="post">
                 <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
-                <input type="hidden" name="type" value="${TYPE}">
+                <input type="hidden" name="type" value="${TYPE}" id="type">
                 <div class="box">
                     <div class="box-header with-border">
                         <h3 class="box-title">1.选择货品</h3>
@@ -76,10 +75,10 @@
                                     <input type="hidden" name="x-input-weight" value="${e.weight}">
                                     <input type="hidden" name="weight[]">
                                     <input type="hidden" name="p[]" value="${e.id}">
-                                    <#--<div class="form-group">-->
-                                        <#--<input type="hidden" name="p[]" value="${e.id}">-->
-                                        <#--<input type="text" class="form-control" name="weight[]" placeholder="单件重量*数量">-->
-                                    <#--</div>-->
+                                <#--<div class="form-group">-->
+                                <#--<input type="hidden" name="p[]" value="${e.id}">-->
+                                <#--<input type="text" class="form-control" name="weight[]" placeholder="单件重量*数量">-->
+                                <#--</div>-->
                                 </td>
                                 <td>
                                     <a class="u-remove" href="javascript:void(0);" data-id="${e.id}">移除</a>
@@ -121,8 +120,34 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
+                    <#if TYPE == 1>
                         <div class="row">
-                            <div class="col-xs-12 col-md-4">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="form-group">
+                                    <label for="contact">收件人<span class="text-danger"></span>：</label>
+
+                                    <div class="row">
+                                        <div class="col-xs-4">
+                                            <input class="form-control" disabled value="${USER.hwcSn}">
+                                        </div>
+                                        <div class="col-xs-8">
+                                            <input class="form-control" id="contact" name="contact">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="control-label">
+                                    此收件人是包裹退货入库唯一识别标识，请注意在亚马逊移出库存中按照系统入库信息来填写。
+                                </label>
+                            </div>
+                        </div>
+                    </#if>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
                                 <div class="form-group">
                                     <label for="referenceNumber">参考号<span class="text-danger"></span>：</label>
                                     <input class="form-control" id="referenceNumber" name="referenceNumber">
@@ -131,7 +156,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-xs-12 col-md-4">
+                            <div class="col-xs-12 col-md-6">
                                 <div class="form-group">
                                     <label for="comment">备注：</label>
                                     <input class="form-control" id="comment" name="comment">
@@ -155,14 +180,6 @@
 <script>
     $(function () {
         $('#mainForm').submit(function () {
-
-//            var rfV = $('#referenceNumber').val();
-//
-//            if (isEmpty(rfV)) {
-//                sweetAlert("哎呦……", "请填写参考号", "error");
-//                return false;
-//            }
-
             //check
             var weightInput = $('input[name="weight[]"]');
             var qtyInput = $('input[name="qty[]"]');
@@ -196,6 +213,17 @@
                 var _q = parseInt(qitem);
                 if (isNaN(_q) || _q.toString() !== qitem) {
                     sweetAlert("哎呦……", "数量 请填写整数", "error");
+                    return false;
+                }
+            }
+
+            var type = $('#type').val();
+
+            if (type === 1) {
+                var contact = $('#contact').val();
+
+                if (isEmpty(contact)) {
+                    sweetAlert("哎呦……", "请填写 收件人 信息", "error");
                     return false;
                 }
             }
@@ -234,7 +262,7 @@
             var q = $(this).val();
             var wapper = $(this).parent().parent().parent();
             var w = $(wapper.find('input[name="x-input-weight"]')[0]).val();
-            var t =accMul(parseFloat(q), parseFloat(w));
+            var t = accMul(parseFloat(q), parseFloat(w));
             if (isEmpty(t) || isNaN(t)) {
                 t = 0;
             }
@@ -246,7 +274,7 @@
             var q = $(this).val();
             var wapper = $(this).parent().parent().parent();
             var w = $(wapper.find('input[name="x-input-weight"]')[0]).val();
-            var t =accMul(parseFloat(q), parseFloat(w));
+            var t = accMul(parseFloat(q), parseFloat(w));
             if (isEmpty(t) || isNaN(t)) {
                 t = 0;
             }

@@ -36,8 +36,8 @@ public class Order implements Serializable {
     private int skuQty;
     private String costSnapshot;
     private Date outTime;
-    private String express = "";
     private String expressNo = "";
+    private String express = "";
     private OrderStatusEnum nextStatus = OrderStatusEnum.NULL;
     private String cType;
     private Long documentId;
@@ -50,10 +50,11 @@ public class Order implements Serializable {
     @Transient
     private CostSnapshotVo costSnapshotVo;
 
-
     private List<OrderItem> orderItems;
 
     private Document doc;
+
+    private User user;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -84,26 +85,6 @@ public class Order implements Serializable {
 
     public void setSn(String sn) {
         this.sn = sn;
-    }
-
-    @Basic
-    @Column(name = "reference_number", nullable = false, length = 32)
-    public String getReferenceNumber() {
-        return referenceNumber;
-    }
-
-    public void setReferenceNumber(String referenceNumber) {
-        this.referenceNumber = referenceNumber;
-    }
-
-    @Basic
-    @Column(name = "tn", nullable = false, length = 32)
-    public String getTn() {
-        return tn;
-    }
-
-    public void setTn(String tn) {
-        this.tn = tn;
     }
 
     @Basic
@@ -290,14 +271,14 @@ public class Order implements Serializable {
         this.orderItems = orderItems;
     }
 
-    @Column
-    public String getExpress() {
-        return express;
-    }
-
-    public void setExpress(String express) {
-        this.express = express;
-    }
+//    @Column
+//    public String getExpress() {
+//        return express;
+//    }
+//
+//    public void setExpress(String express) {
+//        this.express = express;
+//    }
 
     @Column(name = "express_no")
     public String getExpressNo() {
@@ -361,5 +342,40 @@ public class Order implements Serializable {
 
     public void setSurchargeComment(String surchargeComment) {
         this.surchargeComment = surchargeComment;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getTn() {
+        return tn;
+    }
+
+    public void setTn(String tn) {
+        this.tn = tn;
+    }
+
+    @Column(name = "reference_number")
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    public String getExpress() {
+        return express;
+    }
+
+    public void setExpress(String express) {
+        this.express = express;
     }
 }

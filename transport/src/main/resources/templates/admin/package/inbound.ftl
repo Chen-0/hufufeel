@@ -38,6 +38,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>参考号</th>
+                                    <th>收件人</th>
                                     <th>客户</th>
                                     <th>仓库</th>
                                     <th>状态</th>
@@ -49,6 +50,7 @@
                                 <tr>
                                     <td>${o.id}</td>
                                     <td>${o.referenceNumber}</td>
+                                    <td>${o.contact}</td>
                                     <td>${o.nickname}</td>
                                     <td>${o.warehouseName}</td>
                                     <td>${o.status.getValue()}</td>
@@ -61,7 +63,7 @@
                                     <td>${p.product.productSku}</td>
                                     <td>预计：${p.expectQuantity} 件</td>
                                     <td>单件重量：${p.product.weight} KG</td>
-                                    <td colspan="1">实际数量（件）：<input type="text" class="form-control" placeholder=""
+                                    <td colspan="2">实际数量（件）：<input type="text" class="form-control" placeholder=""
                                                                    name="qty[]">
                                     </td>
                                 </tr>

@@ -66,8 +66,7 @@ public class OrderService {
                 if (StringUtils.hasText(keyword)) {
                     String _keyword = getKeyword(keyword);
                     predicates.add(cb.or(
-                            cb.like(root.get("referenceNumber"), _keyword),
-                            cb.like(root.get("tn"), _keyword),
+                            cb.like(root.get("trackingNumber"), _keyword),
                             cb.like(root.get("sn"), _keyword)
                     ));
                 }
@@ -104,11 +103,11 @@ public class OrderService {
 
         OrderSnapshotVo orderSnapshotVo = getOrderSnapshotVo(params);
 
-        if (! StringUtils.hasText(orderSnapshotVo.getCkt4())) {
+        if (!StringUtils.hasText(orderSnapshotVo.getCkt4())) {
             orderSnapshotVo.setCkt4("");
         }
 
-        if (! StringUtils.hasText(orderSnapshotVo.getCkt5())) {
+        if (!StringUtils.hasText(orderSnapshotVo.getCkt5())) {
             orderSnapshotVo.setCkt5("");
         }
 
@@ -133,7 +132,7 @@ public class OrderService {
         order.setSn(generateBatch());
         order.setcType(params.get("c_type"));
 
-        if(order.getcType().equals("u")) {
+        if (order.getcType().equals("u")) {
             order.setDocumentId(Long.valueOf(params.get("did")));
             order.setPhone("");
             order.setContact("");
@@ -195,8 +194,8 @@ public class OrderService {
         if (batch == null) {
             return "CK" + dateString + "0001";
         } else {
-            String temp = batch.substring(0, 8);
-            Integer no = Integer.valueOf(batch.substring(8)) + 1;
+            String temp = batch.substring(0, 9);
+            Integer no = Integer.valueOf(batch.substring(9)) + 1;
             return temp + no;
         }
     }
@@ -297,11 +296,11 @@ public class OrderService {
         }
 
         String timestamp = DateUtils.getTimestamp0();
-        if (! StringUtils.hasText(orderSnapshotVo.getCkt4())) {
+        if (!StringUtils.hasText(orderSnapshotVo.getCkt4())) {
             orderSnapshotVo.setCkt4(timestamp);
         }
 
-        if (! StringUtils.hasText(orderSnapshotVo.getCkt5())) {
+        if (!StringUtils.hasText(orderSnapshotVo.getCkt5())) {
             orderSnapshotVo.setCkt5(timestamp);
         }
 
@@ -353,11 +352,21 @@ public class OrderService {
         }
     }
 
-    public Order outbound(Order order, BigDecimal total, String express, String expressNo, BigDecimal surcharge, String surchargeComment) {
+    public Order checkOut(Order order, BigDecimal total, String express, String expressNo) {
+        if (order.getStatus().equals(OrderStatusEnum.CHECK)) {
+            order.setStatus(OrderStatusEnum.READY);
+            order.setTotal(order.getTotal().add(total));
+            order.setExpressNo(expressNo);
+            order.setExpress(express);
+            return orderRepository.save(order);
+        } else {
+            return order;
+        }
+    }
+
+    public Order outbound(Order order, BigDecimal total, BigDecimal surcharge, String surchargeComment) {
         order.setStatus(OrderStatusEnum.SEND);
-        order.setTotal(total.add(surcharge));
-        order.setExpress(express);
-        order.setExpressNo(expressNo);
+        order.setTotal(order.getTotal().add(total));
         order.setOutTime(new Date());
         order.setSurcharge(surcharge);
         order.setSurchargeComment(surchargeComment);

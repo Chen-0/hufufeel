@@ -72,6 +72,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="/admin/user/index">查看所有</a></li>
+                        <li><a href="/admin/user/statements/index">费用流水</a></li>
                     </ul>
                 </li>
 

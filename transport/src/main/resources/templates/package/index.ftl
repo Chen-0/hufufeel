@@ -43,6 +43,10 @@
                         <tr>
                             <th>入库单号</th>
                             <th>参考号</th>
+                            <#if TYPE == 1>
+                                <th>收件人</th>
+                            </#if>
+
                             <th>仓库</th>
                             <th>SKU数</th>
                             <th>总件数</th>
@@ -73,6 +77,9 @@
                         <tr>
                             <td>${e.cn}</td>
                             <td>${e.referenceNumber}</td>
+                            <#if TYPE == 1>
+                                <td>${e.contact}</td>
+                            </#if>
                             <td>${e.warehouseName}</td>
                             <td>${e.packageProducts?size}</td>
                             <td>${e.expectQuantity}</td>
@@ -91,8 +98,9 @@
                                 <a href="/package/${e.id}/show">查看</a>
                                 <#if e.status.ordinal() == 0>
                                     <a href="/package/${e.id}/cancel" class="x-remove">取消</a>
-                                    <a href="/package/${e.id}/print?type=sku" target="_blank">打印SKU</a>
-                                    <a href="/package/${e.id}/print_package" target="_blank">打印运单</a>
+                                    <a href="/package/${e.id}/show">打印</a>
+                                    <#--<a href="/package/${e.id}/print?type=sku" target="_blank">打印SKU</a>-->
+                                    <#--<a href="/package/${e.id}/print_package" target="_blank">打印运单</a>-->
                                 </#if>
 
                                 <#assign  key = e.id?string>
