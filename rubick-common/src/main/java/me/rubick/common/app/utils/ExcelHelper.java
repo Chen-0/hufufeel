@@ -8,6 +8,8 @@ import me.rubick.common.app.exception.CommonException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,8 +35,27 @@ public class ExcelHelper<T> {
                 excelRow.setB(getValue(row, 1));
                 excelRow.setC(getValue(row, 2));
                 excelRow.setD(getValue(row, 3));
+                excelRow.setE(getValue(row, 4));
+                excelRow.setF(getValue(row, 5));
+                excelRow.setG(getValue(row, 6));
+                excelRow.setH(getValue(row, 7));
+                excelRow.setI(getValue(row, 8));
+                excelRow.setJ(getValue(row, 9));
+                excelRow.setK(getValue(row, 10));
+                excelRow.setL(getValue(row, 11));
+                excelRow.setM(getValue(row, 12));
+                excelRow.setN(getValue(row, 13));
+                excelRow.setO(getValue(row, 14));
 
-                return excelRow;
+                if (
+                        StringUtils.hasText(excelRow.getA()) ||
+                        StringUtils.hasText(excelRow.getB()) ||
+                        StringUtils.hasText(excelRow.getC()) ||
+                        StringUtils.hasText(excelRow.getD())) {
+                    return excelRow;
+                }
+
+               return null;
             }
         });
 
@@ -84,7 +105,11 @@ public class ExcelHelper<T> {
                 continue;
             }
 
-            items.add(converter.read(row));
+            T item = converter.read(row);
+
+            if (!ObjectUtils.isEmpty(item)) {
+                items.add(item);
+            }
         }
 
         return items;

@@ -1,5 +1,7 @@
 package me.rubick.transport.app.constants;
 
+import me.rubick.common.app.exception.BusinessException;
+
 public enum ProductDangerTypeEnum {
 
     NO("否"), YES("是");
@@ -23,5 +25,15 @@ public enum ProductDangerTypeEnum {
             throw new IndexOutOfBoundsException("Invalid ordinal");
         }
         return values()[ordinal];
+    }
+
+    public static ProductDangerTypeEnum valOf(String ordinal) throws BusinessException {
+        for (ProductDangerTypeEnum e: ProductDangerTypeEnum.values()) {
+            if (e.getValue().equals(ordinal)) {
+                return e;
+            }
+        }
+
+        throw new BusinessException("【是否危险品】不是有效值");
     }
 }

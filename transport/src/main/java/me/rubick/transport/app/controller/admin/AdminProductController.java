@@ -1,18 +1,20 @@
 package me.rubick.transport.app.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.excel.ExcelRow;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.CommonException;
 import me.rubick.common.app.exception.FormException;
 import me.rubick.common.app.exception.NotFoundException;
-import me.rubick.common.app.utils.BeanMapperUtils;
-import me.rubick.common.app.utils.DateUtils;
-import me.rubick.common.app.utils.FormUtils;
-import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.common.app.helper.FormHelper;
+import me.rubick.common.app.utils.*;
 import me.rubick.transport.app.constants.*;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.Product;
+import me.rubick.transport.app.model.User;
+import me.rubick.transport.app.model.Warehouse;
 import me.rubick.transport.app.repository.ProductRepository;
+import me.rubick.transport.app.repository.UserRepository;
 import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.vo.ProductFormVo;
 import org.springframework.data.domain.Page;
@@ -25,13 +27,16 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.math.BigDecimal.ROUND_HALF_DOWN;
@@ -47,6 +52,9 @@ public class AdminProductController extends AbstractController {
 
     @Resource
     private ProductRepository productRepository;
+
+    @Resource
+    private UserRepository userRepository;
 
     @ModelAttribute("productStatus")
     public Integer productStatus() {
@@ -200,5 +208,103 @@ public class AdminProductController extends AbstractController {
 
         model.addAttribute("ele", product);
         return "/admin/product/show";
+    }
+
+    @RequestMapping(value = "/product/import", method = RequestMethod.GET)
+    public String getImportProduct() {
+        return "/admin/product/import";
+    }
+
+    /**
+     * 导入
+     */
+    @RequestMapping(value = "/product/import", method = RequestMethod.POST)
+    public String postImportProduct(
+            @RequestParam MultipartFile file,
+            RedirectAttributes redirectAttributes
+    ) throws BusinessException, CommonException {
+        FormHelper formHelper = FormHelper.getInstance();
+        if (file.isEmpty()) {
+            formHelper.addError("file", "请上传文件！");
+        }
+        File tempFile = documentService.multipartFile2File(file);
+
+        List<ExcelRow> excelRows = ExcelHelper.read(tempFile);
+        log.info("{}", JSONMapper.toJSON(excelRows));
+
+        for (ExcelRow row : excelRows) {
+            User user = userRepository.findTopByHwcSn(row.getA());
+
+            if (ObjectUtils.isEmpty(user)) {
+                formHelper.addError("file", "客户编号：" + row.getA() + " 不存在，请检查！");
+                break;
+            }
+
+            try {
+                ProductBusinessTypeEnum.valOf(row.getB());
+            }catch (BusinessException e) {
+                formHelper.addError("file", "业务类型：" + row.getB() + " 不是有效的值，请检查！");
+            }
+
+            try {
+                ProductBatteryTypeEnum.valOf(row.getE());
+            }catch (BusinessException e) {
+                formHelper.addError("file", "电池类型：" + row.getE() + " 不是有效的值，请检查！");
+            }
+
+            try {
+                ProductDangerTypeEnum.valOf(row.getL());
+            }catch (BusinessException e) {
+                formHelper.addError("file", "是否危险品：" + row.getL() + " 不是有效的值，请检查！");
+            }
+
+            formHelper.notNull(row.getG(), "file", "【重量】不能为空！");
+            formHelper.notNull(row.getH(), "file", "【长】不能为空！");
+            formHelper.notNull(row.getI(), "file", "【宽】不能为空！");
+            formHelper.notNull(row.getJ(), "file", "【高】不能为空！");
+            formHelper.notNull(row.getM(), "file", "【申报名称】不能为空！");
+            formHelper.notNull(row.getN(), "file", "【申报价值】不能为空！");
+
+            if (! ObjectUtils.isEmpty(productRepository.findTopByProductSku(row.getD()))) {
+                formHelper.addError("file", "SKU：" + row.getD() + " 已存在，请检查！");
+            }
+        }
+
+        try {
+            formHelper.hasError();
+        } catch (FormException e) {
+            throwForm(redirectAttributes, e.getErrorField(), e.getForm());
+            return "redirect:/admin/product/import";
+        }
+
+        for (ExcelRow row : excelRows) {
+            User user = userRepository.findTopByHwcSn(row.getA());
+
+            Product product = new Product();
+            product.setUserId(user.getId());
+            product.setImageId(1L);
+            product.setType(ProductTypeEnum.NORMAL);
+            product.setDeadline(DateUtils.stringToDate(row.getK()));
+            product.setProductName(row.getC());
+            product.setBusinessType(ProductBusinessTypeEnum.valOf(row.getB()).ordinal() == 1);
+            product.setIsDanger(ProductDangerTypeEnum.valOf(row.getL()).ordinal() == 1);
+            product.setIsBattery(ProductBatteryTypeEnum.valOf(row.getE()).ordinal() == 0);
+            product.setProductSku(row.getD());
+            product.setOrigin(row.getF());
+            product.setWeight(new BigDecimal(row.getG()));
+            product.setLength(new BigDecimal(row.getH()));
+            product.setWidth(new BigDecimal(row.getI()));
+            product.setHeight(new BigDecimal(row.getJ()));
+            product.setQuotedName(row.getM());
+            product.setQuotedPrice(row.getN());
+            product.setComment(row.getO());
+
+            log.info("{}", JSONMapper.toJSON(product));
+            productService.createProduct(product);
+        }
+
+        redirectAttributes.addFlashAttribute("success", "出库单导入成功！");
+
+        return "redirect:/admin/product/index";
     }
 }

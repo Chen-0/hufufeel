@@ -77,6 +77,7 @@
                 </li>
 
                 <li><a href="/admin/setting">系统设置</a></li>
+                <li><a href="/admin/notice/index">公告管理</a></li>
             </ul>
 
             <form action="/logout" method="post" id="logoutForm">

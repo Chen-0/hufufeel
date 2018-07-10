@@ -26,6 +26,7 @@
         <mapping class="me.rubick.transport.app.model.Statements"/>
         <mapping class="me.rubick.transport.app.model.OrderLogistics"/>
         <mapping class="me.rubick.transport.app.model.SwitchSku"/>
+        <mapping class="me.rubick.transport.app.model.Notice"/>
         <!-- <property name="connection.username"/> -->
         <!-- <property name="connection.password"/> -->
 

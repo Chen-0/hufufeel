@@ -82,10 +82,11 @@
                 <div class="notice-bar">
                     <h3>公告栏</h3>
                     <ul>
-                    <#--<volist name="news_list" id="vo">-->
-                            <#--<li><a class="white-text" href="javascript:void(0);" data-id="{$vo['id']}"-->
-                                   <#--data-type="affiche">【公告】&nbsp; {$vo['subject']}</a></li>-->
-                        <#--</volist>-->
+                        <#list notices as n>
+                            <li><a class="white-text" href="javascript:void(0);" data-id="${n.id}"
+                                   data-type="affiche">【公告】&nbsp; ${n.title}</a></li>
+                        </#list>
+
                     </ul>
                 </div>
 
@@ -145,6 +146,23 @@
                 ele.attr('src', ele.attr('lazy-load-src'));
             }
         }
+
+
+        $('a[data-type=affiche]').click(function () {
+            var id = $(this).attr('data-id');
+            $.ajax({
+                type: "POST",
+                url: "/notice/"+id+"/show",
+                data: {trans_id: id},
+                dataType: "json",
+                success: function (result) {
+                    if (result.success) {
+                        $('#affiche-content').html(result.data.context);
+                        $('#affiche-modal').removeClass('hide');
+                    }
+                }
+            });
+        });
     });
 </script>
 </body>

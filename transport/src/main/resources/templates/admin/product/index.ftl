@@ -36,6 +36,10 @@
     <div class="row">
         <div class="col-xs-12">
 
+            <div style="margin: 15px;">
+                <a class="btn btn-primary" href="/admin/product/import">货品导入</a>
+            </div>
+
             <div class="table-responsive">
                 <table class="bordered">
                     <thead>

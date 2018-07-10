@@ -1,13 +1,18 @@
 package me.rubick.transport.app.controller;
 
 import me.rubick.common.app.response.RestResponse;
+import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.transport.app.constants.PackageTypeEnum;
 import me.rubick.transport.app.constants.ProductTypeEnum;
+import me.rubick.transport.app.model.Notice;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.model.PackageProduct;
+import me.rubick.transport.app.repository.NoticeRepository;
 import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.service.PayService;
+import me.rubick.transport.app.vo.admin.NoticeFormVo;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,6 +28,9 @@ public class BaseApiController extends AbstractController {
 
     @Resource
     private PackageRepository packageRepository;
+
+    @Resource
+    private NoticeRepository noticeRepository;
 
     @RequestMapping("/api/base/u2r")
     public RestResponse<BigDecimal> r2u(
@@ -58,5 +66,17 @@ public class BaseApiController extends AbstractController {
         }
 
         return new RestResponse<>(payService.calcCK(p).getTotal());
+    }
+
+    @RequestMapping("/notice/{id}/show")
+    public RestResponse<NoticeFormVo> getNotice(
+            @PathVariable long id
+    ) {
+        Notice notice = noticeRepository.findOne(id);
+        if (ObjectUtils.isEmpty(notice)) {
+            return new RestResponse<>("公告不存在");
+        }
+
+        return new RestResponse<>(BeanMapperUtils.map(notice, NoticeFormVo.class));
     }
 }
