@@ -63,7 +63,7 @@
                                     <td>${p.product.productSku}</td>
                                     <td>预计：${p.expectQuantity} 件</td>
                                     <td>单件重量：${p.product.weight} KG</td>
-                                    <td colspan="2">实际重量（KG）：<input type="text" class="form-control" placeholder=""
+                                    <td colspan="2">实际数量（件）：<input type="text" class="form-control" placeholder=""
                                                                    name="qty[]">
                                     </td>
                                 </tr>
@@ -75,7 +75,7 @@
                         <div class="row" style="margin-top: 25px;">
                             <div class="col-xs-6">
                                 <div class="form-group">
-                                    <label for="total_fee">入库费用（USD）（自动计算，请输入货品实际重量）</label>
+                                    <label for="total_fee">入库费用（USD）（自动计算，请输入货品的数量）</label>
                                     <input type="text" class="form-control" id="total_fee" name="total_fee">
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
         console.log(pids);
 
         function check(v) {
-            if (parseFloat(v).toString().length === v.length) {
+            if (parseInt(v).toString().length === v.length) {
                 return true;
             } else {
                 return false;

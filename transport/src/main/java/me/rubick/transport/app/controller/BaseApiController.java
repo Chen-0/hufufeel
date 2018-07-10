@@ -46,7 +46,7 @@ public class BaseApiController extends AbstractController {
     @RequestMapping(value = "/api/base/{id}/calc_RK", method = RequestMethod.POST)
     public RestResponse<BigDecimal> calcRK(
             @PathVariable long id,
-            @RequestParam("qty[]") List<Integer> qty,
+            @RequestParam("qty[]") List<BigDecimal> qty,
             @RequestParam("p[]") List<Long> pIds
     ) {
         Package p = packageRepository.findOne(id);
@@ -56,16 +56,14 @@ public class BaseApiController extends AbstractController {
         if (p.getPackageProducts().size() != pIds.size()) {
             return new RestResponse<>("");
         }
-        int count = pIds.size();
-        for (PackageProduct pp : p.getPackageProducts()) {
-            for (int i = 0; i < count; i++) {
-                if (pp.getProductId() == pIds.get(i)) {
-                    pp.setQuantity(qty.get(i));
-                }
-            }
+
+        BigDecimal tWeight = BigDecimal.ZERO;
+
+        for (BigDecimal b: qty) {
+            tWeight = tWeight.add(b);
         }
 
-        return new RestResponse<>(payService.calcCK(p).getTotal());
+        return new RestResponse<>(payService.calcCK(p, tWeight).getTotal());
     }
 
     @RequestMapping("/notice/{id}/show")

@@ -192,7 +192,7 @@ public class PayService {
      * @param p
      * @return
      */
-    public Statements calcCK(Package p) {
+    public Statements calcCK(Package p, BigDecimal t_weight) {
 
         if (p.getType().equals(PackageTypeEnum.REJECT)) {
             return calcTHRK(p);
@@ -209,24 +209,12 @@ public class PayService {
 
         BigDecimal total = BigDecimal.ZERO;
 
-
-        //总重、总体积
-        BigDecimal tWeight = BigDecimal.ZERO;
-//        BigDecimal tSize = BigDecimal.ZERO;
-
-        for (PackageProduct pp : p.getPackageProducts()) {
-            Product product = pp.getProduct();
-
-            tWeight = tWeight.add(product.getWeight().multiply(new BigDecimal(pp.getQuantity())));
-//            tSize = tSize.add(product.getVol().multiply(new BigDecimal(pp.getQuantity())));
-        }
-
-        String comment = MessageFormat.format("入库单：{0} ，总重：{1} KG", p.getSn(), tWeight);
-//        String comment = MessageFormat.format("入库单总重：{0} KG, 入库总体积：{1} 立方米", tWeight, tSize);
+        String comment = MessageFormat.format("入库单：{0} ，总重：{1} KG", p.getSn(), t_weight);
 
         switch (costSubjectSnapshotVo.getRkt()) {
             case "RK-AZ":       //按重
-                total = tWeight.multiply(costSubjectSnapshotVo.getRkv());
+                total = t_weight.multiply(costSubjectSnapshotVo.getRkv());
+                log.info("userId={},按重入库, 总重：{}", p.getUserId(), t_weight);
                 break;
             case "RK-AX":       //按箱
                 total = costSubjectSnapshotVo.getRkv();

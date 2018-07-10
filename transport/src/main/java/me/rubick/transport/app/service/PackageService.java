@@ -97,6 +97,12 @@ public class PackageService {
         packageProductRepository.save(products);
     }
 
+    public Package inbound(long packageId) {
+        Package p = packageRepository.findOne(packageId);
+        p.setStatus(PackageStatusEnum.RECEIVED);
+        return packageRepository.save(p);
+    }
+
     public Package inbound(long packageId, List<Product> products, List<Integer> qty) {
         int count = products.size();
         int t = 0;

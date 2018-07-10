@@ -130,7 +130,7 @@ public class AdminPackageController extends AbstractController {
     @RequestMapping(value = "/package/{id}/inbound", method = RequestMethod.POST)
     public String changePackageStatus(
             @PathVariable("id") long id,
-            @RequestParam("qty[]") List<Integer> qty,
+            @RequestParam("qty[]") List<BigDecimal> qty,
             @RequestParam("p[]") List<Long> pIds,
             @RequestParam(required = false, name = "total_fee") BigDecimal total,
             RedirectAttributes redirectAttributes
@@ -139,16 +139,17 @@ public class AdminPackageController extends AbstractController {
 
         int count = products.size();
         if (count != 0 && count == pIds.size() && qty.size() == count) {
-            Package p = packageService.inbound(id, products, qty);
-
+            Package p = packageService.inbound(id);
             redirectAttributes.addFlashAttribute("success", "操作成功！");
 
+            BigDecimal tWeight = BigDecimal.ZERO;
 
-            //////////////////////  增加库存  /////////////////////////////////
-//            stockService.addStock(p);
+            for (BigDecimal b: qty) {
+                tWeight = tWeight.add(b);
+            }
 
             //////////////////////  收入库费  /////////////////////////////////
-            Statements statements = payService.saveStatements(payService.calcCK(p), total);
+            Statements statements = payService.saveStatements(payService.calcCK(p, tWeight), total);
             boolean flag = payService.payStatements(statements.getId());
 
             if (flag) {
