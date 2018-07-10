@@ -1,5 +1,6 @@
 package me.rubick.transport.app.controller.admin;
 
+import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.excel.ExcelRow;
 import me.rubick.common.app.excel.ExcelWriter;
 import me.rubick.common.app.exception.BusinessException;
@@ -46,6 +47,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin")
 @SessionAttributes("orderStatus")
+@Slf4j
 public class AdminOrderController extends AbstractController {
 
     @Resource
@@ -109,26 +111,28 @@ public class AdminOrderController extends AbstractController {
         context[0][12] = "街道";
         context[0][13] = "门牌号";
 
+        int j = 1;
         for (int i = 0; i < row; i++) {
             Order o = elements.get(i);
             if (!o.getStatus().equals(OrderStatusEnum.CHECK)) {
                 continue;
             }
             o.setOrderSnapshotVo(JSONMapper.fromJson(o.getOrderSnapshot(), OrderSnapshotVo.class));
-            context[i + 1][0] = o.getSn();
-            context[i + 1][1] = o.getTn();
-            context[i + 1][2] = o.getReferenceNumber();
-            context[i + 1][3] = o.getOrderSnapshotVo().getCkt1();
-            context[i + 1][4] = o.getOrderSnapshotVo().getCkt3();
-            context[i + 1][5] = o.getWarehouseName();
-            context[i + 1][6] = o.getWeight().toString();
-            context[i + 1][7] = o.getContact();
-            context[i + 1][8] = o.getPhone();
-            context[i + 1][9] = o.getOrderSnapshotVo().getCkf1();
-            context[i + 1][10] = o.getOrderSnapshotVo().getCkf3();
-            context[i + 1][11] = o.getOrderSnapshotVo().getCkf5();
-            context[i + 1][12] = o.getOrderSnapshotVo().getCkf10();
-            context[i + 1][13] = o.getOrderSnapshotVo().getCkf11();
+            context[j][0] = o.getSn();
+            context[j][1] = o.getTn();
+            context[j][2] = o.getReferenceNumber();
+            context[j][3] = o.getOrderSnapshotVo().getCkt1();
+            context[j][4] = o.getOrderSnapshotVo().getCkt3();
+            context[j][5] = o.getWarehouseName();
+            context[j][6] = o.getWeight().toString();
+            context[j][7] = o.getContact();
+            context[j][8] = o.getPhone();
+            context[j][9] = o.getOrderSnapshotVo().getCkf1();
+            context[j][10] = o.getOrderSnapshotVo().getCkf3();
+            context[j][11] = o.getOrderSnapshotVo().getCkf5();
+            context[j][12] = o.getOrderSnapshotVo().getCkf10();
+            context[j][13] = o.getOrderSnapshotVo().getCkf11();
+            j+=1;
         }
 
         response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -235,31 +239,7 @@ public class AdminOrderController extends AbstractController {
             throw new HttpNoFoundException();
         }
 
-        List<Statements> statementsList = new ArrayList<>();
-        Statements statements = payService.createORDER(order);
-        statementsList.add(payService.saveStatements(statements, total));
-
-        orderService.checkOut(order, statementsList.get(0).getTotal(), express, expressNo);
-
-        boolean flag1 = payService.payStatements(statementsList);
-
-        if (flag1) {
-            messageService.send(
-                    order.getUserId(),
-                    MessageFormat.format("/order/{0}/show", order.getId()),
-                    MessageFormat.format("出库单：{0}审核成功！", order.getSn())
-            );
-        } else {
-            order.setNextStatus(order.getStatus());
-            order.setStatus(OrderStatusEnum.FREEZE);
-            orderRepository.save(order);
-
-            messageService.send(
-                    order.getUserId(),
-                    MessageFormat.format("/order/{0}/show", order.getId()),
-                    MessageFormat.format("出库单：{0}，扣费失败，请充值账号并重新缴费。", order.getSn())
-            );
-        }
+        orderService.checkOut(order,total, express, expressNo);
 
         redirectAttributes.addFlashAttribute("success", "运单审核成功！");
 
@@ -392,12 +372,14 @@ public class AdminOrderController extends AbstractController {
     public String postUpdateLogistics(
             @PathVariable long id,
             @RequestParam String comment,
-            @RequestParam(required = false, defaultValue = "", name = "express_no") String expressNo,
+            @RequestParam(required = false, defaultValue = "") String expressNo,
+            @RequestParam(required = false, defaultValue = "") String express,
             RedirectAttributes redirectAttributes,
             @ModelAttribute("orderStatus") Integer status
     ) {
         Order order = orderService.findOne(id);
         order.setExpressNo(expressNo);
+        order.setExpress(express);
         orderRepository.save(order);
 
         OrderLogistics orderLogistics = orderService.findOrNewOrderLogistics(id);
@@ -430,11 +412,18 @@ public class AdminOrderController extends AbstractController {
         FormHelper formHelper = FormHelper.getInstance();
         if (file.isEmpty()) {
             formHelper.addError("file", "请上传文件！");
+            try {
+                formHelper.hasError();
+            } catch (FormException e) {
+                throwForm(redirectAttributes, e.getErrorField(), e.getForm());
+                return "redirect:/admin/order/import";
+            }
         }
         File tempFile = documentService.multipartFile2File(file);
 
         List<ExcelRow> excelRows = ExcelHelper.read(tempFile);
 
+        log.info("{}", JSONMapper.toJSON(excelRows));
         for (ExcelRow row : excelRows) {
             int r = orderRepository.countBySn(row.getA());
             if (r != 1) {

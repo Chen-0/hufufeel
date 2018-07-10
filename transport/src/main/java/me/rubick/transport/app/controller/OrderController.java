@@ -132,7 +132,7 @@ public class OrderController extends AbstractController {
             model.addAttribute("qty", qty);
 
         }
-        return "/package/send";
+        return "/order/create";
     }
 
     @RequestMapping(value = "/order/create", method = RequestMethod.POST)
@@ -236,7 +236,7 @@ public class OrderController extends AbstractController {
         if (ObjectUtils.isEmpty(model.asMap().get("cType"))) {
             model.addAttribute("cType", order.getcType());
         }
-        return "/package/update_send";
+        return "/order/update";
     }
 
     @RequestMapping(value = "/order/{id}/update", method = RequestMethod.POST)

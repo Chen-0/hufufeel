@@ -87,7 +87,7 @@
                 <#list elements.getContent() as e>
                 <tr>
                     <td>${e_index + 1}</td>
-                    <th>${e.user.name}</th>
+                    <th>${e.user.name} (NO.${e.user.hwcSn})</th>
                     <td><a href="/admin/product/${e.product.id}/show">${e.product.productSku}</a></td>
                     <td><a href="/admin/product/${e.product. id}/show">${e.product.productName}</a></td>
                     <td>${e.product.type.value}</td>

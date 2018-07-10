@@ -112,7 +112,7 @@ public class UserController extends AbstractController {
         List<Statements> statements = statementsPage.getContent();
 
         int row = statements.size();
-        Object[][] context = new Object[row][7];
+        Object[][] context = new Object[row+1][7];
         context[0][0] = "编号";
         context[0][1] = "费用说明";
         context[0][2] = "费用类型";
@@ -121,16 +121,16 @@ public class UserController extends AbstractController {
         context[0][5] = "创建时间";
         context[0][6] = "支付时间";
 
-        for (int i = 1; i < row; i++) {
+        for (int i = 0; i < row; i++) {
             Statements s = statements.get(i);
 
-            context[i][0] = i;
-            context[i][1] = s.getComment();
-            context[i][2] = s.getType().getValue();
-            context[i][3] = s.getStatus().getValue();
-            context[i][4] = s.getTotal().toString();
-            context[i][5] = DateUtils.date2StringYMDHMS(s.getCreatedAt());
-            context[i][6] = DateUtils.date2StringYMDHMS(s.getPayAt());
+            context[i+1][0] = i + 1;
+            context[i+1][1] = s.getComment();
+            context[i+1][2] = s.getType().getValue();
+            context[i+1][3] = s.getStatus().getValue();
+            context[i+1][4] = s.getTotal().toString();
+            context[i+1][5] = DateUtils.date2StringYMDHMS(s.getCreatedAt());
+            context[i+1][6] = DateUtils.date2StringYMDHMS(s.getPayAt());
         }
 
         log.info("{}", JSONMapper.toJSON(context));
@@ -149,7 +149,8 @@ public class UserController extends AbstractController {
             RedirectAttributes redirectAttributes
     ) {
         try {
-            Statements statements = payService.secPayStatements(id);
+            User user = userService.getByLogin();
+            Statements statements = payService.secPayStatements(id, user);
             redirectAttributes.addFlashAttribute("SUCCESS", "支付成功！");
 
             switch (statements.getType()) {
@@ -200,6 +201,4 @@ public class UserController extends AbstractController {
 
         return "user/charge_index";
     }
-
-
 }

@@ -182,9 +182,7 @@ public class AdminPackageController extends AbstractController {
 
     ) {
         Package p = packageRepository.findOne(id);
-
         model.addAttribute("o", p);
-        model.addAttribute("total", payService.calcSJ(p).getTotal());
         return "/admin/package/publish";
     }
 
@@ -192,11 +190,22 @@ public class AdminPackageController extends AbstractController {
     public String postPackagePublish(
             Model model,
             @PathVariable("id") long id,
+            @RequestParam("qty[]") List<Integer> qty,
+            @RequestParam("p[]") List<Long> pIds,
             @RequestParam(required = false) BigDecimal total,
             RedirectAttributes redirectAttributes
 
     ) {
+        List<Product> products = productService.findProducts(pIds);
         Package p = packageRepository.findOne(id);
+
+        int count = products.size();
+        if (!(count != 0 && count == pIds.size() && qty.size() == count) || ObjectUtils.isEmpty(p)) {
+            redirectAttributes.addFlashAttribute("error", "上架失败！");
+            return "redirect:/admin/package/index";
+        }
+
+        packageService.inbound(p.getId(), products, qty);
 
 
         Statements statements = payService.saveStatements(payService.calcSJ(p), total);

@@ -117,7 +117,6 @@ public class PackageService {
 
         Package p = packageRepository.findOne(packageId);
         p.setQuantity(t);
-        p.setStatus(PackageStatusEnum.RECEIVED);
         return packageRepository.save(p);
     }
 
@@ -155,7 +154,13 @@ public class PackageService {
         p.setWarehouseId(warehouse.getId());
         p.setStatus(PackageStatusEnum.READY);
         p.setReferenceNumber(referenceNumber);
-        p.setContact(user.getHwcSn() + "-" + contact);
+
+        if (type.equals(PackageTypeEnum.REJECT)) {
+            p.setContact(user.getHwcSn() + "-" + contact);
+        } else {
+            p.setContact("");
+        }
+
         p.setWarehouseName(warehouse.getName());
         p.setNickname(user.getName());
         p.setComment(comment);

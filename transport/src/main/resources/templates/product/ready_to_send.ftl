@@ -217,12 +217,13 @@
                 }
             }
 
-            var type = $('#type').val();
+            var type = parseInt($('#type').val());
 
             if (type === 1) {
                 var contact = $('#contact').val();
 
                 if (isEmpty(contact)) {
+                    $('#contact').parent().parent().addClass("has-error");
                     sweetAlert("哎呦……", "请填写 收件人 信息", "error");
                     return false;
                 }

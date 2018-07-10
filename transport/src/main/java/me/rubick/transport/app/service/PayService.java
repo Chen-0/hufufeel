@@ -317,8 +317,12 @@ public class PayService {
         return flag;
     }
 
-    public Statements secPayStatements(long id) throws BusinessException {
+    public Statements secPayStatements(long id, User user) throws BusinessException {
         Statements statements = statementsRepository.findOne(id);
+
+        if (user.getId() != statements.getUserId()) {
+            throw new BusinessException("您没有权限执行该操作！");
+        }
 
         if (statements.getStatus().equals(StatementStatusEnum.UNPAY)) {
             if (userService.payUSD(statements.getUserId(), statements.getTotal())) {
@@ -384,6 +388,7 @@ public class PayService {
      * @param p
      * @return
      */
+    @Transactional(readOnly = true)
     public Statements calcSJ(Package p) {
         if (p.getType().equals(PackageTypeEnum.REJECT)) {
             return calcTHSJ(p);

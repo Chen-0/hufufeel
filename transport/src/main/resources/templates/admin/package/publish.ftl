@@ -15,6 +15,13 @@
         </div>
     </div>
 
+<#if success?? >
+    <div class="alert alert-success alert-dismissable alert-message">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    ${success}
+    </div>
+</#if>
+
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
             <form action="/admin/package/${o.id}/publish" method="post">
@@ -31,6 +38,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>参考号</th>
+                                    <th>收件人</th>
                                     <th>客户</th>
                                     <th>仓库</th>
                                     <th>状态</th>
@@ -42,6 +50,7 @@
                                 <tr>
                                     <td>${o.id}</td>
                                     <td>${o.referenceNumber}</td>
+                                    <td>${o.contact}</td>
                                     <td>${o.nickname}</td>
                                     <td>${o.warehouseName}</td>
                                     <td>${o.status.getValue()}</td>
@@ -49,13 +58,12 @@
                                 </tr>
                                 <#list o.packageProducts as p>
                                 <tr class="table-sub-item">
-                                    <td>商品</td>
+                                    <td>商品<input type="hidden" name="p[]" value="${p.product.id}"></td>
                                     <td>${p.product.productName}</td>
                                     <td>${p.product.productSku}</td>
                                     <td>预计：${p.expectQuantity} 件</td>
                                     <td>单件重量：${p.product.weight} KG</td>
-                                    <td>
-                                        实际数量（件）${p.quantity}
+                                    <td colspan="2">实际数量（件）：<input type="text" class="form-control" name="qty[]" value="${p.expectQuantity}">
                                     </td>
                                 </tr>
                                 </#list>
@@ -66,8 +74,8 @@
                         <div class="row" style="margin-top: 25px;">
                             <div class="col-xs-6">
                                 <div class="form-group">
-                                    <label for="total">上架费用（USD）（自动计算）</label>
-                                    <input type="text" class="form-control" id="total" name="total" value="${total}">
+                                    <label for="total_fee">上架费用（USD）（自动计算，请输入货品的数量）</label>
+                                    <input type="text" class="form-control" id="total_fee" name="total_fee">
                                 </div>
                             </div>
                         </div>
@@ -82,5 +90,61 @@
 </div>
 
 <#include "*/admin/_layout/script.ftl"/>
+<script>
+    $(function () {
+        var pids = [];
+        $('input[name="p[]"]').each(function () {
+            pids.push($(this).val());
+        });
+
+        console.log(pids);
+
+        function check(v) {
+            if (parseInt(v).toString().length === v.length) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        $('input[name="qty[]"]').change(function () {
+            calc();
+        });
+
+        calc();
+        function calc() {
+            var qqq = [];
+
+            $('input[name="qty[]"]').each(function () {
+                var v = $(this).val();
+
+                if (!isEmpty(v) && check(v)) {
+                    qqq.push(v);
+                }
+
+
+            });
+
+            if (pids.length === qqq.length) {
+                console.log(qqq);
+
+                $.ajax({
+                    url: '/api/base/${o.id}/calc_SJ',
+                    data: {
+                        qty:qqq,
+                        p: pids
+                    },
+                    success: function (e) {
+                        console.log(e);
+
+                        if (e.success) {
+                            $('#total_fee').val(e.data);
+                        }
+                    }
+                })
+            }
+        }
+    })
+</script>
 </body>
 </html>

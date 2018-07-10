@@ -28,6 +28,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -54,6 +55,12 @@ public class OrderService {
     @Resource
     private ProductRepository productRepository;
 
+    @Resource
+    private MessageService messageService;
+
+    @Resource
+    private PayService payService;
+
     public Page<Order> findAll(User user, String keyword, Integer status, Pageable pageable) {
         return orderRepository.findAll(new Specification<Order>() {
             @Override
@@ -66,7 +73,7 @@ public class OrderService {
                 if (StringUtils.hasText(keyword)) {
                     String _keyword = getKeyword(keyword);
                     predicates.add(cb.or(
-                            cb.like(root.get("trackingNumber"), _keyword),
+                            cb.like(root.get("expressNo"), _keyword),
                             cb.like(root.get("sn"), _keyword)
                     ));
                 }
@@ -352,15 +359,39 @@ public class OrderService {
         }
     }
 
-    public Order checkOut(Order order, BigDecimal total, String express, String expressNo) {
-        if (order.getStatus().equals(OrderStatusEnum.CHECK)) {
-            order.setStatus(OrderStatusEnum.READY);
-            order.setTotal(order.getTotal().add(total));
-            order.setExpressNo(expressNo);
-            order.setExpress(express);
-            return orderRepository.save(order);
+    public void checkOut(Order order, BigDecimal total, String express, String expressNo) {
+        if (!order.getStatus().equals(OrderStatusEnum.CHECK)) {
+            return;
+        }
+
+        List<Statements> statementsList = new ArrayList<>();
+        Statements statements = payService.createORDER(order);
+        statementsList.add(payService.saveStatements(statements, total));
+
+        order.setStatus(OrderStatusEnum.READY);
+        order.setTotal(order.getTotal().add(statementsList.get(0).getTotal()));
+        order.setExpressNo(expressNo);
+        order.setExpress(express);
+        orderRepository.save(order);
+
+        boolean flag1 = payService.payStatements(statementsList);
+
+        if (flag1) {
+            messageService.send(
+                    order.getUserId(),
+                    MessageFormat.format("/order/{0}/show", order.getId()),
+                    MessageFormat.format("出库单：{0}审核成功！", order.getSn())
+            );
         } else {
-            return order;
+            order.setNextStatus(order.getStatus());
+            order.setStatus(OrderStatusEnum.FREEZE);
+            orderRepository.save(order);
+
+            messageService.send(
+                    order.getUserId(),
+                    MessageFormat.format("/order/{0}/show", order.getId()),
+                    MessageFormat.format("出库单：{0}，扣费失败，请充值账号并重新缴费。", order.getSn())
+            );
         }
     }
 

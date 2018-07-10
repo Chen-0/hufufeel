@@ -25,7 +25,7 @@
                 <h4>禁止操作！</h4>
 
                 <p>您的账号已经被冻结，您的账号存在欠费行为：</p>
-                <p>1、仓存费欠费</p>
+                <p>1、仓存费欠费 <a href="/user/statements/index">点击查看</a></p>
             </div>
         </#if>
 
@@ -91,11 +91,11 @@
                             <input type="text" class="form-control" id="qty">
                         </div>
                         <div class="form-group">
-                            <button class="btn btn-primary" type="button" id="addProduct">添加货品</button>
                             <button class="btn btn-default" type="button" data-toggle="modal"
                                     data-target="#show-stock-modal">
-                                货品库存
+                                选择库存
                             </button>
+                            <button class="btn btn-primary" type="button" id="addProduct">添加货品</button>
                         </div>
                     </form>
                 </div>
@@ -151,7 +151,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="CKT-4" class="col-xs-1 control-label">运单号</label>
+                            <label for="CKT-4" class="col-xs-1 control-label">参考号</label>
                         <#if error?exists && error.ckt4?exists>
                             <div class="col-xs-5 has-error">
                                 <input class="form-control" id="CKT-4" name="CKT-4" value="${sp.ckt4!}">
@@ -167,12 +167,14 @@
                             <label for="CKT-5" class="col-xs-1 control-label">交易号</label>
                         <#if error?exists && error.ckt5?exists>
                             <div class="col-xs-5 has-error">
-                                <input class="form-control" id="CKT-5" name="CKT-5" value="${sp.ckt5!}" placeholder="可空">
+                                <input class="form-control" id="CKT-5" name="CKT-5" value="${sp.ckt5!}"
+                                       placeholder="可空">
                                 <span class="help-block">${error.ckt5!}</span>
                             </div>
                         <#else>
                             <div class="col-xs-5">
-                                <input class="form-control" id="CKT-5" name="CKT-5" value="${sp.ckt5!}" placeholder="可空">
+                                <input class="form-control" id="CKT-5" name="CKT-5" value="${sp.ckt5!}"
+                                       placeholder="可空">
 
                             </div>
                         </#if>
@@ -203,13 +205,13 @@
                     <div class="form-group">
                         <p class="charge-font inline-block">选择填写信息方式：</p>
                         <label class="select-label">
+                            <input type="radio" name="c_type" value="w" class="x-radio flat-red"
+                                   data-id="x-tab-2" ${foo?string("", "checked")}> 填写
+                        </label>
+                        <label class="select-label">
                             <input type="radio" name="c_type" value="u" class="x-radio flat-red"
                                    data-id="x-tab-1" ${foo?string("checked", "")}> 上传
                             <input type="hidden" name="did" value="-1" id="did">
-                        </label>
-                        <label class="select-label">
-                            <input type="radio" name="c_type" value="w" class="x-radio flat-red"
-                                   data-id="x-tab-2" ${foo?string("", "checked")}> 填写
                         </label>
                     </div>
 
@@ -221,16 +223,27 @@
                         <div class="tab-content">
                             <div class="tab-pane active" id="tab_1">
                             <#--文件上传-->
+                            <#if error?exists && error.did?exists>
                                 <form id="upload-file-form">
-                                    <label for="upload-file-input">请上传文件：</label>
-                                    <input id="upload-file-input" type="file" name="uploadfile"
-                                           accept="application/pdf"/>
-                                    <p class="help-block">请上传PDF格式的文件</p>
-                                <#if error?exists && error.did?exists>
-                                    <p class="text-danger">${error.did!}</p>
-                                </#if>
-                                    <p id="s-msg"></p>
+                                    <div class="form-group has-error">
+                                        <label for="upload-file-input">请上传文件：</label>
+                                        <input id="upload-file-input" type="file" name="uploadfile"
+                                               accept="application/pdf"/>
+                                        <p class="text-danger">${error.did!}</p>
+                                        <p id="s-msg"></p>
+                                    </div>
                                 </form>
+                            <#else>
+                                <form id="upload-file-form">
+                                    <div class="form-group">
+                                        <label for="upload-file-input">请上传文件：</label>
+                                        <input id="upload-file-input" type="file" name="uploadfile"
+                                               accept="application/pdf"/>
+                                        <p class="help-block">请上传PDF格式的文件</p>
+                                        <p id="s-msg"></p>
+                                    </div>
+                                </form>
+                            </#if>
                             </div>
                             <div class="tab-pane" id="tab_2">
                                 <form class="form-horizontal" role="form">
@@ -244,6 +257,7 @@
                                                 <#else>
                                                     <option value="${c}">${c}</option>
                                                 </#if>
+
                                             </#list>
                                             </select>
                                         </div>
@@ -343,9 +357,11 @@
                         </div>
                     </div>
                 </div>
+            <#if USER.arrearage != true >
                 <div class="box-footer clearfix">
                     <button id="submit" class="btn btn-primary btn-lg" type="button">提交</button>
                 </div>
+            </#if>
             </div>
         </section>
     </div>
@@ -562,6 +578,7 @@
                 data.ckf9 = getValue('#CKF-9');
                 data.ckf10 = getValue('#CKF-10');
                 data.ckf11 = getValue('#CKF-11');
+                data.ckf12 = getValue('#CKF-12');
             }
 
 
@@ -664,9 +681,27 @@
         }
 
         $('#CKF-1').change(function () {
-            alert(111);
-            console.log($(this).val());
+            setCon($(this));
         });
+
+        setCon($('#CKF-1'));
+
+        function setCon(ele) {
+            var v = $(ele).val();
+            console.log(v);
+
+            if (v === '其它') {
+
+                $(ele).parent().attr("class", "col-xs-2");
+
+                var box = '<div class="col-xs-3"><input class="form-control" id="CKF-12" name="CKF-12" value="${sp.ckf12!}"></div>';
+
+                $(ele).parent().after(box);
+            } else {
+                $('#CKF-12').parent().remove();
+                $(ele).parent().attr("class", "col-xs-5");
+            }
+        }
     });
 </script>
 </body>

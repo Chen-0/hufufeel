@@ -152,7 +152,7 @@
             var id = $(this).attr('data-id');
             $.ajax({
                 type: "POST",
-                url: "/notice/"+id+"/show",
+                url: "/api/noAuth/notice/"+id+"/show",
                 data: {trans_id: id},
                 dataType: "json",
                 success: function (result) {
