@@ -18,11 +18,9 @@ import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.ProductRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.ProductService;
+import me.rubick.transport.app.service.cache.SimpleCacheService;
 import me.rubick.transport.app.vo.DocumentVo;
-import me.rubick.transport.app.vo.ProductContainer;
 import me.rubick.transport.app.vo.ProductFormVo;
-import org.apache.tomcat.jdbc.pool.DataSourceFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -45,7 +43,6 @@ import java.util.Map;
 
 @Controller
 @Slf4j
-@SessionAttributes("productContainer")
 public class ProductController extends AbstractController {
 
     @Resource
@@ -57,11 +54,8 @@ public class ProductController extends AbstractController {
     @Resource
     private ProductRepository productRepository;
 
-    @ModelAttribute("productContainer")
-    public ProductContainer[] productController() {
-        ProductContainer[] productContainers = {new ProductContainer(), new ProductContainer()};
-        return productContainers;
-    }
+    @Resource
+    private SimpleCacheService simpleCacheService;
 
     @RequestMapping(value = "/product/index")
     public String indexProduct(
@@ -285,11 +279,11 @@ public class ProductController extends AbstractController {
         try {
             productService.deleteProduct(id);
             redirectAttributes.addFlashAttribute("SUCCESS", "删除商品成功！");
-            return "redirect:/product/index?type="+type;
+            return "redirect:/product/index?type=" + type;
         } catch (BusinessException e) {
             log.error("", e);
             redirectAttributes.addFlashAttribute("ERROR", e.getMessage());
-            return "redirect:/product/index?type="+type;
+            return "redirect:/product/index?type=" + type;
         }
     }
 
@@ -300,14 +294,14 @@ public class ProductController extends AbstractController {
     @RequestMapping(value = "/product/select", method = RequestMethod.POST)
     public String selectProduct(
             @RequestParam("trackingNumber[]") List<Long> trackingNumbers,
-            @ModelAttribute("productContainer") ProductContainer[] productContainers,
             @RequestParam int type,
             RedirectAttributes redirectAttributes,
             Model model) throws BusinessException {
         if (!(type == 0 || type == 1)) {
             throw new BusinessException("无效的参数");
         }
-        productContainers[type].getProducts().addAll(trackingNumbers);
+        User user = userService.getByLogin();
+        simpleCacheService.get(user.getId())[type].getProducts().addAll(trackingNumbers);
 
         if (type == 0) {
             redirectAttributes.addFlashAttribute("SUCCESS", "货品已经成功添加至发货单中");
@@ -323,14 +317,15 @@ public class ProductController extends AbstractController {
      */
     @RequestMapping(value = "/product/ready_to_send")
     public String readyToSend(
-            @ModelAttribute("productContainer") ProductContainer[] productContainers,
             @RequestParam(required = false, defaultValue = "0") int type,
             Model model
     ) throws BusinessException {
         if (!(type == 0 || type == 1)) {
             throw new BusinessException("无效的参数");
         }
-        List<Product> products = productService.findProducts(productContainers[type].getProducts());
+        User user = userService.getByLogin();
+        log.info("{}", JSONMapper.toJSON(simpleCacheService.get(user.getId())));
+        List<Product> products = productService.findProducts(simpleCacheService.get(user.getId())[type].getProducts());
         List<Warehouse> warehouses = warehouseRepository.findAll();
         model.addAttribute("warehouses", warehouses);
         model.addAttribute("elements", products);
@@ -343,14 +338,15 @@ public class ProductController extends AbstractController {
     public RestResponse<String> removeProductFromPackage(
             @PathVariable("id") long id,
             @RequestParam int type,
-            @ModelAttribute("productContainer") ProductContainer[] productContainers,
             RedirectAttributes redirectAttributes
     ) throws BusinessException {
         if (!(type == 0 || type == 1)) {
             throw new BusinessException("无效的参数");
         }
-        if (productContainers[type].getProducts().contains(id)) {
-            productContainers[type].getProducts().remove(id);
+
+        User user = userService.getByLogin();
+        if (simpleCacheService.get(user.getId())[type].getProducts().contains(id)) {
+            simpleCacheService.get(user.getId())[type].getProducts().remove(id);
         }
 
         return new RestResponse<>();
@@ -358,14 +354,14 @@ public class ProductController extends AbstractController {
 
     @RequestMapping("/product/package/remove_all")
     public String removeAllProductFromPackage(
-            @RequestParam int type,
-            @ModelAttribute("productContainer") ProductContainer[] productContainers
+            @RequestParam int type
     ) throws BusinessException {
         if (!(type == 0 || type == 1)) {
             throw new BusinessException("无效的参数");
         }
 
-        productContainers[type].getProducts().clear();
+        User user = userService.getByLogin();
+        simpleCacheService.get(user.getId())[type].getProducts().clear();
 
         return MessageFormat.format("redirect:/product/ready_to_send?type={0}", type);
     }

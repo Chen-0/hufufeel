@@ -24,7 +24,7 @@ public class ProductContainer implements Serializable {
         long yy = System.currentTimeMillis() - this.lastUpdateTime;
 
         if (yy >= HOUR) {
-            products = new HashSet<>();
+            products.clear();
         }
 
         return products;
@@ -34,5 +34,9 @@ public class ProductContainer implements Serializable {
         this.products = products;
 
         this.lastUpdateTime = System.currentTimeMillis();
+    }
+
+    public void clearAll() {
+        products.clear();
     }
 }

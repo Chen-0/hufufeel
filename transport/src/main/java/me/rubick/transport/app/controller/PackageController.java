@@ -17,6 +17,7 @@ import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.repository.SwitchSkuRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.*;
+import me.rubick.transport.app.service.cache.SimpleCacheService;
 import me.rubick.transport.app.vo.PackageExcelVo;
 import me.rubick.transport.app.vo.ProductWarehouseVo;
 import me.rubick.transport.app.vo.SwitchSkuFormVo;
@@ -52,6 +53,9 @@ public class PackageController extends AbstractController {
 
     @Resource
     private PayService payService;
+
+    @Resource
+    private SimpleCacheService simpleCacheService;
 
     @RequestMapping(value = "/package/index", method = RequestMethod.GET)
     public String packageIndex(
@@ -130,6 +134,8 @@ public class PackageController extends AbstractController {
         }
 
         packageService.create(user, warehouse, referenceNumber, contact, comment, qtys, pids, PackageTypeEnum.valueOf(type));
+
+        simpleCacheService.get(user.getId())[type].clearAll();
 
         redirectAttributes.addFlashAttribute("SUCCESS", "入库单创建成功！");
 
