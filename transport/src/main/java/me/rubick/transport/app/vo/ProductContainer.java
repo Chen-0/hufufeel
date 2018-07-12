@@ -12,28 +12,11 @@ public class ProductContainer implements Serializable {
 
     private Set<Long> products = new HashSet<>();
 
-    private long lastUpdateTime = System.currentTimeMillis();
 
     private final static long HOUR = 60 * 60 * 1000;
 
     public Set<Long> getProducts() {
-        if (ObjectUtils.isEmpty(lastUpdateTime)) {
-            return products;
-        }
-
-        long yy = System.currentTimeMillis() - this.lastUpdateTime;
-
-        if (yy >= HOUR) {
-            products.clear();
-        }
-
         return products;
-    }
-
-    public void setProducts(Set<Long> products) {
-        this.products = products;
-
-        this.lastUpdateTime = System.currentTimeMillis();
     }
 
     public void clearAll() {
