@@ -101,7 +101,7 @@ public class AdminPackageController extends AbstractController {
         }
         List<Warehouse> warehouses = warehouseRepository.findAll();
         Page<ProductWarehouse> productWarehouses = stockService.findAvailableStockByUser(user, pageable, keyword, wIds);
-        List<User> users = userService.findAll("ROLE_HWC");
+        List<User> users = userService.findAll("ROLE_HWC", null);
 
         model.addAttribute("users", users);
         model.addAttribute("elements", productWarehouses);
@@ -193,6 +193,7 @@ public class AdminPackageController extends AbstractController {
             @RequestParam("qty[]") List<Integer> qty,
             @RequestParam("p[]") List<Long> pIds,
             @RequestParam(required = false) BigDecimal total,
+            @RequestParam(required = false, defaultValue = "") String location,
             RedirectAttributes redirectAttributes
 
     ) {
@@ -206,7 +207,7 @@ public class AdminPackageController extends AbstractController {
         }
 
         packageService.inbound(p.getId(), products, qty);
-
+        packageService.saveLocation(p, location);
 
         Statements statements = payService.saveStatements(payService.calcSJ(p), total);
         boolean flag = payService.payStatements(statements.getId());

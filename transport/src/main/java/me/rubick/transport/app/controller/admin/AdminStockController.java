@@ -12,15 +12,13 @@ import me.rubick.transport.app.constants.OrderStatusEnum;
 import me.rubick.transport.app.constants.ProductStatusEnum;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.*;
-import me.rubick.transport.app.repository.ProductRepository;
-import me.rubick.transport.app.repository.SwitchSkuRepository;
-import me.rubick.transport.app.repository.UserRepository;
-import me.rubick.transport.app.repository.WarehouseRepository;
+import me.rubick.transport.app.repository.*;
 import me.rubick.transport.app.service.StockService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +28,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -51,6 +51,9 @@ public class AdminStockController extends AbstractController {
     @Resource
     private StockService stockService;
 
+    @Resource
+    private ProductWarehouseRepository productWarehouseRepository;
+
     @RequestMapping(value = "/admin/switch_sku/index", method = RequestMethod.GET)
     public String indexSwitchSku(Model model) {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
@@ -59,6 +62,42 @@ public class AdminStockController extends AbstractController {
         model.addAttribute("elements", switchSkus);
 
         return "/admin/store/switch_sku_index";
+    }
+
+    @RequestMapping(value = "/admin/stock/{id}/update", method = RequestMethod.GET)
+    public String getUpdateStock(
+            @PathVariable long id,
+            Model model
+    ) {
+        ProductWarehouse productWarehouse = productWarehouseRepository.findOne(id);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("quantity", String.valueOf(productWarehouse.getQuantity()));
+        map.put("location", productWarehouse.getProduct().getLocation());
+
+        model.addAttribute("ele", productWarehouse);
+        model.addAttribute("fele", map);
+        return "/admin/store/update";
+    }
+
+    @RequestMapping(value = "/admin/stock/{id}/update", method = RequestMethod.POST)
+    public String postUpdateStock(
+            @PathVariable long id,
+            @RequestParam int quantity,
+            @RequestParam(defaultValue = "", required = false) String location,
+            RedirectAttributes redirectAttributes
+    ) {
+        ProductWarehouse productWarehouse = productWarehouseRepository.findOne(id);
+        productWarehouse.setQuantity(quantity);
+        productWarehouseRepository.save(productWarehouse);
+
+        Product product = productWarehouse.getProduct();
+        product.setLocation(location);
+        productRepository.save(product);
+
+        redirectAttributes.addFlashAttribute("success", "修改成功！");
+
+        return "redirect:/admin/stock/index";
     }
 
     @RequestMapping(value = "/admin/stock/import", method = RequestMethod.GET)

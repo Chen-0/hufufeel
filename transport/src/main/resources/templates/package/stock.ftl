@@ -67,8 +67,8 @@
                             <th>货品SKU</th>
                             <th>货品名称</th>
                             <th>仓库</th>
-                            <th>数量</th>
-                            <th>总重量</th>
+                            <th>数量（件）</th>
+                            <th>总重量（KG）</th>
                         </tr>
                         </thead>
                         <tbody>

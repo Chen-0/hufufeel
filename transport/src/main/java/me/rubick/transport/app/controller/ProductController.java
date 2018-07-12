@@ -34,8 +34,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -376,9 +378,11 @@ public class ProductController extends AbstractController {
             return new RestResponse<>(BeanMapperUtils.map(document, DocumentVo.class));
         } catch (BusinessException e) {
             e.printStackTrace();
+            log.error("", e);
+            return new RestResponse<>(e.getMessage());
         }
 
-        return new RestResponse<>("error");
+//        return new RestResponse<>("error");
     }
 
     @RequestMapping("/product/reject/create")

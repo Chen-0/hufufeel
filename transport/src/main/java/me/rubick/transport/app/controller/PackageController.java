@@ -29,6 +29,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -283,6 +284,9 @@ public class PackageController extends AbstractController {
                         throw new BusinessException("请检查SKU:" + packageExcelVo.getSKU() + "的数量，必须为整数！");
                     }
 
+                    packageExcelVo.setContact(ExcelHelper.getValue(row, 2, true));
+                    packageExcelVo.setComment(ExcelHelper.getValue(row, 3, true));
+
                     return packageExcelVo;
                 }
             });
@@ -290,10 +294,20 @@ public class PackageController extends AbstractController {
             List<Integer> qtys = new ArrayList<>();
             List<String> skus = new ArrayList<>();
             Set<String> set = new HashSet<>();
+            String contact = "";
+            String comment = "";
 
             for (PackageExcelVo p : packageExcelVos) {
                 qtys.add(p.getQuantity());
                 skus.add(p.getSKU());
+
+                if (StringUtils.hasText(p.getContact())) {
+                    contact = p.getContact();
+                }
+
+                if (StringUtils.hasText(p.getComment())) {
+                    comment = p.getComment();
+                }
 
                 if (set.contains(p.getSKU())) {
                     throw new BusinessException("错误！SKU：" + p.getSKU() + "含有一个或多个！");
@@ -301,7 +315,7 @@ public class PackageController extends AbstractController {
                 set.add(p.getSKU());
             }
 
-            packageService.create(user, warehouseRepository.findOne(wid), qtys, skus);
+            packageService.create(user, warehouseRepository.findOne(wid), qtys, skus, contact, comment);
 
         } catch (BusinessException e) {
             log.warn("", e);

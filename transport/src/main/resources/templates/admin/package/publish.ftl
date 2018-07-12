@@ -78,6 +78,13 @@
                                     <input type="text" class="form-control" id="total_fee" name="total_fee">
                                 </div>
                             </div>
+
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label for="location">上架仓位</label>
+                                    <input type="text" class="form-control" id="location" name="location">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="panel-footer clearfix">

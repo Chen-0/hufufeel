@@ -55,7 +55,7 @@
         <#if fele["${name}Id"]?exists>
             <p class="help-block">图片已经上传：${fele["${name}Name"]!} </p>
         <#else>
-            <p class="help-block">请上传少于100KB的图片</p>
+            <p class="help-block">请上传少于100KB的图片，格式为JPG、JPEG、PNG。</p>
         </#if>
     </div>
     </#if>

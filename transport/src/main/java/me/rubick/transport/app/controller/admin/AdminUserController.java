@@ -54,10 +54,14 @@ public class AdminUserController extends AbstractController {
     private PayService payService;
 
     @RequestMapping("/index")
-    public String index(Model model) {
-        List<User> users = userService.findAll("ROLE_HWC");
+    public String index(
+            @RequestParam(defaultValue = "", required = false) String keyword,
+            Model model
+    ) {
+        List<User> users = userService.findAll("ROLE_HWC", keyword);
 
         model.addAttribute("elements", users);
+        model.addAttribute("keyword", keyword);
 
         return "admin/user/index";
     }

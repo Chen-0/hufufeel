@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.*;
@@ -117,6 +118,7 @@ public class StockService {
         );
 
         productWarehouse.setQuantity(productWarehouse.getQuantity() + qty);
+
         productWarehouseRepository.save(productWarehouse);
     }
 

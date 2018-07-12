@@ -25,8 +25,24 @@
     <div class="row" style="padding-bottom: 50px;">
         <div class="col-xs-12">
 
+            <div class="row">
+                <div class="col-xs-6 col-xs-offset-3">
+                    <form class=" margin-bottom" role="form" method="get" action="/admin/user/index">
+                        <div class="form-group">
+                            <label for="keyword">关键字（用户名称，编号模糊搜索）：</label>
+                            <input class="form-control" id="keyword" name="keyword" type="text" value="${keyword!}">
+                        </div>
 
-            <div class="table-responsive">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">搜索</button>
+                            <a href="/admin/user/index" class="btn btn-default">重置</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="table-responsive" style="margin-top: 25px;">
                 <form method="get" action="/admin/user/store_cost" id="main">
                     <table class="bordered">
                         <thead>
@@ -89,7 +105,7 @@
 
         $("#main").submit(function () {
 
-            if($(".x-checkbox:checked").length === 0) {
+            if ($(".x-checkbox:checked").length === 0) {
                 alert("请选择用户");
                 return false;
             }

@@ -107,7 +107,7 @@
                     $('#image').next().html('上传文件成功！ ' + resp.data.originalFilename);
                     $('#imageId').val(resp.data.id);
                 }else {
-                    $('#image').next().html(error);
+                    $('#image').next().html(resp.message);
                 }
             }
         });

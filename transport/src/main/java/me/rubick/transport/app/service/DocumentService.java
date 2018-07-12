@@ -71,6 +71,7 @@ public class DocumentService {
         }
 
         temp_directory = directory + File.separator + "temp";
+        log.info("临时目录：{}", temp_directory);
 
         File tempFile = new File(temp_directory);
         if (!tempFile.exists()) {
@@ -207,7 +208,7 @@ public class DocumentService {
             String mimetype = new MimetypesFileTypeMap().getContentType(file);
             String type = mimetype.split("/")[0];
             if (!type.equals("image")) {
-                throw new BusinessException("文件不是图片文件，请重新上传！");
+                throw new BusinessException("文件不是图片文件或格式不对，请上传 JPG 或 PNG 文件！");
             }
             return true;
         }

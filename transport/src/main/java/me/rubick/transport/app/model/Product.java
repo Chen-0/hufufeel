@@ -36,6 +36,7 @@ public class Product {
     private boolean businessType;
     private BigDecimal vol;
     private ProductTypeEnum type;
+    private String location;
 
     private Document image;
     private User user;
@@ -296,5 +297,14 @@ public class Product {
 
     public void setType(ProductTypeEnum type) {
         this.type = type;
+    }
+
+    @Column
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

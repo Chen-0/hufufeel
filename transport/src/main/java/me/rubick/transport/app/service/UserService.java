@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.*;
@@ -147,15 +148,28 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> findAll(String authority) {
+    public List<User> findAll(String authority, String keyword) {
 
         return userRepository.findAll(new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Join<User, Role> roleJoin = root.join("authorities", JoinType.INNER);
 
+                List<Predicate> predicates = new ArrayList<>();
+
+                predicates.add(cb.equal(roleJoin.get("authority"), authority));
+
+                if (StringUtils.hasText(keyword)) {
+                    String _keyword = "%" + keyword + "%";
+                    predicates.add(cb.or(
+                            cb.like(root.get("username"), _keyword),
+                            cb.like(root.get("hwcSn"), _keyword),
+                            cb.like(root.get("name"), _keyword)
+                    ));
+                }
+
                 return cb.and(
-                        cb.equal(roleJoin.get("authority"), authority)
+                        predicates.toArray(new Predicate[]{})
                 );
             }
         });

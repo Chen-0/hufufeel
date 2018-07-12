@@ -34,12 +34,27 @@
 </#if>
 
     <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+            <form class=" margin-bottom" role="form" method="get" action="/admin/product/index">
+                <div class="row">
+                    <div class="form-group col-xs-5">
+                        <label for="keyword">模糊搜索：（货品名称，货品SKU）</label>
+                        <input class="form-control" id="keyword" name="keyword" type="text" value="${keyword!}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">搜索</button>
+                    <a href="/admin/product/index" class="btn btn-default">重置</a>
+                    <a class="btn btn-primary" href="/admin/product/import">货品导入</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="row">
         <div class="col-xs-12">
-
-            <div style="margin: 15px;">
-                <a class="btn btn-primary" href="/admin/product/import">货品导入</a>
-            </div>
-
             <div class="table-responsive">
                 <table class="bordered">
                     <thead>

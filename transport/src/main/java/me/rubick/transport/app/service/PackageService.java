@@ -25,9 +25,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -120,6 +118,15 @@ public class PackageService {
         return packageRepository.save(p);
     }
 
+    public void saveLocation(Package p, String location) {
+        Set<Long> set = new HashSet<>();
+        for (PackageProduct pp: p.getPackageProducts()) {
+            set.add(pp.getProductId());
+        }
+
+        productRepository.updateLocation(set, location);
+    }
+
     public String generateBatch() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String dateString = format.format(new Date());
@@ -185,7 +192,7 @@ public class PackageService {
         this.store(p, packageProducts);
     }
 
-    public void create(User user, Warehouse warehouse, List<Integer> qtys, List<String> skus) throws BusinessException {
+    public void create(User user, Warehouse warehouse, List<Integer> qtys, List<String> skus, String contact, String comment) throws BusinessException {
         List<Long> pids = new ArrayList<>();
 
         for (String s : skus) {
@@ -196,7 +203,7 @@ public class PackageService {
             pids.add(product.getId());
         }
 
-        create(user, warehouse, "", "", "", qtys, pids, PackageTypeEnum.NORMAL);
+        create(user, warehouse, contact, "", comment, qtys, pids, PackageTypeEnum.NORMAL);
     }
 
     public List<Warehouse> findAllWarehouse() {

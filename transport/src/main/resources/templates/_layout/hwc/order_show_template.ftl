@@ -43,7 +43,7 @@
                 <td>快递单号</td>
                 <td class="text-primary">
                     <strong>
-                        ${ele.express!} ${ele.expressNo!}
+                    ${ele.express!} ${ele.expressNo!}
                     </strong>
                 </td>
             </tr>
@@ -126,7 +126,11 @@
         <table class="table table-bordered" style="margin-top: 25px;">
             <thead>
             <tr>
+            <#if AFLAG?exists && AFLAG>
+                <td colspan="8"><strong>货品信息：</strong></td>
+            <#else>
                 <td colspan="7"><strong>货品信息：</strong></td>
+            </#if>
             </tr>
 
             <tr>
@@ -136,6 +140,9 @@
                 <th>实际数量</th>
                 <th>单件重量</th>
                 <th>总重量</th>
+            <#if AFLAG?exists && AFLAG>
+                <th>上架仓位</th>
+            </#if>
                 <th>操作</th>
             </tr>
             </thead>
@@ -154,8 +161,11 @@
                 <td>${pp.quantity}</td>
                 <td>${pp.productSnapshotVo.weight} KG</td>
                 <td>${pp.productSnapshotVo.weight * pp.quantity} KG</td>
+                <#if AFLAG?exists && AFLAG>
+                    <td>${pp.product.location}</td>
+                </#if>
                 <td>
-                    <#if AFLAG>
+                    <#if AFLAG?exists && AFLAG>
                         <a href="/admin/product/${pp.productId}/show">货品详情</a>
                     <#else>
                         <a href="/product/${pp.productId}/show">货品详情</a>

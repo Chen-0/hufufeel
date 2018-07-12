@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.Transient;
@@ -80,11 +81,13 @@ public class ProductService {
                 }
 
                 predicates.add(criteriaBuilder.equal(root.get("isDeleted"), 0));
-                predicates.add(criteriaBuilder.or(
-                        criteriaBuilder.like(root.get("productName"), _keyword),
-                        criteriaBuilder.like(root.get("productSku"), _keyword),
-                        criteriaBuilder.like(criteriaBuilder.concat(root.get("id"), ""), _keyword)
-                ));
+
+                if (StringUtils.hasText(keyword)) {
+                    predicates.add(criteriaBuilder.or(
+                            criteriaBuilder.like(root.get("productName"), _keyword),
+                            criteriaBuilder.like(root.get("productSku"), _keyword)
+                    ));
+                }
 
 
                 return criteriaBuilder.and(predicates.toArray(new Predicate[] {}));

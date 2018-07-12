@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<#assign title="修改货品" />
+<#assign title="查看货品" />
 <#include "*/admin/_layout/head.ftl" />
 
 <body>

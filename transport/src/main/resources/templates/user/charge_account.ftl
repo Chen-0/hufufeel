@@ -85,10 +85,8 @@ ROUTING NUMBER : 121000358 (PAPER&ELECTRONIC)
                  026009593 (WIRES)
 
 ACCOUNT  NAME : HUFU INC
-      (PAYPAL)
-ABBY20130223@GMAIL.COM
-      (Payoneer)
-Abbyyao@hufufeel.com
+hufuaccounting@hufufeel.com（PayPal）
+hufuaccounting@hufufeel.com（payoneer）
                     </pre>
                     <div class="alert alert-warning alert-dismissible">
                         <h4><i class="icon fa fa-warning"></i> 提醒：</h4>

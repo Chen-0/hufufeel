@@ -34,9 +34,9 @@
                     <div class="form-group col-xs-5">
                         <label for="uid">客户：</label>
                         <select class="form-control" name="uid" id="uid">
-                            <#list users as u>
-                                <option value="${u.id}">${u.name}</option>
-                            </#list>
+                        <#list users as u>
+                            <option value="${u.id}">${u.name}</option>
+                        </#list>
                         </select>
                     </div>
                 </div>
@@ -69,7 +69,11 @@
                     <a class="btn btn-primary" href="/admin/stock/import">库存导入</a>
                 </div>
             </form>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-xs-12">
             <table class="table table-bordered table-striped table-condensed table-hover">
                 <thead>
                 <tr>
@@ -81,6 +85,8 @@
                     <th>仓库</th>
                     <th>数量</th>
                     <th>总重量</th>
+                    <th>上架仓位</th>
+                    <td>操作</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -94,6 +100,10 @@
                     <td>${e.warehouse.name}</td>
                     <td>${e.quantity}</td>
                     <td>${e.quantity * e.product.weight}</td>
+                    <td>${e.product.location}</td>
+                    <td>
+                        <a href="/admin/stock/${e.id}/update">修改库存 & 仓位</a>
+                    </td>
                 </tr>
                 </#list>
                 </tbody>
