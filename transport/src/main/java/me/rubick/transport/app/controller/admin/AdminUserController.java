@@ -424,8 +424,10 @@ public class AdminUserController extends AbstractController {
 
         log.info("{}", JSONMapper.toJSON(context));
 
+        Date date = new Date();
+        String s = DateUtils.date2String0(date);
         response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        String fileName = "HUFU-管理员-费用明细.xlsx";
+        String fileName = "HUFU_"+s+"_费用明细.xlsx";
         fileName = URLEncoder.encode(fileName, "utf-8");
         response.setHeader("Content-Disposition", MessageFormat.format("attachment; filename*=\"{0}\"", fileName));
         ExcelWriter.getExcelInputSteam(context, response.getOutputStream());

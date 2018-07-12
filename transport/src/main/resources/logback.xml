@@ -12,13 +12,13 @@
         <file>/letv/transport/logs/transport.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>transport.%i.log.zip</fileNamePattern>
+            <fileNamePattern>/letv/transport/logs/transport.%i.log.zip</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>3</maxIndex>
         </rollingPolicy>
 
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>5MB</maxFileSize>
+            <maxFileSize>10MB</maxFileSize>
         </triggeringPolicy>
         <encoder>
             <pattern>%d [%level] %logger{0}\(%L\) - %m%n</pattern>

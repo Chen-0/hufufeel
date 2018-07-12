@@ -302,15 +302,6 @@ public class OrderService {
             totalQty += orderItem.getQuantity();
         }
 
-        String timestamp = DateUtils.getTimestamp0();
-        if (!StringUtils.hasText(orderSnapshotVo.getCkt4())) {
-            orderSnapshotVo.setCkt4(timestamp);
-        }
-
-        if (!StringUtils.hasText(orderSnapshotVo.getCkt5())) {
-            orderSnapshotVo.setCkt5(timestamp);
-        }
-
         Order order = new Order();
         order.setReferenceNumber(orderSnapshotVo.getCkt4());
         order.setTn(orderSnapshotVo.getCkt5());
@@ -329,6 +320,7 @@ public class OrderService {
         order.setSkuQty(products.size());
         order.setCostSnapshot(JSONMapper.toJSON(new CostSnapshotVo()));
         order.setSn(generateBatch());
+        order.setcType("w");
 
         orderRepository.save(order);
 

@@ -9,6 +9,7 @@ import me.rubick.common.app.exception.FormException;
 import me.rubick.common.app.exception.HttpNoFoundException;
 import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.utils.BeanMapperUtils;
+import me.rubick.common.app.utils.DateUtils;
 import me.rubick.common.app.utils.ExcelHelper;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.OrderStatusEnum;
@@ -42,6 +43,7 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -135,8 +137,10 @@ public class AdminOrderController extends AbstractController {
             j+=1;
         }
 
+        Date date = new Date();
+        String s = DateUtils.date2String0(date);
         response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        String fileName = "HUFU-管理员-出库单.xlsx";
+        String fileName = "HUFU_"+s+"_出库单.xlsx";
         fileName = URLEncoder.encode(fileName, "utf-8");
         response.setHeader("Content-Disposition", MessageFormat.format("attachment; filename*=\"{0}\"", fileName));
         ExcelWriter.getExcelInputSteam(context, response.getOutputStream());
