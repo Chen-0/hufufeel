@@ -19,10 +19,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -59,8 +56,14 @@ public class PackageService {
 
                 if (StringUtils.hasText(keyword)) {
                     String _keyword = getKeyword(keyword);
+                    Join<Package, User> joinU = root.join("user", JoinType.INNER);
                     predicates.add(criteriaBuilder.or(
-                            criteriaBuilder.like(root.get("cn"), _keyword)
+                            criteriaBuilder.like(root.get("cn"), _keyword),
+                            criteriaBuilder.like(root.get("referenceNumber"), _keyword),
+                            criteriaBuilder.like(joinU.get("hwcSn"), _keyword),
+                            criteriaBuilder.like(joinU.get("name"), _keyword),
+                            criteriaBuilder.like(joinU.get("username"), _keyword)
+
                     ));
                 }
 

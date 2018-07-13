@@ -124,7 +124,7 @@
                     <ul class="pagination">
                     <#if elements.isFirst() != true >
                         <li>
-                            <a href="/admin/order/index?page=${elements.previousPageable().pageNumber}&status=${status!}"
+                            <a href="/admin/order/index?page=${elements.previousPageable().pageNumber}&status=${status!}&keyword=${keyword!}"
                                aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
@@ -133,7 +133,7 @@
 
                     <#if elements.isLast() != true>
                         <li>
-                            <a href="/admin/order/index?page=${elements.nextPageable().pageNumber}&status=${status!}"
+                            <a href="/admin/order/index?page=${elements.nextPageable().pageNumber}&status=${status!}&keyword=${keyword!}"
                                aria-label="Previous">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>

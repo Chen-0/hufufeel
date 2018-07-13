@@ -8,6 +8,8 @@ import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.OrderStatusEnum;
 import me.rubick.transport.app.constants.ProductStatusEnum;
 import me.rubick.transport.app.model.*;
+import me.rubick.transport.app.model.Order;
+import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.*;
 import me.rubick.transport.app.vo.CostSnapshotVo;
 import me.rubick.transport.app.vo.OrderExcelVo;
@@ -23,10 +25,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -72,9 +71,12 @@ public class OrderService {
 
                 if (StringUtils.hasText(keyword)) {
                     String _keyword = getKeyword(keyword);
+                    Join<Order, User> joinU = root.join("user", JoinType.INNER);
                     predicates.add(cb.or(
                             cb.like(root.get("expressNo"), _keyword),
-                            cb.like(root.get("sn"), _keyword)
+                            cb.like(root.get("sn"), _keyword),
+                            cb.like(joinU.get("hwcSn"), _keyword),
+                            cb.like(joinU.get("name"), _keyword)
                     ));
                 }
 

@@ -10,18 +10,18 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">
-                ${title} （
-                <#if status??>
-                    <#switch status>
-                        <#case 0> 待入库 <#break>
-                        <#case 1> 已收货 <#break>
-                        <#case 2> 已上架 <#break>
-                        <#case 3> 已取消 <#break>
-                        <#case 4> 已冻结 <#break>
-                    </#switch>
-                <#else >
+            ${title} （
+            <#if status??>
+                <#switch status>
+                    <#case 0> 待入库 <#break>
+                    <#case 1> 已收货 <#break>
+                    <#case 2> 已上架 <#break>
+                    <#case 3> 已取消 <#break>
+                    <#case 4> 已冻结 <#break>
+                </#switch>
+            <#else >
                 查看所有
-                </#if>
+            </#if>
                 ）
             <#--<small><a href="/company/create">新增货品</a></small>-->
             </h1>
@@ -34,6 +34,24 @@
     ${success}
     </div>
 </#if>
+
+    <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+            <form class=" margin-bottom" role="form" method="get" action="/admin/package/index">
+                <div class="row">
+                    <div class="form-group col-xs-5">
+                        <label for="keyword">模糊搜索：（用户名，参考单号，入库单号，客户编号）</label>
+                        <input class="form-control" id="keyword" name="keyword" type="text" value="${keyword!}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">搜索</button>
+                    <a href="/admin/package/index" class="btn btn-default">重置</a>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-xs-12">
@@ -72,27 +90,13 @@
                             <#switch o.status.ordinal()>
                                 <#case 0>
                                     <a href="/admin/package/${o.id}/inbound">入库</a>
-                                <#break>
+                                    <#break>
                                 <#case 1>
                                     <a href="/admin/package/${o.id}/publish">上架</a>
-                                <#break >
+                                    <#break >
                             </#switch>
                         </td>
                     </tr>
-                    <#--<#list o.packageProducts as p>-->
-                    <#--<tr class="table-sub-item">-->
-                        <#--<td>商品</td>-->
-                        <#--<td>${p.product.productName}</td>-->
-                        <#--<td>${p.product.productSku}</td>-->
-                        <#--<td>预计：${p.expectQuantity} 件</td>-->
-                        <#--<#if o.status.ordinal() != 0 ||o.status.ordinal() != 3  >-->
-                        <#--<td>实际：${p.quantity} 件</td>-->
-                        <#--<td colspan="3"></td>-->
-                        <#--<#else>-->
-                            <#--<td colspan="4"></td>-->
-                        <#--</#if>-->
-                    <#--</tr>-->
-                    <#--</#list>-->
                     </#list>
                     </tbody>
                 </table>
@@ -101,7 +105,7 @@
                     <ul class="pagination">
                     <#if elements.isFirst() != true >
                         <li>
-                            <a href="/admin/package/index?page=${elements.previousPageable().pageNumber}&status=${status!}"
+                            <a href="/admin/package/index?page=${elements.previousPageable().pageNumber}&status=${status!}&keyword=${keyword!}"
                                aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
@@ -111,7 +115,7 @@
 
                     <#if elements.isLast() != true>
                         <li>
-                            <a href="/admin/package/index?page=${elements.nextPageable().pageNumber}&status=${status!}"
+                            <a href="/admin/package/index?page=${elements.nextPageable().pageNumber}&status=${status!}&keyword=${keyword!}"
                                aria-label="Previous">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>

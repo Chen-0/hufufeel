@@ -69,6 +69,7 @@ public class AdminPackageController extends AbstractController {
         Page<Package> packages = packageService.searchPackage(keyword, null, status, -1, pageable);
         model.addAttribute("elements", packages);
         model.addAttribute("status", status);
+        model.addAttribute("keyword", keyword);
         return "/admin/package/index";
     }
 

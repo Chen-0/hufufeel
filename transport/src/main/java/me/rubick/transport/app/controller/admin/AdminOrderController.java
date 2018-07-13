@@ -20,6 +20,7 @@ import me.rubick.transport.app.repository.OrderRepository;
 import me.rubick.transport.app.service.OrderService;
 import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.vo.OrderSnapshotVo;
+import me.rubick.transport.app.vo.ProductSnapshotVo;
 import me.rubick.transport.app.vo.admin.OrderFormVo;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
@@ -96,7 +97,7 @@ public class AdminOrderController extends AbstractController {
         List<Order> elements = orders.getContent();
         int row = elements.size();
 
-        Object[][] context = new Object[row + 1][16];
+        Object[][] context = new Object[row + 1][18];
 
         context[0][0] = "发货单号";
         context[0][1] = "交易号";
@@ -112,6 +113,10 @@ public class AdminOrderController extends AbstractController {
         context[0][11] = "城市";
         context[0][12] = "街道";
         context[0][13] = "门牌号";
+        context[0][14] = "邮编";
+        context[0][15] = "sku";
+        context[0][16] = "商品名称";
+        context[0][17] = "发货数量";
 
         int j = 1;
         for (int i = 0; i < row; i++) {
@@ -134,6 +139,29 @@ public class AdminOrderController extends AbstractController {
             context[j][11] = o.getOrderSnapshotVo().getCkf5();
             context[j][12] = o.getOrderSnapshotVo().getCkf10();
             context[j][13] = o.getOrderSnapshotVo().getCkf11();
+            context[j][14] = o.getOrderSnapshotVo().getCkf7();
+
+            StringBuilder skuBuilder = new StringBuilder();
+            StringBuilder nameBuilder = new StringBuilder();
+            StringBuilder qtyBuilder = new StringBuilder();
+
+            for (OrderItem item: o.getOrderItems()) {
+                ProductSnapshotVo productSnapshotVo = JSONMapper.fromJson(item.getProductSnapshot(), ProductSnapshotVo.class);
+                skuBuilder.append(productSnapshotVo.getProductSku());
+                skuBuilder.append(";");
+
+                nameBuilder.append(productSnapshotVo.getProductName());
+                nameBuilder.append(";");
+
+                qtyBuilder.append(item.getQuantity());
+                qtyBuilder.append(";");
+            }
+
+            context[j][15] = skuBuilder.toString();
+            context[j][16] = nameBuilder.toString();
+            context[j][17] = qtyBuilder.toString();
+
+
             j+=1;
         }
 
