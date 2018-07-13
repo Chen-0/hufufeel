@@ -126,4 +126,18 @@ public class ProductService {
     public Product findOne(long id) {
         return productRepository.findOne(id);
     }
+
+    public boolean checkProduct(String productSku, long userId) {
+        Product product = productRepository.findTopByProductSku(productSku);
+
+        if (ObjectUtils.isEmpty(product)) {
+            return false;
+        }
+
+        if (product.getUserId() == userId && product.getStatus().equals(ProductStatusEnum.READY_CHECK)) {
+            return true;
+        }
+
+        return false;
+    }
 }

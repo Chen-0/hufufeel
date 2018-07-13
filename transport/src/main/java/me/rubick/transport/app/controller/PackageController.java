@@ -2,6 +2,7 @@ package me.rubick.transport.app.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.excel.ExcelConverter;
+import me.rubick.common.app.excel.ExcelRow;
 import me.rubick.common.app.exception.*;
 import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.response.RestResponse;
@@ -37,7 +38,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import java.io.File;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Controller
 @Slf4j
@@ -271,52 +274,75 @@ public class PackageController extends AbstractController {
     ) {
         try {
             User user = userService.getByLogin();
-            File file = documentService.multipartFile2File(multipartFile);
-            ExcelHelper<PackageExcelVo> excelHepler = new ExcelHelper<>();
-            List<PackageExcelVo> packageExcelVos = excelHepler.readToObject(file, new ExcelConverter<PackageExcelVo>() {
-                @Override
-                public PackageExcelVo read(Row row) throws BusinessException {
-                    PackageExcelVo packageExcelVo = new PackageExcelVo();
-                    packageExcelVo.setSKU(ExcelHelper.getValue(row, 0, false));
-                    try {
-                        packageExcelVo.setQuantity(new BigDecimal(ExcelHelper.getValue(row, 1, false)).intValue());
-                    } catch (NumberFormatException e) {
-                        throw new BusinessException("请检查SKU:" + packageExcelVo.getSKU() + "的数量，必须为整数！");
-                    }
+            File tempFile = documentService.multipartFile2File(multipartFile);
+            final List<ExcelRow> excelRows = ExcelHelper.read(tempFile);
 
-                    packageExcelVo.setContact(ExcelHelper.getValue(row, 2, true));
-                    packageExcelVo.setComment(ExcelHelper.getValue(row, 3, true));
+            List<List<String>> skuContainer = new ArrayList<>();
+            List<List<Integer>> quantityContainer = new ArrayList<>();
+            List<String> contactContainer = new ArrayList<>();
+            List<String> commentContainer = new ArrayList<>();
 
-                    return packageExcelVo;
-                }
-            });
+            int count = excelRows.size();
+            for (int i = 0; i < count; i++) {
+                List<Integer> qtys = new ArrayList<>();
+                List<String> skus = new ArrayList<>();
+                Set<String> set = new HashSet<>();
+                String contact = "";
+                String comment = "";
 
-            List<Integer> qtys = new ArrayList<>();
-            List<String> skus = new ArrayList<>();
-            Set<String> set = new HashSet<>();
-            String contact = "";
-            String comment = "";
+                ExcelRow row = excelRows.get(i);
 
-            for (PackageExcelVo p : packageExcelVos) {
-                qtys.add(p.getQuantity());
-                skus.add(p.getSKU());
-
-                if (StringUtils.hasText(p.getContact())) {
-                    contact = p.getContact();
+                //检查数字
+                //检查SKU
+                try {
+                    addSku(user.getId(), skus, qtys, row.getA(), row.getB());
+                    addSku(user.getId(), skus, qtys, row.getC(), row.getD());
+                    addSku(user.getId(), skus, qtys, row.getE(), row.getF());
+                    addSku(user.getId(), skus, qtys, row.getG(), row.getH());
+                    addSku(user.getId(), skus, qtys, row.getI(), row.getJ());
+                    addSku(user.getId(), skus, qtys, row.getK(), row.getL());
+                } catch (BusinessException e) {
+                    throw new ExcelImportException(i + 2, e.getMessage());
                 }
 
-                if (StringUtils.hasText(p.getComment())) {
-                    comment = p.getComment();
+                set.addAll(skus);
+                if (set.size() != skus.size() || skus.size() != qtys.size()) {
+                    throw new ExcelImportException(i + 2, "含有重复的SKU！");
                 }
 
-                if (set.contains(p.getSKU())) {
-                    throw new BusinessException("错误！SKU：" + p.getSKU() + "含有一个或多个！");
-                }
-                set.add(p.getSKU());
+                contact = row.getM();
+                comment = row.getN();
+
+                skuContainer.add(skus);
+                quantityContainer.add(qtys);
+                contactContainer.add(contact);
+                commentContainer.add(comment);
             }
 
-            packageService.create(user, warehouseRepository.findOne(wid), qtys, skus, contact, comment);
+            log.info("{}", JSONMapper.toJSON(skuContainer));
+            log.info("{}", JSONMapper.toJSON(quantityContainer));
+            log.info("{}", JSONMapper.toJSON(contactContainer));
+            log.info("{}", JSONMapper.toJSON(commentContainer));
 
+            count = skuContainer.size();
+
+            for (int i = 0; i < count; i++) {
+                packageService.create(
+                        user,
+                        warehouseRepository.findOne(wid),
+                        quantityContainer.get(i),
+                        skuContainer.get(i),
+                        contactContainer.get(i),
+                        commentContainer.get(i)
+                );
+            }
+
+        } catch (ExcelImportException e) {
+            String message = MessageFormat.format("错误发生在第{0}行：{1}", e.getRow(), e.getMessage());
+            log.warn("{}", message);
+            log.warn("", e);
+            redirectAttributes.addFlashAttribute("warn", message);
+            return "redirect:/package/import";
         } catch (BusinessException e) {
             log.warn("", e);
             redirectAttributes.addFlashAttribute("warn", e.getMessage());
@@ -329,6 +355,27 @@ public class PackageController extends AbstractController {
 
         redirectAttributes.addFlashAttribute("SUCCESS", "导入入库单成功！");
         return "redirect:/package/import";
+    }
+
+    private void addSku(long userId, List<String> sku, List<Integer> qty, String _sku, String _qty) throws BusinessException {
+        if (StringUtils.hasText(_sku)) {
+            if (productService.checkProduct(_sku, userId)) {
+                sku.add(_sku);
+
+                if (StringUtils.hasText(_qty) && checkNum(_qty)) {
+                    qty.add(Integer.valueOf(_qty));
+                } else {
+                    throw new BusinessException(MessageFormat.format("SKU：{0} 的数量不是整数！", _sku));
+                }
+            } else {
+                throw new BusinessException(MessageFormat.format("SKU：{0} 不存在或未通过审核！", _sku));
+            }
+        }
+    }
+
+    private boolean checkNum(String value) {
+        Pattern pattern = Pattern.compile("^\\d+$");
+        return pattern.matcher(value).matches();
     }
 
     @RequestMapping("/package/{id}/print")
