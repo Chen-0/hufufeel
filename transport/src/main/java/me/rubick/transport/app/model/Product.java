@@ -36,7 +36,7 @@ public class Product {
     private boolean businessType;
     private BigDecimal vol;
     private ProductTypeEnum type;
-    private String location;
+    private String location = "";
 
     private Document image;
     private User user;
