@@ -89,18 +89,14 @@
                     - <strong class="text-danger">${ele.orderSnapshotVo.ckf12}</strong></#if></td>
                 <td>州/省</td>
                 <td>
-                ${ele.orderSnapshotVo.ckf3!}
-
-                    <#if ele.orderSnapshotVo.ckf7??>
-                        （邮编：${ele.orderSnapshotVo.ckf7!}）
-                    </#if>
+                    ${ele.orderSnapshotVo.ckf3!}
                 </td>
                 <td>城市</td>
                 <td>${ele.orderSnapshotVo.ckf5!}</td>
             </tr>
             <tr>
-                <td></td>
-                <td></td>
+                <td>邮编：</td>
+                <td>${ele.orderSnapshotVo.ckf7!}</td>
                 <td>街道</td>
                 <td>${ele.orderSnapshotVo.ckf10!}</td>
                 <td>门牌号</td>

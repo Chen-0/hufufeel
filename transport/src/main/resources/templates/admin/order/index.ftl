@@ -63,7 +63,7 @@
                     <thead>
                     <tr>
                         <th>出库单号</th>
-                        <th>运单号</th>
+                        <th>快递单号</th>
                         <th>客户</th>
                         <th>SKU数</th>
                         <th>总件数</th>

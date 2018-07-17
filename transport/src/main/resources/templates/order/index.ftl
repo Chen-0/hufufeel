@@ -24,7 +24,7 @@
                 <div class="box-body">
                     <form class="form-inline margin-bottom" role="form" method="get" action="/order/index">
                         <#if _STATUS?? >
-                            <input type="hidden" name="status" value="${_STATUS}">
+                            <input type="hidden" name="status" value="${_STATUS!}">
                         </#if>
                         <div class="form-group">
                             <label for="keyword">关键字：</label>
@@ -33,6 +33,7 @@
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">搜索</button>
                             <a href="/order/index?status=${_STATUS!}" class="btn btn-default">重置</a>
+                            <a class="btn btn-primary" href="/order/export?keyword=${keyword!}&status=${_STATUS!}">发货单导出</a>
                         </div>
                     </form>
 
@@ -41,12 +42,13 @@
                         <thead>
                         <tr>
                             <th>出库单号</th>
-                            <th>运单号</th>
+                            <th>快递单号</th>
                             <th>SKU数</th>
                             <th>总件数</th>
                             <th>实际总重量</th>
                             <th>状态</th>
                             <th>创建时间</th>
+                            <th>收件人</th>
                             <th>备注</th>
                             <th>操作</th>
                         </tr>
@@ -66,6 +68,7 @@
 
                             <td>${e.status.getValue()}</td>
                             <td>${e.createdAt?string}</td>
+                            <td>${e.contact}</td>
                             <td>${e.comment!}</td>
                             <td>
                                 <a href="/order/${e.id}/show">查看</a>

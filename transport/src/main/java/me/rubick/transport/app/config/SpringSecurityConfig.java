@@ -38,6 +38,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/static/**", "/file/**").permitAll()
                 .antMatchers("/login", "/register").permitAll()
                 .antMatchers("/api/noAuth/**").permitAll()
+                .antMatchers("/error/**").permitAll()
 
                 //支付回调
                 .antMatchers("/pay/alipay/notify").permitAll()
@@ -56,8 +57,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .and().logout().logoutSuccessUrl("/")
+                .and().exceptionHandling().accessDeniedPage("/error/403")
                 .and()
-//                .rememberMe().rememberMeParameter("remember_me").key("F_enjsmyrh").rememberMeCookieName("F_werbuzemcihrn").rememberMeCookieDomain("hufufeel.com");
                 .rememberMe().rememberMeParameter("remember_me").key("QWTtvidaThAmnBgn").rememberMeCookieName("zVaWBuPrLlDfXHlc").rememberMeCookieDomain("hufufeel.com");
     }
 

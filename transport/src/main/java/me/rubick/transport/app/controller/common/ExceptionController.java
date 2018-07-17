@@ -16,8 +16,5 @@ public class ExceptionController {
         return "redirect:/error/page_not_found";
     }
 
-    @RequestMapping("/error/page_not_found")
-    public String pageNoFound() {
-        return "/error/404";
-    }
+
 }

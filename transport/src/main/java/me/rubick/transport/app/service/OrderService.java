@@ -80,7 +80,7 @@ public class OrderService {
                     ));
                 }
 
-                if (!ObjectUtils.isEmpty(status)) {
+                if (!ObjectUtils.isEmpty(status) && status != -1) {
                     predicates.add(cb.equal(root.get("status"), status));
                 }
                 return cb.and(predicates.toArray(new Predicate[]{}));

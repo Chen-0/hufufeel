@@ -30,7 +30,7 @@ public class DateUtils {
         if (ObjectUtils.isEmpty(date)) {
             return "";
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return simpleDateFormat.format(date);
     }
 

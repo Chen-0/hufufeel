@@ -97,26 +97,29 @@ public class AdminOrderController extends AbstractController {
         List<Order> elements = orders.getContent();
         int row = elements.size();
 
-        Object[][] context = new Object[row + 1][18];
+        Object[][] context = new Object[row + 1][21];
 
         context[0][0] = "发货单号";
-        context[0][1] = "交易号";
-        context[0][2] = "参考号";
-        context[0][3] = "派送方式";
-        context[0][4] = "销售平台";
-        context[0][5] = "仓库";
-        context[0][6] = "总重量";
-        context[0][7] = "姓名";
-        context[0][8] = "电话";
-        context[0][9] = "国家";
-        context[0][10] = "州/省";
-        context[0][11] = "城市";
-        context[0][12] = "街道";
-        context[0][13] = "门牌号";
-        context[0][14] = "邮编";
-        context[0][15] = "sku";
-        context[0][16] = "商品名称";
-        context[0][17] = "发货数量";
+        context[0][1] = "运费（USD）";
+        context[0][2] = "快递公司（可空）";
+        context[0][3] = "快递单号";
+        context[0][4] = "交易号";
+        context[0][5] = "参考号";
+        context[0][6] = "派送方式";
+        context[0][7] = "销售平台";
+        context[0][8] = "仓库";
+        context[0][9] = "总重量";
+        context[0][10] = "姓名";
+        context[0][11] = "电话";
+        context[0][12] = "国家";
+        context[0][13] = "州/省";
+        context[0][14] = "城市";
+        context[0][15] = "街道";
+        context[0][16] = "门牌号";
+        context[0][17] = "邮编";
+        context[0][18] = "sku";
+        context[0][19] = "商品名称";
+        context[0][20] = "发货数量";
 
         int j = 1;
         for (int i = 0; i < row; i++) {
@@ -126,20 +129,23 @@ public class AdminOrderController extends AbstractController {
             }
             o.setOrderSnapshotVo(JSONMapper.fromJson(o.getOrderSnapshot(), OrderSnapshotVo.class));
             context[j][0] = o.getSn();
-            context[j][1] = o.getTn();
-            context[j][2] = o.getReferenceNumber();
-            context[j][3] = o.getOrderSnapshotVo().getCkt1();
-            context[j][4] = o.getOrderSnapshotVo().getCkt3();
-            context[j][5] = o.getWarehouseName();
-            context[j][6] = o.getWeight().toString();
-            context[j][7] = o.getContact();
-            context[j][8] = o.getPhone();
-            context[j][9] = o.getOrderSnapshotVo().getCkf1();
-            context[j][10] = o.getOrderSnapshotVo().getCkf3();
-            context[j][11] = o.getOrderSnapshotVo().getCkf5();
-            context[j][12] = o.getOrderSnapshotVo().getCkf10();
-            context[j][13] = o.getOrderSnapshotVo().getCkf11();
-            context[j][14] = o.getOrderSnapshotVo().getCkf7();
+            context[j][1] = "";
+            context[j][2] = "";
+            context[j][3] = "";
+            context[j][4] = o.getTn();
+            context[j][5] = o.getReferenceNumber();
+            context[j][6] = o.getOrderSnapshotVo().getCkt1();
+            context[j][7] = o.getOrderSnapshotVo().getCkt3();
+            context[j][8] = o.getWarehouseName();
+            context[j][9] = o.getWeight().toString() + "KG";
+            context[j][10] = o.getContact();
+            context[j][11] = o.getPhone();
+            context[j][12] = o.getOrderSnapshotVo().getCkf1();
+            context[j][13] = o.getOrderSnapshotVo().getCkf3();
+            context[j][14] = o.getOrderSnapshotVo().getCkf5();
+            context[j][15] = o.getOrderSnapshotVo().getCkf10();
+            context[j][16] = o.getOrderSnapshotVo().getCkf11();
+            context[j][17] = o.getOrderSnapshotVo().getCkf7();
 
             StringBuilder skuBuilder = new StringBuilder();
             StringBuilder nameBuilder = new StringBuilder();
@@ -157,9 +163,9 @@ public class AdminOrderController extends AbstractController {
                 qtyBuilder.append(";");
             }
 
-            context[j][15] = skuBuilder.toString();
-            context[j][16] = nameBuilder.toString();
-            context[j][17] = qtyBuilder.toString();
+            context[j][18] = skuBuilder.toString();
+            context[j][19] = nameBuilder.toString();
+            context[j][20] = qtyBuilder.toString();
 
 
             j+=1;

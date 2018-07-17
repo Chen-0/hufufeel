@@ -2,10 +2,12 @@ package me.rubick.transport.app.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.excel.ExcelConverter;
+import me.rubick.common.app.excel.ExcelWriter;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.CommonException;
 import me.rubick.common.app.response.RestResponse;
 import me.rubick.common.app.utils.BeanMapperUtils;
+import me.rubick.common.app.utils.DateUtils;
 import me.rubick.common.app.utils.ExcelHelper;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.OrderStatusEnum;
@@ -19,7 +21,9 @@ import me.rubick.transport.app.service.ProductService;
 import me.rubick.transport.app.vo.DocumentVo;
 import me.rubick.transport.app.vo.OrderExcelVo;
 import me.rubick.transport.app.vo.OrderSnapshotVo;
+import me.rubick.transport.app.vo.ProductSnapshotVo;
 import org.apache.poi.ss.usermodel.Row;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -31,7 +35,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.*;
 
 @Controller
@@ -417,5 +425,100 @@ public class OrderController extends AbstractController {
 
         return new RestResponse<>(BeanMapperUtils.map(document, DocumentVo.class));
 
+    }
+
+    @RequestMapping(value = "/order/export", method = RequestMethod.GET)
+    public void adminOrderExport(
+            HttpServletResponse response,
+            @PageableDefault(size = Integer.MAX_VALUE, direction = Sort.Direction.DESC, sort = {"id"}) Pageable pageable,
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(required = false, defaultValue = "-1") Integer status
+    ) throws IOException {
+        User user = userService.getByLogin();
+        Page<Order> orders = orderService.findAll(user, keyword, status, pageable);
+        List<Order> elements = orders.getContent();
+        int row = elements.size();
+        log.info("{}", row);
+        Object[][] context = new Object[row + 1][21];
+
+        context[0][0] = "发货单号";
+        context[0][1] = "交易号";
+        context[0][2] = "参考号";
+        context[0][3] = "派送方式";
+        context[0][4] = "快递单号";
+        context[0][5] = "销售平台";
+        context[0][6] = "仓库";
+        context[0][7] = "总重量";
+        context[0][8] = "创建时间";
+        context[0][9] = "姓名";
+        context[0][10] = "电话";
+        context[0][11] = "国家";
+        context[0][12] = "州/省";
+        context[0][13] = "城市";
+        context[0][14] = "街道";
+        context[0][15] = "门牌号";
+        context[0][16] = "邮编";
+        context[0][17] = "sku";
+        context[0][18] = "商品名称";
+        context[0][19] = "发货数量";
+        context[0][20] = "状态";
+
+        int j = 1;
+        for (int i = 0; i < row; i++) {
+            Order o = elements.get(i);
+            o.setOrderSnapshotVo(JSONMapper.fromJson(o.getOrderSnapshot(), OrderSnapshotVo.class));
+            context[j][0] = o.getSn();
+            log.info("{}", o.getSn());
+            context[j][1] = o.getTn();
+            context[j][2] = o.getReferenceNumber();
+            context[j][3] = o.getOrderSnapshotVo().getCkt1();
+            context[j][4] = o.getExpressNo();
+            context[j][5] = o.getOrderSnapshotVo().getCkt3();
+            context[j][6] = o.getWarehouseName();
+            context[j][7] = o.getWeight().toString() + "KG";
+            context[j][8] = DateUtils.date2StringYMDHMS(o.getCreatedAt());
+            context[j][9] = o.getContact();
+            context[j][10] = o.getPhone();
+            context[j][11] = o.getOrderSnapshotVo().getCkf1();
+            context[j][12] = o.getOrderSnapshotVo().getCkf3();
+            context[j][13] = o.getOrderSnapshotVo().getCkf5();
+            context[j][14] = o.getOrderSnapshotVo().getCkf10();
+            context[j][15] = o.getOrderSnapshotVo().getCkf11();
+            context[j][16] = o.getOrderSnapshotVo().getCkf7();
+
+            StringBuilder skuBuilder = new StringBuilder();
+            StringBuilder nameBuilder = new StringBuilder();
+            StringBuilder qtyBuilder = new StringBuilder();
+
+            for (OrderItem item: o.getOrderItems()) {
+                ProductSnapshotVo productSnapshotVo = JSONMapper.fromJson(item.getProductSnapshot(), ProductSnapshotVo.class);
+                skuBuilder.append(productSnapshotVo.getProductSku());
+                skuBuilder.append(";");
+
+                nameBuilder.append(productSnapshotVo.getProductName());
+                nameBuilder.append(";");
+
+                qtyBuilder.append(item.getQuantity());
+                qtyBuilder.append(";");
+            }
+
+            context[j][17] = skuBuilder.toString();
+            context[j][18] = nameBuilder.toString();
+            context[j][19] = qtyBuilder.toString();
+            context[j][20] = o.getStatus().getValue();
+
+
+            j+=1;
+        }
+
+        log.info("{}", JSONMapper.toJSON(context));
+
+        Date date = new Date();
+        String s = DateUtils.date2String0(date);
+        response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String fileName = "HUFU_"+s+"_出库单.xlsx";
+        fileName = URLEncoder.encode(fileName, "utf-8");
+        response.setHeader("Content-Disposition", MessageFormat.format("attachment; filename*=\"{0}\"", fileName));
+        ExcelWriter.getExcelInputSteam(context, response.getOutputStream());
     }
 }
