@@ -438,7 +438,6 @@ public class OrderController extends AbstractController {
         Page<Order> orders = orderService.findAll(user, keyword, status, pageable);
         List<Order> elements = orders.getContent();
         int row = elements.size();
-        log.info("{}", row);
         Object[][] context = new Object[row + 1][21];
 
         context[0][0] = "发货单号";
@@ -468,7 +467,6 @@ public class OrderController extends AbstractController {
             Order o = elements.get(i);
             o.setOrderSnapshotVo(JSONMapper.fromJson(o.getOrderSnapshot(), OrderSnapshotVo.class));
             context[j][0] = o.getSn();
-            log.info("{}", o.getSn());
             context[j][1] = o.getTn();
             context[j][2] = o.getReferenceNumber();
             context[j][3] = o.getOrderSnapshotVo().getCkt1();
@@ -510,8 +508,6 @@ public class OrderController extends AbstractController {
 
             j+=1;
         }
-
-        log.info("{}", JSONMapper.toJSON(context));
 
         Date date = new Date();
         String s = DateUtils.date2String0(date);
