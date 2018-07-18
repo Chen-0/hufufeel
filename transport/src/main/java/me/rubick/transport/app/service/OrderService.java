@@ -60,7 +60,7 @@ public class OrderService {
     @Resource
     private PayService payService;
 
-    public Page<Order> findAll(User user, String keyword, Integer status, Pageable pageable) {
+    public Page<Order> findAll(User user, String keyword, Integer status, Date start, Date end, Pageable pageable) {
         return orderRepository.findAll(new Specification<Order>() {
             @Override
             public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -78,6 +78,14 @@ public class OrderService {
                             cb.like(joinU.get("hwcSn"), _keyword),
                             cb.like(joinU.get("name"), _keyword)
                     ));
+                }
+
+                if (!ObjectUtils.isEmpty(start)) {
+                    predicates.add(cb.greaterThanOrEqualTo(root.get("createdAt"), start));
+                }
+
+                if (!ObjectUtils.isEmpty(end)) {
+                    predicates.add(cb.lessThanOrEqualTo(root.get("createdAt"), end));
                 }
 
                 if (!ObjectUtils.isEmpty(status) && status != -1) {

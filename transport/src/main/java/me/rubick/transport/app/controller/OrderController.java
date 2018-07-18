@@ -66,13 +66,19 @@ public class OrderController extends AbstractController {
             Model model,
             @PageableDefault(size = 10, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, defaultValue = "") String keyword,
-            @RequestParam(required = false) Integer status
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) String startAt,
+            @RequestParam(required = false) String endAt
     ) {
+        Date start = DateUtils.stringToDate(startAt);
+        Date end = DateUtils.stringToDate(endAt);
         User user = userService.getByLogin();
-        model.addAttribute("elements", orderService.findAll(user, keyword, status, pageable));
+        model.addAttribute("elements", orderService.findAll(user, keyword, status, start, end, pageable));
         model.addAttribute("_STATUS", status);
         model.addAttribute("keyword", keyword);
         model.addAttribute("MENU", "DINGDANGUANLI");
+        model.addAttribute("startAt", startAt);
+        model.addAttribute("endAt", endAt);
 
         if (status != null && status == OrderStatusEnum.FREEZE.ordinal()) {
             Map<String, Statements> map = payService.findUnpayStatementsByUserIdAndType(user.getId(), Arrays.asList(StatementTypeEnum.ORDER));
@@ -432,10 +438,15 @@ public class OrderController extends AbstractController {
             HttpServletResponse response,
             @PageableDefault(size = Integer.MAX_VALUE, direction = Sort.Direction.DESC, sort = {"id"}) Pageable pageable,
             @RequestParam(required = false, defaultValue = "") String keyword,
-            @RequestParam(required = false, defaultValue = "-1") Integer status
+            @RequestParam(required = false, defaultValue = "-1") Integer status,
+            @RequestParam(required = false) String startAt,
+            @RequestParam(required = false) String endAt
     ) throws IOException {
+        Date start = DateUtils.stringToDate(startAt);
+        Date end = DateUtils.stringToDate(endAt);
+
         User user = userService.getByLogin();
-        Page<Order> orders = orderService.findAll(user, keyword, status, pageable);
+        Page<Order> orders = orderService.findAll(user, keyword, status, start, end, pageable);
         List<Order> elements = orders.getContent();
         int row = elements.size();
         Object[][] context = new Object[row + 1][21];

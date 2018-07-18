@@ -22,18 +22,37 @@
         <section class="content">
             <div class="box">
                 <div class="box-body">
-                    <form class="form-inline margin-bottom" role="form" method="get" action="/order/index">
-                        <#if _STATUS?? >
-                            <input type="hidden" name="status" value="${_STATUS!}">
-                        </#if>
+                    <form class="form-horizontal" action="/order/index" method="get">
+                    <#if _STATUS?? >
+                        <input type="hidden" name="status" value="${_STATUS!}">
+                    </#if>
                         <div class="form-group">
-                            <label for="keyword">关键字：</label>
-                            <input class="form-control" id="keyword" name="keyword" type="text" value="${keyword!}">
+                            <label for="" class="col-xs-1 control-label">筛选：</label>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">搜索</button>
-                            <a href="/order/index?status=${_STATUS!}" class="btn btn-default">重置</a>
-                            <a class="btn btn-primary" href="/order/export?keyword=${keyword!}&status=${_STATUS!}">发货单导出</a>
+                            <label for="keyword" class="col-xs-1 control-label">关键字：</label>
+                            <div class="col-xs-3">
+                                <input class="form-control" id="keyword" name="keyword" type="text" value="${keyword!}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="startAt" class="col-xs-1 control-label">从：</label>
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control" id="startAt" name="startAt" value="${startAt!}">
+                            </div>
+
+                            <label for="endAt" class="col-xs-1 control-label">至：</label>
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control" id="endAt" name="endAt" value="${endAt!}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-xs-6 col-xs-offset-1">
+                                <button type="submit" class="btn btn-primary">搜索</button>
+                                <a href="/order/index?status=${_STATUS!}" class="btn btn-default">重置</a>
+                                <a class="btn btn-primary" href="/order/export?keyword=${keyword!}&status=${_STATUS!}&startAt=${startAt!}&endAt=${endAt!}">发货单导出</a>
+                            </div>
                         </div>
                     </form>
 
@@ -114,6 +133,14 @@
         if (confirm("确认取消该条目")) {
             window.location.href = url;
         }
+    });
+
+
+    $(function () {
+        $('#startAt, #endAt').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true
+        });
     });
 </script>
 </body>

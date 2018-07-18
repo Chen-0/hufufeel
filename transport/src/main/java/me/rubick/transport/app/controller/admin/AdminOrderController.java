@@ -74,7 +74,7 @@ public class AdminOrderController extends AbstractController {
             @RequestParam(required = false, defaultValue = "") String keyword,
             @RequestParam(required = false) Integer status
     ) {
-        Page<Order> orders = orderService.findAll(null, keyword, status, pageable);
+        Page<Order> orders = orderService.findAll(null, keyword, status, null, null, pageable);
         model.addAttribute("elements", orders);
         model.addAttribute("status", status);
         model.addAttribute("keyword", keyword);
@@ -93,7 +93,7 @@ public class AdminOrderController extends AbstractController {
             @RequestParam(required = false, defaultValue = "") String keyword,
             @RequestParam(required = false) Integer status
     ) throws IOException {
-        Page<Order> orders = orderService.findAll(null, keyword, status, pageable);
+        Page<Order> orders = orderService.findAll(null, keyword, status, null, null, pageable);
         List<Order> elements = orders.getContent();
         int row = elements.size();
 
@@ -151,7 +151,7 @@ public class AdminOrderController extends AbstractController {
             StringBuilder nameBuilder = new StringBuilder();
             StringBuilder qtyBuilder = new StringBuilder();
 
-            for (OrderItem item: o.getOrderItems()) {
+            for (OrderItem item : o.getOrderItems()) {
                 ProductSnapshotVo productSnapshotVo = JSONMapper.fromJson(item.getProductSnapshot(), ProductSnapshotVo.class);
                 skuBuilder.append(productSnapshotVo.getProductSku());
                 skuBuilder.append(";");
@@ -168,13 +168,13 @@ public class AdminOrderController extends AbstractController {
             context[j][20] = qtyBuilder.toString();
 
 
-            j+=1;
+            j += 1;
         }
 
         Date date = new Date();
         String s = DateUtils.date2String0(date);
         response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        String fileName = "HUFU_"+s+"_出库单.xlsx";
+        String fileName = "HUFU_" + s + "_出库单.xlsx";
         fileName = URLEncoder.encode(fileName, "utf-8");
         response.setHeader("Content-Disposition", MessageFormat.format("attachment; filename*=\"{0}\"", fileName));
         ExcelWriter.getExcelInputSteam(context, response.getOutputStream());
@@ -277,7 +277,7 @@ public class AdminOrderController extends AbstractController {
             throw new HttpNoFoundException();
         }
 
-        orderService.checkOut(order,total, express, expressNo);
+        orderService.checkOut(order, total, express, expressNo);
 
         redirectAttributes.addFlashAttribute("success", "运单审核成功！");
 
