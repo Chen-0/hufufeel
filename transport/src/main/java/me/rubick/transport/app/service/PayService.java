@@ -558,7 +558,7 @@ public class PayService {
         statements.setPayAt(null);
         total = total.setScale(2, RoundingMode.FLOOR);
         statements.setTotal(total);
-        statements.setComment("转运费：" + total + "USD");
+        statements.setComment("运费：" + total + "USD");
 
         return statementsRepository.save(statements);
     }
