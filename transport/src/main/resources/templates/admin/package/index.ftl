@@ -95,6 +95,7 @@
                                     <a href="/admin/package/${o.id}/publish">上架</a>
                                     <#break >
                             </#switch>
+                            <a class="x-remove" href="/admin/package/${o.id}/remove">删除</a>
                         </td>
                     </tr>
                     </#list>
@@ -133,5 +134,16 @@
 </div>
 
 <#include "*/admin/_layout/script.ftl"/>
+<script>
+    $('.x-remove').click(function (e) {
+        e.preventDefault();
+
+        var url = $(this).attr("href");
+
+        if (confirm("确实删除该条目")) {
+            window.location.href = url;
+        }
+    });
+</script>
 </body>
 </html>

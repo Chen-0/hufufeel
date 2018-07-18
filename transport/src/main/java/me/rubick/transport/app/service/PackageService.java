@@ -216,4 +216,8 @@ public class PackageService {
     public Package findOne(long id) {
         return packageRepository.findOne(id);
     }
+
+    public void deletePackage(long id) {
+        packageRepository.delete(id);
+    }
 }

@@ -236,4 +236,14 @@ public class AdminPackageController extends AbstractController {
         redirectAttributes.addFlashAttribute("success", "上架成功！");
         return "redirect:/admin/package/index";
     }
+
+    @RequestMapping("/package/{id}/remove")
+    public String deletePackage(
+            @PathVariable long id,
+            RedirectAttributes redirectAttributes
+    ) {
+        packageService.deletePackage(id);
+        redirectAttributes.addFlashAttribute("success", "删除成功！");
+        return "redirect:/admin/package/index";
+    }
 }
