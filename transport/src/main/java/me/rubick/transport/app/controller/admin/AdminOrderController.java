@@ -21,6 +21,7 @@ import me.rubick.transport.app.service.OrderService;
 import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.vo.OrderSnapshotVo;
 import me.rubick.transport.app.vo.ProductSnapshotVo;
+import me.rubick.transport.app.vo.admin.OrderCheckOutVo;
 import me.rubick.transport.app.vo.admin.OrderFormVo;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
@@ -256,28 +257,44 @@ public class AdminOrderController extends AbstractController {
             return "redirect:/admin/order/index";
         }
 
-        Statements statements = payService.createORDER(order);
-        model.addAttribute("ss", statements);
         model.addAttribute("ele", order);
+        if (ObjectUtils.isEmpty(model.asMap().get("fele"))) {
+            model.addAttribute("fele", new OrderCheckOutVo());
+        }
+
         return "/admin/order/check_out";
     }
 
     @RequestMapping(value = "/order/{id}/check_out", method = RequestMethod.POST)
     public String postCheckOut(
-            @RequestParam(required = false, defaultValue = "", name = "express_no") String expressNo,
-            @RequestParam(required = false, defaultValue = "", name = "express") String express,
-            @RequestParam(required = false) BigDecimal total,
             @PathVariable long id,
             RedirectAttributes redirectAttributes,
-            @ModelAttribute("orderStatus") Integer status
+            @ModelAttribute("orderStatus") Integer status,
+            @RequestParam String json
     ) throws HttpNoFoundException {
         Order order = orderService.findOne(id);
+        OrderCheckOutVo orderCheckOutVo = JSONMapper.fromJson(json, OrderCheckOutVo.class);
 
         if (ObjectUtils.isEmpty(order)) {
             throw new HttpNoFoundException();
         }
 
-        orderService.checkOut(order, total, express, expressNo);
+        try {
+            FormHelper formHelper = FormHelper.getInstance();
+            formHelper.notNull(orderCheckOutVo.getTotal(), "total");
+            formHelper.mustDecimal(orderCheckOutVo.getTotal(), "total");
+            formHelper.hasError();
+        } catch (FormException e) {
+            throwForm(redirectAttributes, e.getErrorField(), orderCheckOutVo);
+            return "redirect:/admin/order/" + order.getId() + "/check_out";
+        }
+
+        orderService.checkOut(
+                order,
+                new BigDecimal(orderCheckOutVo.getTotal()),
+                orderCheckOutVo.getExpress(),
+                orderCheckOutVo.getExpressNo()
+        );
 
         redirectAttributes.addFlashAttribute("success", "运单审核成功！");
 
@@ -302,6 +319,7 @@ public class AdminOrderController extends AbstractController {
         Statements statements = payService.createORDER(order);
         model.addAttribute("ss", statements);
         model.addAttribute("ele", order);
+        model.addAttribute("cost", userService.findCostSubjectByUserId(order.getUserId()));
         model.addAttribute("material_fee_list", configService.findMapByKey("material_fee"));
         model.addAttribute("package_fee_list", configService.findMapByKey("package_fee"));
         return "/admin/order/out_bound";
@@ -315,6 +333,7 @@ public class AdminOrderController extends AbstractController {
             @RequestParam(required = false, defaultValue = "") String surchargeComment,
             @RequestParam BigDecimal package_fee,
             @RequestParam BigDecimal material_fee,
+            @RequestParam BigDecimal order_fee,
             RedirectAttributes redirectAttributes,
             @ModelAttribute("orderStatus") Integer status
     ) {
@@ -326,6 +345,10 @@ public class AdminOrderController extends AbstractController {
 
         List<Statements> statementsList = new ArrayList<>();
         BigDecimal t = BigDecimal.ZERO;
+
+        Statements statements1 = payService.createORDER(order);
+        statementsList.add(payService.saveStatements(statements1, order_fee));
+        t = t.add(statements1.getTotal());
 
         //额外费用
         if (surcharge.compareTo(BigDecimal.ZERO) > 0) {

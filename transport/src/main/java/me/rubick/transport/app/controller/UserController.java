@@ -186,6 +186,7 @@ public class UserController extends AbstractController {
         model.addAttribute("pc", pc);
         model.addAttribute("user", user);
         model.addAttribute("cc", costSubjectSnapshotVo);
+        model.addAttribute("material_fee_list", configService.findMapByKey("material_fee"));
 
         return "/user/index";
     }

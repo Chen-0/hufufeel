@@ -169,15 +169,6 @@ public class PayService {
 //        return statementsRepository.findByUserId(userId, pageable);
     }
 
-    public Statements saveStatements(Statements statements, BigDecimal total, BigDecimal surcharge) {
-        log.info("系统自动生成 = {}, 提交={}", statements.getTotal(), total);
-        if (!ObjectUtils.isEmpty(total)) {
-            statements.setTotal(total);
-        }
-        statements.setTotal(statements.getTotal().add(surcharge));
-        return statementsRepository.save(statements);
-    }
-
     public Statements saveStatements(Statements statements, BigDecimal total) {
         log.info("系统自动生成 = {}, 提交={}", statements.getTotal(), total);
         if (!ObjectUtils.isEmpty(total)) {
@@ -548,6 +539,26 @@ public class PayService {
         total = total.setScale(2, RoundingMode.FLOOR);
         statements.setTotal(total);
         statements.setComment("收取仓租费：" + total + "USD");
+
+        return statementsRepository.save(statements);
+    }
+
+    /**
+     * 运费
+     * @param order
+     * @param total
+     * @return
+     */
+    public Statements createExpressFee(Order order, BigDecimal total) {
+        Statements statements = new Statements();
+        statements.setUserId(order.getUserId());
+        statements.setStatus(StatementStatusEnum.UNPAY);
+        statements.setType(StatementTypeEnum.ORDER);
+        statements.setTarget(String.valueOf(order.getId()));
+        statements.setPayAt(null);
+        total = total.setScale(2, RoundingMode.FLOOR);
+        statements.setTotal(total);
+        statements.setComment("转运费：" + total + "USD");
 
         return statementsRepository.save(statements);
     }

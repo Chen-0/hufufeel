@@ -222,6 +222,18 @@
                                     </#switch>
                                     </td>
                                 </tr>
+
+                                <tr>
+                                    <td>物料费</td>
+                                    <td>按规格收费</td>
+                                    <td>
+                                        <#list material_fee_list?keys as key>
+                                            <#if key_index != 0>
+                                            ${material_fee_list[key]} <br>
+                                            </#if>
+                                        </#list>
+                                    </td>
+                                </tr>
                             </table>
                         </div>
                         <!-- /.box-body -->

@@ -361,13 +361,22 @@ public class OrderService {
         }
     }
 
+    /**
+     * 订单出库
+     * @param order
+     * @param total 运费
+     * @param express 快递公司
+     * @param expressNo 快递单号
+     */
     public void checkOut(Order order, BigDecimal total, String express, String expressNo) {
         if (!order.getStatus().equals(OrderStatusEnum.CHECK)) {
             return;
         }
 
         List<Statements> statementsList = new ArrayList<>();
-        Statements statements = payService.createORDER(order);
+        Statements statements = payService.createExpressFee(order, total);
+
+
         statementsList.add(payService.saveStatements(statements, total));
 
         order.setStatus(OrderStatusEnum.READY);

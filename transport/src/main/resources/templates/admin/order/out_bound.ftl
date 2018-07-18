@@ -40,6 +40,28 @@
                     <form method="post" action="/admin/order/${ele.id}/out_bound" class="form-horizontal">
                         <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
 
+                        <div class="form-group">
+                            <div class="col-sm-4">
+                                <label>订单费用（
+                                <#if cost.ddt == "DD-AZ">
+                                    <#if ele.weight gt 1 >
+                                        重量费：${cost.ddv[2]} 超件费：${cost.ddv[3]}
+                                    <#else>
+                                        重量费：${cost.ddv[0]} 超件费：${cost.ddv[1]}
+                                    </#if>
+                                <#else>
+                                    按件收费：${cost.ddv[0]}
+                                </#if>
+                                    ）</label>
+                            </div>
+                            <div class="col-sm-6">
+                                <input name="order_fee" class="form-control" type="text" value="${ss.total}">
+                            </div>
+                            <label class="control-label col-sm-2">
+
+
+                            </label>
+                        </div>
 
                         <div class="form-group">
                             <div class="col-sm-4">
@@ -60,9 +82,9 @@
                             </div>
                             <div class="col-sm-6">
                                 <select name="material_fee" class="form-control">
-                                    <#list material_fee_list?keys as i>
-                                        <option value="${i}">${material_fee_list[i]}</option>
-                                    </#list>
+                                <#list material_fee_list?keys as i>
+                                    <option value="${i}">${material_fee_list[i]}</option>
+                                </#list>
                                 </select>
                             </div>
                         </div>

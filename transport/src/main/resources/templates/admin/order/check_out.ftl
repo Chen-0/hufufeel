@@ -37,35 +37,13 @@
                     运单出库
                 </div>
                 <div class="panel-body">
-                    <form method="post" action="/admin/order/${ele.id}/check_out" class="form-horizontal">
+                    <form class="xn-form" method="post" action="/admin/order/${ele.id}/check_out">
                         <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
 
-                        <div class="form-group">
-                            <div class="col-sm-4">
-                                <label for="total">订单费用</label>
-                            </div>
-                            <div class="col-sm-6">
-                                <input id="total" name="total" class="form-control" type="text" value="${ss.total}">
-                            </div>
-                        </div>
+                        <@formGroup label="运费（USD）" name="total" ></@formGroup>
+                        <@formGroup label="快递公司" name="express" ></@formGroup>
+                        <@formGroup label="快递单号" name="expressNo" ></@formGroup>
 
-                        <div class="form-group">
-                            <div class="col-sm-4">
-                                <label for="express">快递公司</label>
-                            </div>
-                            <div class="col-sm-6">
-                                <input id="express" name="express" class="form-control" type="text">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-4">
-                                <label for="express_no">快递号</label>
-                            </div>
-                            <div class="col-sm-6">
-                                <input id="express_no" name="express_no" class="form-control" type="text">
-                            </div>
-                        </div>
 
                         <div class="form-group">
                             <div class="col-xs-12">
