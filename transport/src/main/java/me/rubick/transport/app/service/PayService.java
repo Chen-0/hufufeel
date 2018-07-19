@@ -459,6 +459,18 @@ public class PayService {
         return statements;
     }
 
+    private Statements create(long userId, Long targetId, StatementTypeEnum type, BigDecimal total, String comment) {
+        Statements statements = new Statements();
+        statements.setUserId(userId);
+        statements.setStatus(StatementStatusEnum.UNPAY);
+        statements.setType(type);
+        statements.setTarget(String.valueOf(targetId));
+        statements.setPayAt(null);
+        statements.setComment(comment);
+        statements.setTotal(total);
+        return statements;
+    }
+
     public Statements createWithSave(long userId, String target, String comment, BigDecimal total) {
         Statements statements = new Statements();
         statements.setUserId(userId);
@@ -500,7 +512,15 @@ public class PayService {
         }
 
         log.info("orderId={}, count={}, total weight={}", order.getId(), count, tWeight);
-        String comment = MessageFormat.format("出库单：{0}，一共 {1} 件货品，总重量 {2} KG", order.getSn(), count, tWeight);
+        StringBuilder _ext = new StringBuilder("");
+
+        if (list.size() == 1) {
+            _ext.append(MessageFormat.format("按件收费：{1}USD。", list.get(0)));
+        } if (list.size() == 2) {
+            _ext.append(MessageFormat.format("重量收费：{0}USD，超件费：{1}USD。", list.get(0), list.get(1)));
+        }
+
+        String comment = MessageFormat.format("出库单：{0}，一共 {1} 件货品，总重量 {2} KG。{3}", order.getSn(), count, tWeight, _ext);
 
         total = total.setScale(2, RoundingMode.FLOOR);
         log.info("总价：{}", total);

@@ -350,9 +350,11 @@ public class AdminOrderController extends AbstractController {
         List<Statements> statementsList = new ArrayList<>();
         BigDecimal t = BigDecimal.ZERO;
 
-        Statements statements1 = payService.createORDER(order);
-        statementsList.add(payService.saveStatements(statements1, order_fee));
-        t = t.add(statements1.getTotal());
+        if(order_fee.compareTo(BigDecimal.ZERO) > 0) {
+            Statements statements1 = payService.createORDER(order);
+            statementsList.add(payService.saveStatements(statements1, order_fee));
+            t = t.add(statements1.getTotal());
+        }
 
         //额外费用
         if (surcharge.compareTo(BigDecimal.ZERO) > 0) {
