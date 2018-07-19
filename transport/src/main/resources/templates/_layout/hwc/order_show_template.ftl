@@ -3,7 +3,7 @@
         <table class="table table-bordered">
             <tr>
                 <td colspan="6">
-                    <strong>基本信息：</strong>
+                    <strong>基本信息： <#if AFLAG?exists && AFLAG>所属客户：${ele.user.name}</#if></strong>
                     <strong class="pull-right">状态：${ele.status.getValue()}</strong>
                 </td>
             </tr>
@@ -74,14 +74,10 @@
             <tr>
                 <td>姓名</td>
                 <td>${ele.orderSnapshotVo.ckf2!}</td>
-                <td>
-                    电话：${ele.orderSnapshotVo.ckf4!}
-                </td>
-                <td>
-                    Email：${ele.orderSnapshotVo.ckf6!}
-                </td>
-                <td></td>
-                <td></td>
+                <td>电话：</td>
+                <td>${ele.orderSnapshotVo.ckf4!}</td>
+                <td>Email：</td>
+                <td>${ele.orderSnapshotVo.ckf6!}</td>
             </tr>
             <tr>
                 <td>国家</td>

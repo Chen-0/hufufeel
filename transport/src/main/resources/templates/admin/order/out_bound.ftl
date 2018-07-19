@@ -43,15 +43,11 @@
                         <div class="form-group">
                             <div class="col-sm-4">
                                 <label>订单费用（
-                                <#if cost.ddt == "DD-AZ">
-                                    <#if ele.weight gt 1 >
-                                        重量费：${cost.ddv[2]} 超件费：${cost.ddv[3]}
+                                    <#if cost?size == 1>
+                                        按件收费:${cost[0]}
                                     <#else>
-                                        重量费：${cost.ddv[0]} 超件费：${cost.ddv[1]}
+                                        重量费:${cost[0]} 超件费:${cost[1]}
                                     </#if>
-                                <#else>
-                                    按件收费：${cost.ddv[0]}
-                                </#if>
                                     ）</label>
                             </div>
                             <div class="col-sm-6">

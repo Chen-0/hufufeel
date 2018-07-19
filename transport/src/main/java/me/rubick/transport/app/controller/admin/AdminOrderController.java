@@ -316,12 +316,16 @@ public class AdminOrderController extends AbstractController {
             return "redirect:/admin/order/index";
         }
 
-        Statements statements = payService.createORDER(order);
-        model.addAttribute("ss", statements);
+        Statements statements2 = payService.createORDER(order);
+        model.addAttribute("ss", statements2);
         model.addAttribute("ele", order);
-        model.addAttribute("cost", userService.findCostSubjectByUserId(order.getUserId()));
+        model.addAttribute("cost", payService.getOrderTotalDetail(order));
         model.addAttribute("material_fee_list", configService.findMapByKey("material_fee"));
         model.addAttribute("package_fee_list", configService.findMapByKey("package_fee"));
+        List<Statements> statements = payService.findByUserIdAndTypeIn(
+                order.getId(), Arrays.asList(StatementTypeEnum.ORDER)
+        );
+        model.addAttribute("statements", statements);
         return "/admin/order/out_bound";
     }
 

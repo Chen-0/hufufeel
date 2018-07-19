@@ -472,8 +472,6 @@ public class PayService {
     }
 
     public Statements createORDER(Order order) {
-        CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(order.getUserId());
-
         Statements statements = new Statements();
         statements.setUserId(order.getUserId());
         statements.setStatus(StatementStatusEnum.UNPAY);
@@ -482,6 +480,12 @@ public class PayService {
         statements.setPayAt(null);
 
         BigDecimal total = BigDecimal.ZERO;
+
+        List<BigDecimal> list = getOrderTotalDetail(order);
+
+        for (BigDecimal b: list) {
+            total = total.add(b);
+        }
 
 
         //总重、总体积
@@ -497,29 +501,6 @@ public class PayService {
 
         log.info("orderId={}, count={}, total weight={}", order.getId(), count, tWeight);
         String comment = MessageFormat.format("出库单：{0}，一共 {1} 件货品，总重量 {2} KG", order.getSn(), count, tWeight);
-        log.info(comment);
-        switch (costSubjectSnapshotVo.getDdt()) {
-            case "DD-AZ":       //按重
-                count = count >= 10 ? 10 : count;
-                count -= 1;
-
-                if (tWeight.compareTo(new BigDecimal("1")) <= 0) {
-                    //1kg 内含 1kg
-                    total = total.add(costSubjectSnapshotVo.getDdv().get(0));
-                    total = total.add(costSubjectSnapshotVo.getDdv().get(1).multiply(new BigDecimal(count)));
-                    log.info("----- 1kg 内含 --- order id={} weight={}, total={}", order.getId(), tWeight, total);
-                } else {
-                    //超过1kg
-                    total = total.add(costSubjectSnapshotVo.getDdv().get(2).multiply(tWeight));
-                    total = total.add(costSubjectSnapshotVo.getDdv().get(3).multiply(new BigDecimal(count)));
-                    log.info("----- 超过1kg --- order id={} weight={}, total={}", order.getId(), tWeight, total);
-                }
-
-                break;
-            case "DD-AJ":       //按件
-                total = costSubjectSnapshotVo.getDdv().get(0).multiply(new BigDecimal(count));
-                break;
-        }
 
         total = total.setScale(2, RoundingMode.FLOOR);
         log.info("总价：{}", total);
@@ -527,6 +508,42 @@ public class PayService {
         statements.setComment(comment);
         statements.setTotal(total);
         return statements;
+    }
+
+    public List<BigDecimal> getOrderTotalDetail(Order order) {
+        CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(order.getUserId());
+        int count = 0;
+        BigDecimal tWeight = BigDecimal.ZERO;
+        List<BigDecimal> list = new ArrayList<>();
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            Product product = orderItem.getProduct();
+
+            count += orderItem.getQuantity();
+            tWeight = tWeight.add(product.getWeight().multiply(new BigDecimal(orderItem.getQuantity())));
+        }
+        switch (costSubjectSnapshotVo.getDdt()) {
+            case "DD-AZ":       //按重
+                count = count >= 10 ? 10 : count;
+                count -= 1;
+
+                if (tWeight.compareTo(new BigDecimal("1")) <= 0) {
+                    //1kg 内含 1kg
+                    list.add(costSubjectSnapshotVo.getDdv().get(0));
+                    list.add(costSubjectSnapshotVo.getDdv().get(1).multiply(new BigDecimal(count)));
+                } else {
+                    //超过1kg
+                    list.add(costSubjectSnapshotVo.getDdv().get(2).multiply(tWeight));
+                    list.add(costSubjectSnapshotVo.getDdv().get(3).multiply(new BigDecimal(count)));
+                }
+
+                break;
+            case "DD-AJ":       //按件
+                list.add(costSubjectSnapshotVo.getDdv().get(0).multiply(new BigDecimal(count)));
+                break;
+        }
+
+        return list;
     }
 
     public Statements createSTORECOST(User user, BigDecimal total) {
