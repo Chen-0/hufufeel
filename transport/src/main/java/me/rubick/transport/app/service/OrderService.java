@@ -208,12 +208,22 @@ public class OrderService {
         String dateString = format.format(new Date());
         String batch = orderRepository.getMaxSN(dateString);
 
-        if (batch == null) {
+        try {
+            if (batch == null) {
+                return "CK" + dateString + "0001";
+            } else {
+                int zIndex = batch.lastIndexOf("0");
+                if (zIndex != batch.length() - 1) {
+                    zIndex += 1;
+                }
+                String temp = batch.substring(0, zIndex);
+                Integer no = Integer.valueOf(batch.substring(zIndex)) + 1;
+                return temp.toString() + no.toString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("", e);
             return "CK" + dateString + "0001";
-        } else {
-            String temp = batch.substring(0, 9);
-            Integer no = Integer.valueOf(batch.substring(9)) + 1;
-            return temp + no;
         }
     }
 
