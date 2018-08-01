@@ -115,7 +115,7 @@ public class OrderService {
         BigDecimal totalWeight = BigDecimal.ZERO;
         for (OrderItem item : orderItems) {
             totalQty += item.getQuantity();
-            totalWeight = totalWeight.add(item.getProduct().getWeight());
+            totalWeight = totalWeight.add(item.getProduct().getWeight().multiply(new BigDecimal(item.getQuantity())));
         }
 
         OrderSnapshotVo orderSnapshotVo = getOrderSnapshotVo(params);
@@ -316,10 +316,13 @@ public class OrderService {
         }
 
         int totalQty = 0;
+        BigDecimal totalWeight = BigDecimal.ZERO;
+
         List<OrderItem> orderItems = createOrderItem(user, warehouse, products, quantities);
 
         for (OrderItem orderItem : orderItems) {
             totalQty += orderItem.getQuantity();
+            totalWeight = totalWeight.add(orderItem.getProduct().getWeight().multiply(new BigDecimal(orderItem.getQuantity())));
         }
 
         Order order = new Order();
@@ -330,7 +333,7 @@ public class OrderService {
         order.setWarehouseId(warehouse.getId());
         order.setWarehouseName(warehouse.getName());
         order.setTotal(new BigDecimal(0));
-        order.setWeight(new BigDecimal(0));
+        order.setWeight(totalWeight);
         order.setOrderSnapshot(JSONMapper.toJSON(orderSnapshotVo));
         order.setQuantity(totalQty);
         order.setPhone(orderSnapshotVo.getCkf4());
