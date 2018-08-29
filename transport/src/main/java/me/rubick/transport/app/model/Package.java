@@ -29,6 +29,7 @@ public class Package {
     private PackageStatusEnum nextStatus = PackageStatusEnum.NULL;
     private String cn;
     private PackageTypeEnum type;
+    private String searchNo = "";
 
     private List<PackageProduct> packageProducts;
     private User user;
@@ -213,5 +214,14 @@ public class Package {
 
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
+    }
+
+    @Column(name = "search_no")
+    public String getSearchNo() {
+        return searchNo;
+    }
+
+    public void setSearchNo(String searchNo) {
+        this.searchNo = searchNo;
     }
 }

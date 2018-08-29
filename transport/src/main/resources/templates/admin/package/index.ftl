@@ -40,7 +40,7 @@
             <form class=" margin-bottom" role="form" method="get" action="/admin/package/index">
                 <div class="row">
                     <div class="form-group col-xs-5">
-                        <label for="keyword">模糊搜索：（用户名，参考单号，入库单号，客户编号）</label>
+                        <label for="keyword">模糊搜索：（用户名，参考单号，入库单号，客户编号、快递单号）</label>
                         <input class="form-control" id="keyword" name="keyword" type="text" value="${keyword!}">
                     </div>
                 </div>
@@ -62,6 +62,7 @@
                     <tr>
                         <th>#</th>
                         <th>参考号</th>
+                        <th>快递单号</th>
                         <th>收件人</th>
                         <th>客户</th>
                         <th>仓库</th>
@@ -78,6 +79,7 @@
                     <tr>
                         <td><a href="/admin/package/${o.id}/show">${o.cn}</a></td>
                         <td>${o.referenceNumber}</td>
+                        <td>${o.searchNo!}</td>
                         <td>${o.contact}</td>
                         <td>${o.nickname} NO.${o.user.hwcSn}</td>
                         <td>${o.warehouseName}</td>
@@ -87,6 +89,9 @@
                         <td>${o.comment!}</td>
                         <td>
                             <a href="/admin/package/${o.id}/show">详情</a>
+                            <#if o.type.ordinal() == 1>
+                                <a href="/admin/package/${o.id}/update_search_no">修改快递单号</a>
+                            </#if>
                             <#switch o.status.ordinal()>
                                 <#case 0>
                                     <a href="/admin/package/${o.id}/inbound">入库</a>

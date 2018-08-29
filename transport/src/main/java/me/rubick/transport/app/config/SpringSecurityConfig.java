@@ -59,7 +59,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().logout().logoutSuccessUrl("/")
                 .and().exceptionHandling().accessDeniedPage("/error/403")
                 .and()
-                .rememberMe().rememberMeParameter("remember_me").key("QWTtvidaThAmnBgn").rememberMeCookieName("zVaWBuPrLlDfXHlc").rememberMeCookieDomain("hufufeel.com");
+                .rememberMe().rememberMeParameter("remember_me").key("QWTtvidaThAmnBgn").rememberMeCookieName("zVaWBuPrLlDfXHlc");
     }
 
     @Override

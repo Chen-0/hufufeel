@@ -60,6 +60,7 @@ public class PackageService {
                     predicates.add(criteriaBuilder.or(
                             criteriaBuilder.like(root.get("cn"), _keyword),
                             criteriaBuilder.like(root.get("referenceNumber"), _keyword),
+                            criteriaBuilder.like(root.get("searchNo"), _keyword),
                             criteriaBuilder.like(joinU.get("hwcSn"), _keyword),
                             criteriaBuilder.like(joinU.get("name"), _keyword),
                             criteriaBuilder.like(joinU.get("username"), _keyword)
@@ -158,12 +159,13 @@ public class PackageService {
         }
     }
 
-    public void create(User user, Warehouse warehouse, String referenceNumber, String contact, String comment, List<Integer> qtys, List<Long> pids, PackageTypeEnum type) {
+    public void create(User user, Warehouse warehouse, String referenceNumber, String contact, String comment, List<Integer> qtys, List<Long> pids, PackageTypeEnum type, String searchNo) {
         Package p = new Package();
         p.setUserId(user.getId());
         p.setWarehouseId(warehouse.getId());
         p.setStatus(PackageStatusEnum.READY);
         p.setReferenceNumber(referenceNumber);
+        p.setSearchNo(searchNo);
 
         if (type.equals(PackageTypeEnum.REJECT)) {
             p.setContact(user.getHwcSn() + "-" + contact);
@@ -206,7 +208,7 @@ public class PackageService {
             pids.add(product.getId());
         }
 
-        create(user, warehouse, contact, "", comment, qtys, pids, PackageTypeEnum.NORMAL);
+        create(user, warehouse, contact, "", comment, qtys, pids, PackageTypeEnum.NORMAL, "");
     }
 
     public List<Warehouse> findAllWarehouse() {

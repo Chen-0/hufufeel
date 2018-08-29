@@ -116,6 +116,7 @@ public class PackageController extends AbstractController {
             @RequestParam(required = false, defaultValue = "") String comment,
             @RequestParam("qty[]") List<Integer> qtys,
             @RequestParam("p[]") List<Long> pids,
+            @RequestParam(required = false, defaultValue = "") String searchNo,
             @RequestParam int type,
             RedirectAttributes redirectAttributes
     ) throws BusinessException {
@@ -137,7 +138,7 @@ public class PackageController extends AbstractController {
             throw new BusinessException("[A001] 禁止访问");
         }
 
-        packageService.create(user, warehouse, referenceNumber, contact, comment, qtys, pids, PackageTypeEnum.valueOf(type));
+        packageService.create(user, warehouse, referenceNumber, contact, comment, qtys, pids, PackageTypeEnum.valueOf(type), searchNo);
 
         simpleCacheService.get(user.getId())[type].clearAll();
 

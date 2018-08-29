@@ -246,4 +246,36 @@ public class AdminPackageController extends AbstractController {
         redirectAttributes.addFlashAttribute("success", "删除成功！");
         return "redirect:/admin/package/index";
     }
+
+
+    @RequestMapping(value = "/package/{id}/update_search_no", method = RequestMethod.GET)
+    public String updatePackageSearchNo(
+            @PathVariable long id,
+            Model model
+    ) {
+        Package p = packageRepository.findOne(id);
+        List<Statements> statements = payService.findByUserIdAndTypeIn(
+                p.getId(), Arrays.asList(StatementTypeEnum.SJ, StatementTypeEnum.RK)
+        );
+        model.addAttribute("statements", statements);
+        model.addAttribute("ele", p);
+
+        return "/admin/package/update_search_no";
+    }
+
+    @RequestMapping(value = "/package/{id}/update_search_no", method = RequestMethod.POST)
+    public String postUpdatePackageSearchNo(
+            @PathVariable long id,
+            @RequestParam(defaultValue = "") String searchNo,
+            RedirectAttributes redirectAttributes
+    ) {
+        Package p = packageService.findOne(id);
+        p.setSearchNo(searchNo);
+
+        packageRepository.save(p);
+
+        redirectAttributes.addFlashAttribute("success", "修改成功！");
+
+        return "redirect:/admin/package/index";
+    }
 }

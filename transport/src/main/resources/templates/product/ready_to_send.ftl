@@ -38,7 +38,6 @@
             </div>
         </#if>
 
-
             <form id="mainForm" action="/package/create" method="post">
                 <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
                 <input type="hidden" name="type" value="${TYPE}" id="type">
@@ -107,7 +106,7 @@
                             <label class="select-label">
                                 <input type="radio" name="w" class="x-radio flat-red" value="${w.id}"
                                        <#if w_index==0>checked</#if>>
-                            ${w.name}
+                                ${w.name}
                             </label>
                         </#list>
                         </div>
@@ -144,12 +143,21 @@
                                 </label>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="form-group">
+                                    <label for="searchNo">快递单号：</label>
+                                    <input class="form-control" id="searchNo" name="searchNo">
+                                </div>
+                            </div>
+                        </div>
                     </#if>
 
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="referenceNumber">参考号<span class="text-danger"></span>：</label>
+                                    <label for="referenceNumber">参考号：</label>
                                     <input class="form-control" id="referenceNumber" name="referenceNumber">
                                 </div>
                             </div>
