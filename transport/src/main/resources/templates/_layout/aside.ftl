@@ -11,6 +11,7 @@
                 <ul class="dropdown-menu">
                     <li><a href="/product/index">查看货品</a></li>
                     <li><a href="/product/create">添加货品</a></li>
+                    <li><a href="/product/import">导入货品</a></li>
                 </ul>
             </li>
 

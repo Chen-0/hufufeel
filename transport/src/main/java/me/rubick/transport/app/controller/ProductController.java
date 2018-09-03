@@ -1,19 +1,18 @@
 package me.rubick.transport.app.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.excel.ExcelRow;
 import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.CommonException;
 import me.rubick.common.app.exception.FormException;
 import me.rubick.common.app.exception.NotFoundException;
 import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.response.RestResponse;
-import me.rubick.common.app.utils.BeanMapperUtils;
-import me.rubick.common.app.utils.DateUtils;
-import me.rubick.common.app.utils.FormUtils;
-import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.common.app.utils.*;
 import me.rubick.transport.app.constants.ProductBatteryTypeEnum;
 import me.rubick.transport.app.constants.ProductBusinessTypeEnum;
 import me.rubick.transport.app.constants.ProductDangerTypeEnum;
+import me.rubick.transport.app.constants.ProductTypeEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.ProductRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
@@ -38,6 +37,7 @@ import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -432,5 +432,97 @@ public class ProductController extends AbstractController {
         productService.createRejectProduct(product);
         redirectAttributes.addFlashAttribute("SUCCESS", "添加退货货品成功！");
         return "redirect:/product/index?type=1";
+    }
+
+    @RequestMapping(value = "/product/import", method = RequestMethod.GET)
+    public String getImportProduct() {
+        return "/product/import";
+    }
+
+    /**
+     * 导入
+     */
+    @RequestMapping(value = "/product/import", method = RequestMethod.POST)
+    public String postImportProduct(
+            @RequestParam MultipartFile file,
+            RedirectAttributes redirectAttributes
+    ) throws BusinessException, CommonException {
+        FormHelper formHelper = FormHelper.getInstance();
+        if (file.isEmpty()) {
+            formHelper.addError("file", "请上传文件！");
+        }
+        File tempFile = documentService.multipartFile2File(file);
+
+        List<ExcelRow> excelRows = ExcelHelper.read(tempFile);
+        log.info("{}", JSONMapper.toJSON(excelRows));
+
+        User user = userService.getByLogin();
+
+        for (ExcelRow row : excelRows) {
+            try {
+                ProductBusinessTypeEnum.valOf(row.getA());
+            }catch (BusinessException e) {
+                formHelper.addError("file", "业务类型：" + row.getA() + " 不是有效的值，请检查！");
+            }
+
+            try {
+                ProductBatteryTypeEnum.valOf(row.getD());
+            }catch (BusinessException e) {
+                formHelper.addError("file", "电池类型：" + row.getD() + " 不是有效的值，请检查！");
+            }
+
+            try {
+                ProductDangerTypeEnum.valOf(row.getK());
+            }catch (BusinessException e) {
+                formHelper.addError("file", "是否危险品：" + row.getK() + " 不是有效的值，请检查！");
+            }
+
+            formHelper.notNull(row.getF(), "file", "【重量】不能为空！");
+            formHelper.notNull(row.getG(), "file", "【长】不能为空！");
+            formHelper.notNull(row.getH(), "file", "【宽】不能为空！");
+            formHelper.notNull(row.getI(), "file", "【高】不能为空！");
+            formHelper.notNull(row.getL(), "file", "【申报名称】不能为空！");
+            formHelper.notNull(row.getM(), "file", "【申报价值】不能为空！");
+
+            String sku = user.getHwcSn() + "-" + row.getC();
+            if (! ObjectUtils.isEmpty(productRepository.findTopByProductSku(sku))) {
+                formHelper.addError("file", "SKU：" + sku + " 已存在，请检查！");
+            }
+        }
+
+        try {
+            formHelper.hasError();
+        } catch (FormException e) {
+            throwForm(redirectAttributes, e.getErrorField(), e.getForm());
+            return "redirect:/admin/product/import";
+        }
+
+        for (ExcelRow row : excelRows) {
+            Product product = new Product();
+            product.setUserId(user.getId());
+            product.setImageId(1L);
+            product.setType(ProductTypeEnum.NORMAL);
+            product.setDeadline(DateUtils.stringToDate(row.getJ()));
+            product.setProductName(row.getB());
+            product.setBusinessType(ProductBusinessTypeEnum.valOf(row.getA()).ordinal() == 1);
+            product.setIsDanger(ProductDangerTypeEnum.valOf(row.getK()).ordinal() == 1);
+            product.setIsBattery(ProductBatteryTypeEnum.valOf(row.getD()).ordinal() == 0);
+            product.setProductSku(row.getC());
+            product.setOrigin(row.getE());
+            product.setWeight(new BigDecimal(row.getF()));
+            product.setLength(new BigDecimal(row.getG()));
+            product.setWidth(new BigDecimal(row.getH()));
+            product.setHeight(new BigDecimal(row.getI()));
+            product.setQuotedName(row.getL());
+            product.setQuotedPrice(row.getM());
+            product.setComment(row.getN());
+
+            log.info("{}", JSONMapper.toJSON(product));
+            productService.createProduct(product);
+        }
+
+        redirectAttributes.addFlashAttribute("success", "货品导入成功！");
+
+        return "redirect:/product/index";
     }
 }
