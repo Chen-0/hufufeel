@@ -30,6 +30,7 @@ public class Package {
     private String cn;
     private PackageTypeEnum type;
     private String searchNo = "";
+    private boolean isDelete = false;
 
     private List<PackageProduct> packageProducts;
     private User user;
@@ -223,5 +224,14 @@ public class Package {
 
     public void setSearchNo(String searchNo) {
         this.searchNo = searchNo;
+    }
+
+    @Column(name = "is_delete")
+    public boolean getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(boolean delete) {
+        isDelete = delete;
     }
 }

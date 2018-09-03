@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface PackageRepository extends JpaRepository<Package, Long>, JpaSpecificationExecutor<Package> {
 
     @Query("select max(p.sn) from Package p where p.sn like %?1%")
@@ -15,4 +17,6 @@ public interface PackageRepository extends JpaRepository<Package, Long>, JpaSpec
     public String getMaxCN(String date);
 
     long countByUserIdAndStatus(long userId, PackageStatusEnum packageStatus);
+
+    public List<Package> findAllByIsDelete(Boolean d);
 }

@@ -73,6 +73,35 @@ public class AdminPackageController extends AbstractController {
         return "/admin/package/index";
     }
 
+    @RequestMapping("/package/_index")
+    public String admin_PackageIndex(Model model) {
+        List<Package> packages = packageRepository.findAllByIsDelete(true);
+
+        model.addAttribute("elements", packages);
+        model.addAttribute("status", -1);
+        model.addAttribute("keyword", "");
+        return "/admin/package/_index";
+    }
+
+    @RequestMapping("/package/{id}/recover")
+    public String recover(
+            @PathVariable long id,
+            RedirectAttributes redirectAttributes
+    ) {
+        Package p = packageService.findOne(id);
+
+        if (ObjectUtils.isEmpty(p)) {
+            return "redirect:/admin/package/_index";
+        }
+
+        p.setIsDelete(false);
+        packageRepository.save(p);
+
+        redirectAttributes.addFlashAttribute("success", "恢复成功！");
+
+        return "redirect:/admin/package/_index";
+    }
+
     @RequestMapping(value = "/package/{id}/show", method = RequestMethod.GET)
     public String adminPackageShow(
             @PathVariable long id,

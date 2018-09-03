@@ -80,6 +80,8 @@ public class PackageService {
                     predicates.add(criteriaBuilder.equal(root.get("status"), status));
                 }
 
+                predicates.add(criteriaBuilder.equal(root.get("isDelete"), false));
+
                 return criteriaBuilder.and(predicates.toArray(new Predicate[]{}));
             }
         }, pageable);
@@ -220,6 +222,13 @@ public class PackageService {
     }
 
     public void deletePackage(long id) {
-        packageRepository.delete(id);
+        Package p = packageRepository.findOne(id);
+
+        if (ObjectUtils.isEmpty(p)) {
+            return;
+        }
+
+        p.setIsDelete(true);
+        packageRepository.save(p);
     }
 }

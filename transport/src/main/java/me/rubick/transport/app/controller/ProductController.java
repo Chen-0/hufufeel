@@ -147,7 +147,7 @@ public class ProductController extends AbstractController {
         FormHelper formHelper = FormHelper.getInstance();
         formHelper.validateDefault0("businessType", productFormVo.getBusinessType());
         formHelper.validateDefault0("productName", productFormVo.getProductName());
-        formHelper.validate("productSku", productFormVo.getProductSku()).notNull().maxLength(12);
+        formHelper.validate("productSku", productFormVo.getProductSku()).notNull().maxLength(20);
         formHelper.validateDefault0("isBattery", productFormVo.getIsBattery());
         formHelper.validateDefault0("weight", productFormVo.getWeight()).mustDecimal0();
         formHelper.validateDefault0("length", productFormVo.getLength()).mustDecimal0();
