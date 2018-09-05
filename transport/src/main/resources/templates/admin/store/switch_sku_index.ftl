@@ -29,7 +29,9 @@
                 <tr>
                     <th>编号</th>
                     <th>客户名称</th>
-                    <th>原SKU</th>
+                    <th>SKU</th>
+                    <th>件数</th>
+                    <th>装箱尺寸</th>
                     <th>提交时间</th>
                     <th>操作</th>
                 </tr>
@@ -40,9 +42,12 @@
                     <td>${e_index + 1}</td>
                     <td>${e.user.name} （NO.${e.user.hwcSn}）</td>
                     <td>${e.sku}</td>
+                    <td>${e.qty}</td>
+                    <td>${e.size}</td>
                     <td>${e.createdAt?string}</td>
                     <td>
                         <a href="/file/${e.doc.name}" download="${e.user.name}-NO.${e.user.hwcSn}换标文件.pdf">文件下载</a>
+                        <a href="/admin/switch_sku/${e.id}/update">修改信息</a>
                     </td>
                 </tr>
                 </#list>

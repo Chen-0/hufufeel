@@ -54,16 +54,6 @@ public class AdminStockController extends AbstractController {
     @Resource
     private ProductWarehouseRepository productWarehouseRepository;
 
-    @RequestMapping(value = "/admin/switch_sku/index", method = RequestMethod.GET)
-    public String indexSwitchSku(Model model) {
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
-        List<SwitchSku> switchSkus = switchSkuRepository.findAll(sort);
-
-        model.addAttribute("elements", switchSkus);
-
-        return "/admin/store/switch_sku_index";
-    }
-
     @RequestMapping(value = "/admin/stock/{id}/update", method = RequestMethod.GET)
     public String getUpdateStock(
             @PathVariable long id,
@@ -180,5 +170,46 @@ public class AdminStockController extends AbstractController {
 
         redirectAttributes.addFlashAttribute("success", "出库单导入成功！");
         return "redirect:/admin/stock/index";
+    }
+
+    // -----------------------------------------------------------------------------
+
+    @RequestMapping(value = "/admin/switch_sku/index", method = RequestMethod.GET)
+    public String indexSwitchSku(Model model) {
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        List<SwitchSku> switchSkus = switchSkuRepository.findAll(sort);
+
+        model.addAttribute("elements", switchSkus);
+
+        return "/admin/store/switch_sku_index";
+    }
+
+    @RequestMapping(value = "/admin/switch_sku/{id}/update", method = RequestMethod.GET)
+    public String getUpdateSwitchSku(
+            @PathVariable long id,
+            Model model
+    ) {
+        SwitchSku switchSku = switchSkuRepository.findOne(id);
+        model.addAttribute("ele", switchSku);
+        model.addAttribute("fele", switchSku);
+        return "/admin/store/update_sku";
+    }
+
+    @RequestMapping(value = "/admin/switch_sku/{id}/update", method = RequestMethod.POST)
+    public String postUpdateSwitchSku(
+            @PathVariable long id,
+            @RequestParam int qty,
+            @RequestParam String size,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
+        SwitchSku switchSku = switchSkuRepository.findOne(id);
+        switchSku.setSize(size);
+        switchSku.setQty(qty);
+
+        switchSkuRepository.save(switchSku);
+        model.addAttribute("ele", switchSku);
+        redirectAttributes.addFlashAttribute("success", "修改换标信息成功！");
+        return "redirect:/admin/switch_sku/index";
     }
 }

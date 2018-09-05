@@ -593,9 +593,27 @@ public class PayService {
         statements.setType(StatementTypeEnum.ORDER);
         statements.setTarget(String.valueOf(order.getId()));
         statements.setPayAt(null);
-        total = total.setScale(2, RoundingMode.FLOOR);
+//        total = total.setScale(2, RoundingMode.FLOOR);
         statements.setTotal(total);
         statements.setComment("运费：" + total + "USD");
+
+        return statementsRepository.save(statements);
+    }
+
+    /**
+     * 补收费
+     * @return
+     */
+    public Statements createRecharge(User user, BigDecimal total, String comment) {
+        Statements statements = new Statements();
+
+        statements.setUserId(user.getId());
+        statements.setStatus(StatementStatusEnum.UNPAY);
+        statements.setType(StatementTypeEnum.RECHARGE);
+        statements.setTotal(total);
+        statements.setTarget(null);
+        statements.setComment(comment);
+        statements.setPayAt(null);
 
         return statementsRepository.save(statements);
     }

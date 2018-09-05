@@ -72,6 +72,7 @@
                                 <a href="/admin/user/${o.id}/cost_subject">用户设置</a>
                                 <a href="/admin/user/${o.id}/password">修改密码</a>
                                 <a href="/admin/user/${o.id}/charge">修改余额</a>
+                                <a href="/admin/user/${o.id}/recharge">补收费</a>
                             </td>
                         </tr>
                         </#list>

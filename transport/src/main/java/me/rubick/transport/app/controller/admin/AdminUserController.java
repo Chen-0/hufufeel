@@ -16,6 +16,7 @@ import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.service.UserService;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import me.rubick.transport.app.vo.UserCsVo;
+import me.rubick.transport.app.vo.admin.RechargeFormVo;
 import me.rubick.transport.app.vo.admin.UserCreateVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -431,5 +432,46 @@ public class AdminUserController extends AbstractController {
         fileName = URLEncoder.encode(fileName, "utf-8");
         response.setHeader("Content-Disposition", MessageFormat.format("attachment; filename*=\"{0}\"", fileName));
         ExcelWriter.getExcelInputSteam(context, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/{id}/recharge", method = RequestMethod.GET)
+    public String getRecharge(
+            @PathVariable long id,
+            Model model
+    ) {
+        User user = userService.findOne(id);
+        model.addAttribute("user", user);
+        if (! model.asMap().containsKey("fele")) {
+            model.addAttribute("fele", new HashMap<String, String>());
+        }
+        return "/admin/user/recharge";
+    }
+
+    @RequestMapping(value = "/{id}/recharge", method = RequestMethod.POST)
+    public String PostRecharge(
+            @PathVariable long id,
+            @RequestParam String json,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
+        User user = userService.findOne(id);
+        RechargeFormVo rechargeFormVo = JSONMapper.fromJson(json, RechargeFormVo.class);
+
+        try {
+            FormHelper formHelper = FormHelper.getInstance();
+            formHelper.validateDefault0("total", rechargeFormVo.getTotal());
+            formHelper.validateDefault0("comment", rechargeFormVo.getComment());
+
+            formHelper.hasError();
+        } catch (FormException e) {
+            throwForm(redirectAttributes, e.getErrorField(), rechargeFormVo);
+            return "redirect:/admin/user/"+user.getId()+"/recharge";
+        }
+
+        Statements statements = payService.createRecharge(user, rechargeFormVo.getTotal(), rechargeFormVo.getComment());
+        payService.payStatements(statements.getId());
+
+        redirectAttributes.addFlashAttribute("success", "补收费成功！");
+        return "redirect:/admin/user/index";
     }
 }

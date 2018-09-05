@@ -14,6 +14,8 @@ public class SwitchSku {
     private String sku;
     private long docId;
     private Date createdAt;
+    private String size;
+    private int qty;
 
     private Document doc;
     private User user;
@@ -89,5 +91,23 @@ public class SwitchSku {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Column(name = "size")
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    @Column(name = "qty")
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
     }
 }
