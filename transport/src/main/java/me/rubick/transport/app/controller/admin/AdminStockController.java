@@ -10,6 +10,7 @@ import me.rubick.common.app.utils.ExcelHelper;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.OrderStatusEnum;
 import me.rubick.transport.app.constants.ProductStatusEnum;
+import me.rubick.transport.app.constants.SwitchSkuEnum;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.*;
@@ -198,7 +199,7 @@ public class AdminStockController extends AbstractController {
     @RequestMapping(value = "/admin/switch_sku/{id}/update", method = RequestMethod.POST)
     public String postUpdateSwitchSku(
             @PathVariable long id,
-            @RequestParam int qty,
+            @RequestParam String qty,
             @RequestParam String size,
             Model model,
             RedirectAttributes redirectAttributes
@@ -209,6 +210,26 @@ public class AdminStockController extends AbstractController {
 
         switchSkuRepository.save(switchSku);
         model.addAttribute("ele", switchSku);
+        redirectAttributes.addFlashAttribute("success", "修改换标信息成功！");
+        return "redirect:/admin/switch_sku/index";
+    }
+
+    @RequestMapping("/admin/switch_sku/{id}/change_status")
+    public String changeSwitchSkuStatus(
+            @PathVariable long id,
+            @RequestParam int type,
+            RedirectAttributes redirectAttributes
+    ) {
+        SwitchSkuEnum status = SwitchSkuEnum.valueOf(type);
+        SwitchSku switchSku = switchSkuRepository.findOne(id);
+
+        if (ObjectUtils.isEmpty(switchSku)) {
+            return "redirect:/admin/switch_sku/index";
+        }
+
+        switchSku.setStatus(status);
+        switchSkuRepository.save(switchSku);
+
         redirectAttributes.addFlashAttribute("success", "修改换标信息成功！");
         return "redirect:/admin/switch_sku/index";
     }

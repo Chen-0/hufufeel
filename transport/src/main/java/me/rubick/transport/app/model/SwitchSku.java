@@ -1,5 +1,6 @@
 package me.rubick.transport.app.model;
 
+import me.rubick.transport.app.constants.SwitchSkuEnum;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -15,7 +16,8 @@ public class SwitchSku {
     private long docId;
     private Date createdAt;
     private String size;
-    private int qty;
+    private String qty;
+    private SwitchSkuEnum status;
 
     private Document doc;
     private User user;
@@ -103,11 +105,20 @@ public class SwitchSku {
     }
 
     @Column(name = "qty")
-    public int getQty() {
+    public String getQty() {
         return qty;
     }
 
-    public void setQty(int qty) {
+    public void setQty(String qty) {
         this.qty = qty;
+    }
+
+    @Column
+    public SwitchSkuEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(SwitchSkuEnum status) {
+        this.status = status;
     }
 }

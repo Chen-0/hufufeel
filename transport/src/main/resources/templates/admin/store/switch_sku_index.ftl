@@ -32,6 +32,7 @@
                     <th>SKU</th>
                     <th>件数</th>
                     <th>装箱尺寸</th>
+                    <th>状态</th>
                     <th>提交时间</th>
                     <th>操作</th>
                 </tr>
@@ -44,10 +45,16 @@
                     <td>${e.sku}</td>
                     <td>${e.qty}</td>
                     <td>${e.size}</td>
+                    <td>${e.status.value}</td>
                     <td>${e.createdAt?string}</td>
                     <td>
                         <a href="/file/${e.doc.name}" download="${e.user.name}-NO.${e.user.hwcSn}换标文件.pdf">文件下载</a>
                         <a href="/admin/switch_sku/${e.id}/update">修改信息</a>
+
+                        <a href="/admin/switch_sku/${e.id}/change_status?type=1">正在换标</a>
+                        <#if e.qty?length gt 0>
+                            <a href="/admin/switch_sku/${e.id}/change_status?type=2">换标成功</a>
+                        </#if>
                     </td>
                 </tr>
                 </#list>

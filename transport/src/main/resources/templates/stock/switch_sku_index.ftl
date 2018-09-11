@@ -32,6 +32,9 @@
                         <tr>
                             <th>编号</th>
                             <th>原SKU</th>
+                            <th>件数</th>
+                            <th>装箱尺寸</th>
+                            <th>状态</th>
                             <th>提交时间</th>
                             <th>操作</th>
                         </tr>
@@ -41,6 +44,9 @@
                         <tr>
                             <td>${e_index + 1}</td>
                             <td>${e.sku}</td>
+                            <td>${e.qty}</td>
+                            <td>${e.size}</td>
+                            <td>${e.status.value}</td>
                             <td>${e.createdAt?string}</td>
                             <td>
                                 <a href="/file/${e.doc.name}" download="换标文件.pdf">文件下载</a>
