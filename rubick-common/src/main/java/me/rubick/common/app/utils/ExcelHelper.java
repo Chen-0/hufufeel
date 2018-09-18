@@ -62,7 +62,7 @@ public class ExcelHelper<T> {
         return excelRows;
     }
 
-    private Workbook getWorkbook(File file) throws CommonException {
+    public static Workbook getWorkbook(File file) throws CommonException {
         log.info(file.getName());
         String[] strings = file.getName().split("\\.");
         String excelFilePath = strings[strings.length - 1];

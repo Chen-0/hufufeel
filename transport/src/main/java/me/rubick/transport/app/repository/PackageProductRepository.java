@@ -16,4 +16,7 @@ public interface PackageProductRepository extends JpaRepository<PackageProduct, 
     @Modifying
     @Query("update PackageProduct p set p.quantity = p.quantity + ?3 where p.packageId=?1 and p.productId=?2 and p.quantity + ?3 <= p.expectQuantity")
     void inboundReject(long packageId, long productId, int qty);
+
+    @Query("select sum(pp.quantity * p.weight) from PackageProduct pp, Product p where pp.productId = p.id and pp.packageId = ?1")
+    BigDecimal sumWeight(long packageId);
 }

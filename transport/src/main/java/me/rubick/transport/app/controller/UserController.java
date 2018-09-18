@@ -3,6 +3,7 @@ package me.rubick.transport.app.controller;
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.excel.ExcelWriter;
 import me.rubick.common.app.exception.BusinessException;
+import me.rubick.common.app.exception.CommonException;
 import me.rubick.common.app.utils.DateUtils;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.OrderStatusEnum;
@@ -14,6 +15,7 @@ import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.repository.PaymentRepository;
 import me.rubick.transport.app.service.PayService;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,10 +23,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -97,50 +96,50 @@ public class UserController extends AbstractController {
         return "/user/statements";
     }
 
-    @RequestMapping(value = "/user/statements/export", method = RequestMethod.GET)
-    public void exportStatements(
-            Model model,
-            @PageableDefault(size = Integer.MAX_VALUE, sort = {"id"}, direction = Sort.Direction.DESC, page = 0) Pageable pageable,
-            @RequestParam(required = false) String startAt,
-            @RequestParam(required = false) String endAt,
-            HttpServletResponse response) throws IOException {
-        User user = userService.getByLogin();
-
-        Date start = DateUtils.stringToDate(startAt);
-        Date end = DateUtils.stringToDate(endAt);
-        Page<Statements> statementsPage = payService.findAllStatements(user.getId(), start, end, pageable);
-        List<Statements> statements = statementsPage.getContent();
-
-        int row = statements.size();
-        Object[][] context = new Object[row+1][7];
-        context[0][0] = "编号";
-        context[0][1] = "费用说明";
-        context[0][2] = "费用类型";
-        context[0][3] = "支付状态";
-        context[0][4] = "金额";
-        context[0][5] = "创建时间";
-        context[0][6] = "支付时间";
-
-        for (int i = 0; i < row; i++) {
-            Statements s = statements.get(i);
-
-            context[i+1][0] = i + 1;
-            context[i+1][1] = s.getComment();
-            context[i+1][2] = s.getType().getValue();
-            context[i+1][3] = s.getStatus().getValue();
-            context[i+1][4] = s.getTotal().toString();
-            context[i+1][5] = DateUtils.date2StringYMDHMS(s.getCreatedAt());
-            context[i+1][6] = DateUtils.date2StringYMDHMS(s.getPayAt());
-        }
-
-        log.info("{}", JSONMapper.toJSON(context));
-
-        response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        String fileName = "HUFU-"+user.getHwcSn()+"-费用明细.xlsx";
-        fileName = URLEncoder.encode(fileName, "utf-8");
-        response.setHeader("Content-Disposition", MessageFormat.format("attachment; filename*=\"{0}\"", fileName));
-        ExcelWriter.getExcelInputSteam(context, response.getOutputStream());
-    }
+//    @RequestMapping(value = "/user/statements/export", method = RequestMethod.GET)
+//    public void exportStatements(
+//            Model model,
+//            @PageableDefault(size = Integer.MAX_VALUE, sort = {"id"}, direction = Sort.Direction.DESC, page = 0) Pageable pageable,
+//            @RequestParam(required = false) String startAt,
+//            @RequestParam(required = false) String endAt,
+//            HttpServletResponse response) throws IOException {
+//        User user = userService.getByLogin();
+//
+//        Date start = DateUtils.stringToDate(startAt);
+//        Date end = DateUtils.stringToDate(endAt);
+//        Page<Statements> statementsPage = payService.findAllStatements(user.getId(), start, end, pageable);
+//        List<Statements> statements = statementsPage.getContent();
+//
+//        int row = statements.size();
+//        Object[][] context = new Object[row+1][7];
+//        context[0][0] = "编号";
+//        context[0][1] = "费用说明";
+//        context[0][2] = "费用类型";
+//        context[0][3] = "支付状态";
+//        context[0][4] = "金额";
+//        context[0][5] = "创建时间";
+//        context[0][6] = "支付时间";
+//
+//        for (int i = 0; i < row; i++) {
+//            Statements s = statements.get(i);
+//
+//            context[i+1][0] = i + 1;
+//            context[i+1][1] = s.getComment();
+//            context[i+1][2] = s.getType().getValue();
+//            context[i+1][3] = s.getStatus().getValue();
+//            context[i+1][4] = s.getTotal().toString();
+//            context[i+1][5] = DateUtils.date2StringYMDHMS(s.getCreatedAt());
+//            context[i+1][6] = DateUtils.date2StringYMDHMS(s.getPayAt());
+//        }
+//
+//        log.info("{}", JSONMapper.toJSON(context));
+//
+//        response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//        String fileName = "HUFU-"+user.getHwcSn()+"-费用明细.xlsx";
+//        fileName = URLEncoder.encode(fileName, "utf-8");
+//        response.setHeader("Content-Disposition", MessageFormat.format("attachment; filename*=\"{0}\"", fileName));
+//        ExcelWriter.getExcelInputSteam(context, response.getOutputStream());
+//    }
 
     @RequestMapping(value = "/user/statements/{id}/pay", method = RequestMethod.GET)
     public String payStatements(
@@ -201,5 +200,29 @@ public class UserController extends AbstractController {
         model.addAttribute("elements", payments);
 
         return "user/charge_index";
+    }
+
+    @RequestMapping(value = "/user/statements/export", method = RequestMethod.GET)
+//    @ResponseBody
+    public void exportStatements(
+            Model model,
+            @PageableDefault(size = Integer.MAX_VALUE, sort = {"id"}, direction = Sort.Direction.DESC, page = 0) Pageable pageable,
+            @RequestParam(required = false) String startAt,
+            @RequestParam(required = false) String endAt,
+            HttpServletResponse response) throws IOException, CommonException {
+        User user = userService.getByLogin();
+
+        Date start = DateUtils.stringToDate(startAt);
+        Date end = DateUtils.stringToDate(endAt);
+        Page<Statements> statementsPage = payService.findAllStatements(user.getId(), start, end, pageable);
+        List<Statements> statements = statementsPage.getContent();
+
+        Workbook workbook = payService.anaStatements(user, statements);
+        response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String fileName = "HUFU-"+user.getHwcSn()+"-费用明细.xlsx";
+        fileName = URLEncoder.encode(fileName, "utf-8");
+        response.setHeader("Content-Disposition", MessageFormat.format("attachment; filename*=\"{0}\"", fileName));
+        workbook.write(response.getOutputStream());
+//        return "OK";
     }
 }

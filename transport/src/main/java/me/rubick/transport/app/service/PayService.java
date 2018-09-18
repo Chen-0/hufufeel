@@ -1,12 +1,19 @@
 package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.excel.ExcelWriter;
 import me.rubick.common.app.exception.BusinessException;
+import me.rubick.common.app.exception.CommonException;
+import me.rubick.common.app.utils.DateUtils;
+import me.rubick.common.app.utils.ExcelHelper;
+import me.rubick.common.app.utils.HashUtils;
 import me.rubick.transport.app.constants.*;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
 import me.rubick.transport.app.repository.*;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,8 +27,13 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -41,6 +53,12 @@ public class PayService {
 
     @Resource
     private PackageRepository packageRepository;
+
+    @Resource
+    private PackageProductRepository packageProductRepository;
+
+    @Resource
+    private OrderItemRepository orderItemRepository;
 
     @Resource
     private StockService stockService;
@@ -408,7 +426,7 @@ public class PayService {
             tSize = tSize.add(product.getVol().multiply(new BigDecimal(pp.getQuantity())));
         }
 
-        String comment = MessageFormat.format("入库单：{0}，一共 {1} 件货品，总体积 {2}", p.getSn(), count, tSize);
+        String comment = MessageFormat.format("入库单上架：{0}，一共 {1} 件货品，总体积 {2}", p.getSn(), count, tSize);
         log.info(comment);
         switch (costSubjectSnapshotVo.getSjt()) {
             case "SJ-AS":       //按体积
@@ -616,5 +634,188 @@ public class PayService {
         statements.setPayAt(null);
 
         return statementsRepository.save(statements);
+    }
+
+    @Resource
+    private DocumentService documentService;
+
+
+    /**
+     * 分析费用
+     * @param statements
+     */
+    public Workbook anaStatements(User user, List<Statements> statements) throws IOException, CommonException {
+
+        File file = documentService.cp2tmp(getTransactionFile());
+
+        Workbook workbook = ExcelHelper.getWorkbook(file);
+
+        Sheet sheet = workbook.getSheetAt(0);
+
+        // 入库单入库
+        BigDecimal rukuFee = BigDecimal.ZERO;
+        int rukuCount = 0;
+        BigDecimal rukuWeight = BigDecimal.ZERO;
+
+        // 入库单上架
+        BigDecimal sjFee = BigDecimal.ZERO;
+        int sjCount = 0;
+        BigDecimal sjWeight = BigDecimal.ZERO;
+
+        // 退货单入库
+        BigDecimal rejectrkFee = BigDecimal.ZERO;
+        int rejectrkCount = 0;
+        BigDecimal rejectrkWeight = BigDecimal.ZERO;
+
+        //退货单上架
+        BigDecimal rejectsjFee = BigDecimal.ZERO;
+        int rejectsjCount = 0;
+        BigDecimal rejectsjWeight = BigDecimal.ZERO;
+
+        //运费
+        BigDecimal yfFee = BigDecimal.ZERO;
+        int yfCount = 0;
+        BigDecimal yfWeight = BigDecimal.ZERO;
+
+        //物料
+        BigDecimal wlFee = BigDecimal.ZERO;
+
+        BigDecimal ckFee = BigDecimal.ZERO;
+        int ckCount = 0;
+        BigDecimal ckWeight = BigDecimal.ZERO;
+
+
+        for (Statements s: statements) {
+            if (s.getComment().contains("入库单")) {
+
+                if (s.getType().equals(StatementTypeEnum.RK)) {
+                    //入库
+                    rukuFee = rukuFee.add(s.getTotal());
+                    rukuCount++;
+                    rukuWeight = rukuWeight.add(packageProductRepository.sumWeight(Long.valueOf(s.getTarget())));
+                } else if (s.getType().equals(StatementTypeEnum.SJ)){
+                    //上架
+                    sjFee = sjFee.add(s.getTotal());
+                    sjCount++;
+                    sjWeight = sjWeight.add(packageProductRepository.sumWeight(Long.valueOf(s.getTarget())));
+                }
+            }
+
+            else if (s.getComment().contains("退货单")) {
+
+                if (s.getComment().contains("正在入库")) {
+                    //入库
+                    rejectrkFee = rejectrkFee.add(s.getTotal());
+                    rejectrkCount++;
+                    rejectrkWeight = rejectrkWeight.add(packageProductRepository.sumWeight(Long.valueOf(s.getTarget())));
+                } else if (s.getComment().contains("正在上架")) {
+                    //上架
+                    rejectsjFee = rejectsjFee.add(s.getTotal());
+                    rejectsjCount++;
+                    rejectsjWeight = rejectsjWeight.add(packageProductRepository.sumWeight(Long.valueOf(s.getTarget())));
+                }
+            }
+
+            else if(s.getComment().contains("运费")) {
+                yfFee = yfFee.add(s.getTotal());
+                yfCount ++;
+            }
+
+            else if (s.getComment().contains("物料费")) {
+                wlFee = wlFee.add(s.getTotal());
+            }
+
+            else if (s.getComment().contains("出库单")) {
+                ckFee = ckFee.add(s.getTotal());
+                ckCount ++;
+                ckWeight = ckWeight.add(orderItemRepository.sumWeight(Long.valueOf(s.getTarget())));
+            }
+
+        }
+
+        log.info("入库单入库费：{}", rukuFee);
+        log.info("入库单上架费：{}", sjFee);
+        log.info("退货单入库费：{}", rejectrkFee);
+        log.info("退货单上架费：{}", rejectsjFee);
+        log.info("运费：{}", yfFee);
+        log.info("运单操作费：{}", ckFee);
+        log.info("物料费：{}", wlFee);
+
+        sheet.getRow(2).getCell(1).setCellValue(user.getHwcSn());
+        sheet.getRow(2).getCell(4).setCellValue(user.getName());
+
+        sheet.getRow(3).getCell(1).setCellValue(DateUtils.date2String0(new Date()) + HashUtils.generateNumberString(4));
+
+        sheet.getRow(4).getCell(2).setCellValue(rukuCount);
+        sheet.getRow(5).getCell(2).setCellValue(rukuWeight.doubleValue());
+        sheet.getRow(6).getCell(2).setCellValue(rukuFee.doubleValue());
+
+        sheet.getRow(7).getCell(2).setCellValue(sjCount);
+        sheet.getRow(8).getCell(2).setCellValue(sjWeight.doubleValue());
+        sheet.getRow(9).getCell(2).setCellValue(sjFee.doubleValue());
+
+        sheet.getRow(10).getCell(2).setCellValue(rejectrkCount);
+        sheet.getRow(11).getCell(2).setCellValue(rejectrkWeight.doubleValue());
+        sheet.getRow(12).getCell(2).setCellValue(rejectrkFee.doubleValue());
+
+        sheet.getRow(13).getCell(2).setCellValue(rejectsjCount);
+        sheet.getRow(14).getCell(2).setCellValue(rejectsjWeight.doubleValue());
+        sheet.getRow(15).getCell(2).setCellValue(rejectsjFee.doubleValue());
+
+        sheet.getRow(16).getCell(2).setCellValue(rejectsjFee.doubleValue());
+        sheet.getRow(17).getCell(2).setCellValue(rejectsjFee.doubleValue());
+
+        sheet.getRow(18).getCell(2).setCellValue(ckCount);
+        sheet.getRow(19).getCell(2).setCellValue(ckWeight.doubleValue());
+        sheet.getRow(20).getCell(2).setCellValue(ckFee.doubleValue());
+        sheet.getRow(21).getCell(2).setCellValue(wlFee.doubleValue());
+        sheet.getRow(22).getCell(2).setCellValue(yfCount);
+        sheet.getRow(23).getCell(2).setCellValue(yfFee.doubleValue());
+
+
+        BigDecimal sum = BigDecimal.ZERO;
+        sum = sum.add(rukuFee).add(sjFee).add(rejectrkFee).add(rejectsjFee).add(ckFee).add(yfFee).add(wlFee);
+
+        sheet.getRow(24).getCell(2).setCellValue(sum.doubleValue());
+
+        writeForWorksheet(statements, workbook);
+        return workbook;
+    }
+
+    private void writeForWorksheet(List<Statements> statements, Workbook workbook) {
+
+        int row = statements.size();
+        Object[][] context = new Object[row+1][7];
+        context[0][0] = "编号";
+        context[0][1] = "费用说明";
+        context[0][2] = "费用类型";
+        context[0][3] = "支付状态";
+        context[0][4] = "金额";
+        context[0][5] = "创建时间";
+        context[0][6] = "支付时间";
+
+        for (int i = 0; i < row; i++) {
+            Statements s = statements.get(i);
+
+            context[i+1][0] = i + 1;
+            context[i+1][1] = s.getComment();
+            context[i+1][2] = s.getType().getValue();
+            context[i+1][3] = s.getStatus().getValue();
+            context[i+1][4] = s.getTotal().toString();
+            context[i+1][5] = DateUtils.date2StringYMDHMS(s.getCreatedAt());
+            context[i+1][6] = DateUtils.date2StringYMDHMS(s.getPayAt());
+        }
+
+        ExcelWriter.writeRows2Sheet(context, workbook.createSheet());
+    }
+
+    private File getTransactionFile() {
+        URL url = getClass().getClassLoader().getResource("static"+File.separator + "hwc" + File.separator + "transaction.xlsx");
+        try {
+            return new File(url.toURI());
+        } catch (URISyntaxException e) {
+            log.info("{}", e.getMessage());
+            return new File(url.getPath());
+        }
     }
 }

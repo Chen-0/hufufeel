@@ -10,7 +10,8 @@ import me.rubick.transport.app.repository.DocumentRepository;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
 import net.coobird.thumbnailator.util.ThumbnailatorUtils;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -77,6 +78,14 @@ public class DocumentService {
         if (!tempFile.exists()) {
             tempFile.mkdir();
         }
+    }
+
+    public File cp2tmp(File file) throws IOException {
+        String extension = FilenameUtils.getExtension(file.getName());
+        log.info("extension - {}", extension);
+        File tempFile = new File(temp_directory + File.separator + "stm_" + HashUtils.generateString() + "." + extension);
+        FileUtils.copyFile(file, tempFile);
+        return tempFile;
     }
 
     public String getDirectory() {

@@ -2,6 +2,7 @@ package me.rubick.common.app.excel;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -18,6 +19,20 @@ public class ExcelWriter {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
 
+        writeRows2Sheet(datatypes, sheet);
+
+        try {
+            workbook.write(outputStream);
+            workbook.close();
+            outputStream.flush();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void writeRows2Sheet(Object[][] datatypes, Sheet sheet) {
         int rowNum = 0;
 
         for (Object[] datatype : datatypes) {
@@ -32,14 +47,6 @@ public class ExcelWriter {
                 }
             }
         }
-
-        try {
-            workbook.write(outputStream);
-            workbook.close();
-            outputStream.flush();
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
+
 }
