@@ -220,7 +220,7 @@ public class PayService {
         return statements;
     }
 
-    private Statements calcTHRK(Package p) {
+    public Statements calcTHRK(Package p) {
         CostSubjectSnapshotVo costSubjectSnapshotVo = userService.findCostSubjectByUserId(p.getUserId());
 
         Statements statements = new Statements();

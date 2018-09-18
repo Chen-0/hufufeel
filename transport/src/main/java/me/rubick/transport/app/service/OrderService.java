@@ -208,23 +208,41 @@ public class OrderService {
         String dateString = format.format(new Date());
         String batch = orderRepository.getMaxSN(dateString);
 
+        //一共 2  +  8   +  4
+        //    CK   date    no
+
         try {
             if (batch == null) {
                 return "CK" + dateString + "0001";
             } else {
-                int zIndex = batch.lastIndexOf("0");
-                if (zIndex != batch.length() - 1) {
-                    zIndex += 1;
-                }
-                String temp = batch.substring(0, zIndex);
-                Integer no = Integer.valueOf(batch.substring(zIndex)) + 1;
-                return temp.toString() + no.toString();
+                String bb = batch.substring(10);
+                String temp = batch.substring(0, 10);
+                return temp + s2n(bb);
             }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("", e);
             return "CK" + dateString + "0001";
         }
+    }
+
+    private String s2n(String bb) {
+        int no = Integer.valueOf(bb);
+        no += 1;
+
+        bb = String.valueOf(no);
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        int len = 4 - bb.length();
+
+        for (int i = 0; i < len; i ++) {
+            stringBuilder.append("0");
+        }
+
+        stringBuilder.append(bb);
+
+        return stringBuilder.toString();
     }
 
     public void cancelOrder(Order order, long userId) {

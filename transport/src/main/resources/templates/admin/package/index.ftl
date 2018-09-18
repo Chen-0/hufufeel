@@ -94,7 +94,11 @@
                             </#if>
                             <#switch o.status.ordinal()>
                                 <#case 0>
-                                    <a href="/admin/package/${o.id}/inbound">入库</a>
+                                    <#if o.type.ordinal() == 1>
+                                        <a href="/admin/package/${o.id}/inbound_reject">入库</a>
+                                    <#else>
+                                        <a href="/admin/package/${o.id}/inbound">入库</a>
+                                    </#if>
                                     <#break>
                                 <#case 1>
                                     <a href="/admin/package/${o.id}/publish">上架</a>

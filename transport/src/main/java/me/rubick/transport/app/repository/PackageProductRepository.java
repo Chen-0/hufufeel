@@ -12,4 +12,8 @@ public interface PackageProductRepository extends JpaRepository<PackageProduct, 
     @Modifying
     @Query("update PackageProduct p set p.quantity = ?3 where p.packageId=?1 and p.productId=?2")
     void inbound(long packageId, long productId, int qty);
+
+    @Modifying
+    @Query("update PackageProduct p set p.quantity = p.quantity + ?3 where p.packageId=?1 and p.productId=?2 and p.quantity + ?3 <= p.expectQuantity")
+    void inboundReject(long packageId, long productId, int qty);
 }

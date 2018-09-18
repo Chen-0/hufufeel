@@ -1,11 +1,19 @@
 package me.rubick.transport.app.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.excel.ExcelRow;
+import me.rubick.common.app.exception.BusinessException;
+import me.rubick.common.app.exception.CommonException;
+import me.rubick.common.app.response.RestResponse;
+import me.rubick.common.app.utils.ExcelHelper;
+import me.rubick.common.app.utils.JSONMapper;
+import me.rubick.transport.app.constants.OrderStatusEnum;
 import me.rubick.transport.app.constants.PackageStatusEnum;
 import me.rubick.transport.app.constants.StatementTypeEnum;
 import me.rubick.transport.app.controller.AbstractController;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
+import me.rubick.transport.app.repository.PackageBoxRepository;
 import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.repository.UserRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
@@ -20,15 +28,16 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,6 +66,9 @@ public class AdminPackageController extends AbstractController {
 
     @Resource
     private WarehouseRepository warehouseRepository;
+
+    @Resource
+    private PackageBoxRepository packageBoxRepository;
 
 
     @RequestMapping("/package/index")
@@ -174,7 +186,7 @@ public class AdminPackageController extends AbstractController {
 
             BigDecimal tWeight = BigDecimal.ZERO;
 
-            for (BigDecimal b: qty) {
+            for (BigDecimal b : qty) {
                 tWeight = tWeight.add(b);
             }
 
@@ -246,7 +258,7 @@ public class AdminPackageController extends AbstractController {
             //支付成功
             messageService.send(
                     p.getUserId(),
-                    "/package/"+p.getId()+"/show",
+                    "/package/" + p.getId() + "/show",
                     MessageFormat.format("入库单上架成功，单号：{0}，上架成功！费用已从您的账户里扣除。", p.getSn(), p.getWarehouseName())
             );
             stockService.addStock(p);
@@ -306,5 +318,123 @@ public class AdminPackageController extends AbstractController {
         redirectAttributes.addFlashAttribute("success", "修改成功！");
 
         return "redirect:/admin/package/index";
+    }
+
+    @RequestMapping(value = "/package/{id}/inbound_reject", method = RequestMethod.GET)
+    public String getInboundReject(
+            @PathVariable long id,
+            Model model
+    ) {
+
+        Package p = packageRepository.findOne(id);
+        if (ObjectUtils.isEmpty(p)) {
+            return "redirect:/admin/package/index";
+        }
+        Statements statements = payService.calcTHRK(p);
+        List<PackageBox> packageBoxes = packageBoxRepository.findAllByPackageId(p.getId());
+
+        model.addAttribute("pb", packageBoxes);
+        model.addAttribute("o", p);
+        model.addAttribute("s", statements);
+        return "/admin/package/inbound_reject";
+    }
+
+    /**
+     * 退货入库
+     *
+     * @param id
+     * @param qty
+     * @param pIds
+     * @param redirectAttributes
+     * @return
+     */
+    @RequestMapping(value = "/package/{id}/inbound_reject", method = RequestMethod.POST)
+    public String postInboundReject(
+            @PathVariable("id") long id,
+            @RequestParam("qty[]") List<Integer> qty,
+            @RequestParam("p[]") List<Long> pIds,
+            @RequestParam(required = false) MultipartFile file,
+            RedirectAttributes redirectAttributes
+    ) {
+        List<Product> products = productService.findProducts(pIds);
+        Package p = packageRepository.findOne(id);
+
+        int count = products.size();
+        if (count != 0 && count == pIds.size() && qty.size() == count) {
+            packageService.inboundReject(id, products, qty);
+
+            redirectAttributes.addFlashAttribute("success", "操作成功！");
+        }
+
+        if (!ObjectUtils.isEmpty(file) && !file.isEmpty()) {
+            try {
+                File tempFile = documentService.multipartFile2File(file);
+                List<PackageBox> packageBoxes = new ArrayList<>();
+                List<ExcelRow> excelRows = ExcelHelper.read(tempFile);
+
+                log.info("{}", JSONMapper.toJSON(excelRows));
+
+                for (ExcelRow row : excelRows) {
+                    String text = row.getA();
+                    if (StringUtils.hasText(text)) {
+                        PackageBox packageBox = new PackageBox();
+                        packageBox.setBoxNo(text);
+                        packageBox.setPackageId(p.getId());
+                        packageBoxes.add(packageBox);
+                    }
+                }
+
+                if (!ObjectUtils.isEmpty(packageBoxes)) {
+                    packageBoxRepository.save(packageBoxes);
+                }
+
+
+            } catch (Exception e) {
+                log.error("", e);
+            }
+
+            redirectAttributes.addFlashAttribute("success", "操作成功！");
+        }
+
+        return "redirect:/admin/package/" + p.getId() + "/inbound_reject";
+    }
+
+    @RequestMapping(value = "/package/{id}/finish_inbound_reject", method = RequestMethod.POST)
+    @ResponseBody
+    public RestResponse<Integer> finishInboundReject(
+            @PathVariable("id") long id,
+            @RequestParam(required = false, name = "total_fee") BigDecimal total,
+            RedirectAttributes redirectAttributes
+    ) {
+
+        Package p = packageRepository.findOne(id);
+        if (ObjectUtils.isEmpty(p)) {
+            return new RestResponse<>("入库单不存在");
+        }
+
+        packageService.inbound(p.getId());
+        //////////////////////  收入库费  /////////////////////////////////
+        Statements statements = payService.saveStatements(payService.calcTHRK(p), total);
+        boolean flag = payService.payStatements(statements.getId());
+
+        if (flag) {
+            messageService.send(
+                    p.getUserId(),
+                    "/package/" + p.getId() + "/show",
+                    MessageFormat.format("单号：{0}在{1}入库成功！", p.getSn(), p.getWarehouseName())
+            );
+        } else {
+            p.setNextStatus(p.getStatus());
+            p.setStatus(PackageStatusEnum.FREEZE);
+            packageRepository.save(p);
+
+            messageService.send(
+                    p.getUserId(),
+                    "/user/statements/index",
+                    MessageFormat.format("单号：{0}，扣费失败，请充值账号并重新缴费。", p.getSn(), p.getWarehouseName())
+            );
+        }
+        redirectAttributes.addFlashAttribute("success", "操作成功！");
+        return new RestResponse<>();
     }
 }

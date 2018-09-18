@@ -124,6 +124,16 @@ public class PackageService {
         return packageRepository.save(p);
     }
 
+    public void inboundReject(long packageId, List<Product> products, List<Integer> qty) {
+        int count = products.size();
+        for (int i = 0; i < count; i++) {
+            packageProductRepository.inboundReject(
+                    packageId,
+                    products.get(i).getId(),
+                    qty.get(i));
+        }
+    }
+
     public void saveLocation(Package p, String location) {
         Set<Long> set = new HashSet<>();
         for (PackageProduct pp: p.getPackageProducts()) {

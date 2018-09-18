@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<#assign title="货品入库" />
+<#assign title="退货入库" />
 <#include "*/admin/_layout/head.ftl" />
 
 <body>
@@ -18,13 +18,13 @@
 <#if success?? >
     <div class="alert alert-success alert-dismissable alert-message">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-    ${success}
+        ${success}
     </div>
 </#if>
 
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <form action="/admin/package/${o.id}/inbound" method="post">
+            <form action="/admin/package/${o.id}/inbound_reject" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="${_csrf.parameterName!}" value="${_csrf.token!}"/>
 
                 <div class="panel panel-info">
@@ -62,9 +62,15 @@
                                     <td>${p.product.productName}</td>
                                     <td>${p.product.productSku}</td>
                                     <td>预计：${p.expectQuantity} 件</td>
-                                    <td>单件重量：${p.product.weight} KG</td>
-                                    <td colspan="2">实际数量（件）：<input type="text" class="form-control" placeholder=""
-                                                                   name="qty[]">
+                                    <td>已入库数量：${p.quantity} 件</td>
+
+                                    <#if p.quantity lt p.expectQuantity>
+                                        <td colspan="2">本次入库件数（件）：<input type="text" class="form-control" placeholder=""
+                                                                         name="qty[]">
+                                        <#else>
+                                            <td colspan="2"></td>
+                                    </#if>
+
                                     </td>
                                 </tr>
                                 </#list>
@@ -75,17 +81,55 @@
                         <div class="row" style="margin-top: 25px;">
                             <div class="col-xs-6">
                                 <div class="form-group">
-                                    <label for="total_fee">入库费用（USD）（自动计算，请输入货品的数量）</label>
-                                    <input type="text" class="form-control" id="total_fee" name="total_fee">
+                                    <label for="total_fee">退货入库费用</label>
+                                    <input type="text" class="form-control" id="total_fee" name="total_fee"
+                                           value="${s.total}">
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top: 25px;">
+                            <div class="col-xs-6">
+                                <label for="file">导入箱号（可不上传）</label>
+                                <input type="file" name="file">
+                                <a href="/static/hwc/import_reject_no.xlsx" download="导入箱号模板.xlsx">导入模板下载</a>
                             </div>
                         </div>
                     </div>
                     <div class="panel-footer clearfix">
-                        <button class="pull-right btn btn-primary" type="submit">提交</button>
+                        <button class="pull-right btn btn-default" type="submit">提交</button>
+                        <button class="pull-right btn btn-danger" id="Fbtn" type="button" style="margin-right: 15px;">结束入库</button>
                     </div>
                 </div>
             </form>
+
+            <#if pb?exists && pb?size gt 0 >
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    箱号
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table table class="bordered">
+                            <thead>
+                            <tr>
+                                <td>箱号</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                    <#list pb as p>
+                                    <tr>
+                                        <td>${p.boxNo}</td>
+                                    </tr>
+                                    </#list>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            </#if>
+
         </div>
     </div>
 </div>
@@ -93,54 +137,25 @@
 <#include "*/admin/_layout/script.ftl"/>
 <script>
     $(function () {
-        var pids = [];
-        $('input[name="p[]"]').each(function () {
-            pids.push($(this).val());
-        });
+        $('#Fbtn').click(function (e) {
+            e.preventDefault();
 
-        console.log(pids);
+            var total = $("#total_fee").val();
 
-        function check(v) {
-            if (parseInt(v).toString().length === v.length) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        $('input[name="qty[]"]').change(function () {
-            var qqq = [];
-
-            $('input[name="qty[]"]').each(function () {
-                var v = $(this).val();
-
-                if (!isEmpty(v) && check(v)) {
-                    qqq.push(v);
-                }
-
-
-            });
-
-            if (pids.length === qqq.length) {
-                console.log(qqq);
-
-                $.ajax({
-                    url: '/api/base/${o.id}/calc_RK',
-                    data: {
-                        qty:qqq,
-                        p: pids
-                    },
-                    success: function (e) {
-                        console.log(e);
-
-                        if (e.success) {
-                            $('#total_fee').val(e.data);
-                        }
+            $.ajax({
+                url: '/admin/package/${o.id}/finish_inbound_reject',
+                data: {
+                    total: total
+                },
+                success: function (e) {
+                    if (e.success === true) {
+                        window.location.href = "/admin/package/index";
+                    } else {
+                        alert(e.message);
                     }
-                })
-            }
-
-        });
+                }
+            });
+        })
     })
 </script>
 </body>
