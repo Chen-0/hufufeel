@@ -140,21 +140,24 @@
         $('#Fbtn').click(function (e) {
             e.preventDefault();
 
-            var total = $("#total_fee").val();
+            if(confirm("结束入库将无法再次操作入库，确认继续？")) {
 
-            $.ajax({
-                url: '/admin/package/${o.id}/finish_inbound_reject',
-                data: {
-                    total: total
-                },
-                success: function (e) {
-                    if (e.success === true) {
-                        window.location.href = "/admin/package/index";
-                    } else {
-                        alert(e.message);
+                var total = $("#total_fee").val();
+
+                $.ajax({
+                    url: '/admin/package/${o.id}/finish_inbound_reject',
+                    data: {
+                        total: total
+                    },
+                    success: function (e) {
+                        if (e.success === true) {
+                            window.location.href = "/admin/package/index";
+                        } else {
+                            alert(e.message);
+                        }
                     }
-                }
-            });
+                });
+            }
         })
     })
 </script>

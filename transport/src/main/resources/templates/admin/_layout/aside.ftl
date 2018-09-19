@@ -35,6 +35,7 @@
                         <li><a href="/admin/package/index">查看所有</a></li>
                         <li><a href="/admin/package/index?status=0">待入库</a></li>
                         <li><a href="/admin/package/index?status=1">待上架</a></li>
+                        <li><a href="/admin/package/_index">回收站</a></li>
                     </ul>
                 </li>
 
