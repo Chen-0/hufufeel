@@ -239,8 +239,17 @@ public class AdminPackageController extends AbstractController {
             RedirectAttributes redirectAttributes
 
     ) {
+
         List<Product> products = productService.findProducts(pIds);
         Package p = packageRepository.findOne(id);
+
+        if (ObjectUtils.isEmpty(p)) {
+            return "redirect:/admin/package/index";
+        }
+
+        if (! p.getStatus().equals(PackageStatusEnum.RECEIVED)) {
+            return "redirect:/admin/package/index";
+        }
 
         int count = products.size();
         if (!(count != 0 && count == pIds.size() && qty.size() == count) || ObjectUtils.isEmpty(p)) {
@@ -410,6 +419,10 @@ public class AdminPackageController extends AbstractController {
         Package p = packageRepository.findOne(id);
         if (ObjectUtils.isEmpty(p)) {
             return new RestResponse<>("入库单不存在");
+        }
+
+        if (! p.getStatus().equals(PackageStatusEnum.READY)) {
+            return new RestResponse<>("入库单已经入库了");
         }
 
         packageService.inbound(p.getId());

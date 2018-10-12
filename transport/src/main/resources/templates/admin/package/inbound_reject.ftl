@@ -137,8 +137,15 @@
 <#include "*/admin/_layout/script.ftl"/>
 <script>
     $(function () {
+        var status = true;
         $('#Fbtn').click(function (e) {
             e.preventDefault();
+
+            if (status === false) {
+                return;
+            }
+
+            status = false;
 
             if(confirm("结束入库将无法再次操作入库，确认继续？")) {
 
@@ -150,6 +157,7 @@
                         total: total
                     },
                     success: function (e) {
+                        status = true;
                         if (e.success === true) {
                             window.location.href = "/admin/package/index";
                         } else {

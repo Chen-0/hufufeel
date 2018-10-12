@@ -30,6 +30,7 @@ import javax.persistence.criteria.Root;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URISyntaxException;
@@ -646,7 +647,7 @@ public class PayService {
      */
     public Workbook anaStatements(User user, List<Statements> statements) throws IOException, CommonException {
 
-        File file = documentService.cp2tmp(getTransactionFile());
+        File file = documentService.inputStream2tmp(getTransactionFile(), "xlsx");
 
         Workbook workbook = ExcelHelper.getWorkbook(file);
 
@@ -809,13 +810,7 @@ public class PayService {
         ExcelWriter.writeRows2Sheet(context, workbook.createSheet());
     }
 
-    private File getTransactionFile() {
-        URL url = getClass().getClassLoader().getResource("static"+File.separator + "hwc" + File.separator + "transaction.xlsx");
-        try {
-            return new File(url.toURI());
-        } catch (URISyntaxException e) {
-            log.info("{}", e.getMessage());
-            return new File(url.getPath());
-        }
+    private InputStream getTransactionFile() {
+        return getClass().getClassLoader().getResourceAsStream("static"+File.separator + "hwc" + File.separator + "transaction.xlsx");
     }
 }

@@ -25,10 +25,7 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.Date;
 
@@ -85,6 +82,12 @@ public class DocumentService {
         log.info("extension - {}", extension);
         File tempFile = new File(temp_directory + File.separator + "stm_" + HashUtils.generateString() + "." + extension);
         FileUtils.copyFile(file, tempFile);
+        return tempFile;
+    }
+
+    public File inputStream2tmp(InputStream inputStream, String extension) throws IOException {
+        File tempFile = new File(temp_directory + File.separator + "stm_" + HashUtils.generateString() + "." + extension);
+        FileUtils.copyInputStreamToFile(inputStream, tempFile);
         return tempFile;
     }
 
