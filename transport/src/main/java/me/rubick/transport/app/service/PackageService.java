@@ -1,16 +1,16 @@
 package me.rubick.transport.app.service;
 
+import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.BusinessException;
+import me.rubick.common.app.utils.BeanMapperUtils;
 import me.rubick.common.app.utils.HashUtils;
+import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.PackageStatusEnum;
 import me.rubick.transport.app.constants.PackageTypeEnum;
 import me.rubick.transport.app.constants.ProductStatusEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
-import me.rubick.transport.app.repository.PackageProductRepository;
-import me.rubick.transport.app.repository.PackageRepository;
-import me.rubick.transport.app.repository.ProductRepository;
-import me.rubick.transport.app.repository.WarehouseRepository;
+import me.rubick.transport.app.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,6 +26,7 @@ import java.util.*;
 
 @Service
 @Transactional
+@Slf4j
 public class PackageService {
 
     @Resource
@@ -39,6 +40,9 @@ public class PackageService {
 
     @Resource
     private WarehouseRepository warehouseRepository;
+
+    @Resource
+    private UserRepository userRepository;
 
 
     public Page<Package> searchPackage(
@@ -121,22 +125,168 @@ public class PackageService {
 
         Package p = packageRepository.findOne(packageId);
         p.setQuantity(t);
+        p.setExpectQuantity(t);
         return packageRepository.save(p);
     }
 
-    public void inboundReject(long packageId, List<Product> products, List<Integer> qty) {
+//    public void inboundReject(Package p, List<Product> products, List<Integer> qty) {
+//        int count = products.size();
+//        for (int i = 0; i < count; i++) {
+//            packageProductRepository.inboundReject(
+//                    p.getId(),
+//                    products.get(i).getId(),
+//                    qty.get(i));
+//        }
+//
+//
+//
+//        //copy the package info
+//
+//        //to Map
+//        Map<Long, Integer> map = new HashMap<>();
+//
+//        for (int i = 0; i < count; i++) {
+//            //check the qty
+//            if (qty.get(i) > 0) {
+//                map.put(products.get(i).getId(), qty.get(i));
+//            }
+//        }
+//
+//        Package newP = new Package();
+//        BeanMapperUtils.copy(p, newP);
+//        newP.setId(0);
+//        newP.setQuantity(0);
+//        newP.setExpectQuantity(0);
+//        newP.setCreatedAt(new Date());
+//        newP.setUpdatedAt(new Date());
+//        newP.setComment("从退货单：" + p.getCn() + "中生成子退货单");
+//        newP.setSn(this.generateBatch());
+//        newP.setPid(p.getId());
+//        newP.setCn(generateCN(userRepository.findOne(p.getUserId())));
+//
+//        newP = packageRepository.save(newP);
+//
+//        List<PackageProduct> packageProducts = new ArrayList<>();
+//        for (Map.Entry<Long, Integer> entry: map.entrySet()) {
+//            PackageProduct pp = new PackageProduct();
+//            pp.setPackageId(newP.getId());
+//            pp.setProductId(entry.getKey());
+//            pp.setExpectQuantity(entry.getValue());
+//            pp.setQuantity(entry.getValue());
+//            packageProducts.add(pp);
+//        }
+//
+//        packageProductRepository.save(packageProducts);
+//
+//        inbound(newP.getId());
+//    }
+
+    /**
+     * 退货入库
+     *
+     * @param p
+     * @param products
+     * @param qty
+     */
+    public void inboundReject(Package p, List<Product> products, List<Integer> qty) {
+        List<PackageProduct> existPPs = p.getPackageProducts();
+        List<PackageProduct> pps = new ArrayList<>();
         int count = products.size();
+
+        //to Map
+        Map<Long, Integer> map = new HashMap<>();
+
         for (int i = 0; i < count; i++) {
-            packageProductRepository.inboundReject(
-                    packageId,
-                    products.get(i).getId(),
-                    qty.get(i));
+            //check the qty
+            if (qty.get(i) > 0) {
+                map.put(products.get(i).getId(), qty.get(i));
+            }
         }
+
+        boolean flag = false;
+        Set<Long> dlist = new HashSet<>();
+
+        for (PackageProduct pp : existPPs) {
+            int tc = map.get(pp.getProductId());
+            if (tc < pp.getExpectQuantity()) {
+                flag = true;
+            }
+        }
+
+        for (PackageProduct pp : existPPs) {
+            int tc = map.get(pp.getProductId());
+
+//            if (tc < pp.getExpectQuantity()) {
+//                //计算剩余预计
+//                pp.setExpectQuantity(pp.getExpectQuantity() - tc);
+//
+//                //生成新的入库货品单
+//                PackageProduct npp = new PackageProduct();
+//                npp.setExpectQuantity(tc);
+//                npp.setQuantity(tc);
+//                npp.setProductId(pp.getProductId());
+//                pps.add(npp);
+//            } else {
+//                pp.setQuantity(tc);
+//            }
+
+            if (! flag) {
+                pp.setQuantity(tc);
+            } else {
+                pp.setExpectQuantity(pp.getExpectQuantity() - tc);
+
+                //生成新的入库货品单
+                PackageProduct npp = new PackageProduct();
+                npp.setExpectQuantity(tc);
+                npp.setQuantity(tc);
+                npp.setProductId(pp.getProductId());
+                pps.add(npp);
+
+                if (pp.getExpectQuantity() - tc <= 0) {
+                    dlist.add(pp.getId());
+                }
+            }
+        }
+
+        packageProductRepository.save(existPPs);
+
+        if (dlist.size() > 0) {
+            packageProductRepository.deleteById(dlist);
+        }
+
+        //判断是否需要拆单
+        if (!flag) {
+            return;
+        }
+
+        log.info("需要拆单：{}", JSONMapper.toJSON(pps));
+
+        Package newP = new Package();
+        BeanMapperUtils.copy(p, newP);
+        newP.setId(0);
+        newP.setQuantity(0);
+        newP.setExpectQuantity(0);
+        newP.setCreatedAt(new Date());
+        newP.setUpdatedAt(new Date());
+        newP.setComment("从退货单：" + p.getCn() + "中生成子退货单");
+        newP.setSn(this.generateBatch());
+        newP.setPid(p.getId());
+        newP.setCn(generateCN(userRepository.findOne(p.getUserId())));
+
+        newP = packageRepository.save(newP);
+
+        for (PackageProduct pp: pps) {
+            pp.setPackageId(newP.getId());
+        }
+
+        packageProductRepository.save(pps);
+
+        inbound(newP.getId());
     }
 
     public void saveLocation(Package p, String location) {
         Set<Long> set = new HashSet<>();
-        for (PackageProduct pp: p.getPackageProducts()) {
+        for (PackageProduct pp : p.getPackageProducts()) {
             set.add(pp.getProductId());
         }
 

@@ -119,7 +119,7 @@
                 </div>
 
                 <div class="box-footer clearfix">
-                    <a href="/admin/user/statements/export?startAt=${startAt!}&endAt=${endAt!}&userId=${userId!}" class="btn btn-primary" target="_blank" download="HUFU${USER.hwcSn}费用明细.xlsx">导出</a>
+                    <a href="/admin/user/statements/export?startAt=${startAt!}&endAt=${endAt!}&userId=${userId!}" class="btn btn-primary" target="_blank" download="HUFU-管理后台-费用明细.xlsx">导出</a>
                     <nav aria-label="Page navigation" style="text-align: center;">
                         <ul class="pagination">
                         <#if elements.isFirst() != true >

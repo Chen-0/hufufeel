@@ -27,6 +27,7 @@
             <div class="box">
                 <div class="box-body">
                     <form class="form-inline margin-bottom" role="form" method="get" action="/package/index">
+                        <input type="hidden" name="type" value="${TYPE}">
                         <div class="form-group">
                             <label for="keyword">关键字：</label>
                             <input class="form-control" id="keyword" name="keyword" type="text" value="${keyword!}">
@@ -115,7 +116,7 @@
                 </div>
 
                 <div class="box-footer clearfix">
-                <#assign BASEURL="/package/index?keyword=${keyword}&status=${_STATUS!}&page="/>
+                <#assign BASEURL="/package/index?type=${TYPE}&keyword=${keyword}&status=${_STATUS!}&page="/>
                 <#include "*/_layout/v2.0/components/pages.ftl">
                 </div>
             </div>

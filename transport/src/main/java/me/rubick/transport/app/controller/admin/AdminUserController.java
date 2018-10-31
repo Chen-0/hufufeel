@@ -2,6 +2,7 @@ package me.rubick.transport.app.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.excel.ExcelWriter;
+import me.rubick.common.app.exception.CommonException;
 import me.rubick.common.app.exception.FormException;
 import me.rubick.common.app.exception.HttpNoFoundException;
 import me.rubick.common.app.helper.FormHelper;
@@ -18,6 +19,7 @@ import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import me.rubick.transport.app.vo.UserCsVo;
 import me.rubick.transport.app.vo.admin.RechargeFormVo;
 import me.rubick.transport.app.vo.admin.UserCreateVo;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -392,46 +394,29 @@ public class AdminUserController extends AbstractController {
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) String startAt,
             @RequestParam(required = false) String endAt,
-            HttpServletResponse response) throws IOException {
-//        User user = userService.findOne(userId);
+            HttpServletResponse response) throws IOException, CommonException {
+        User user = null;
+
+        if (! ObjectUtils.isEmpty(userId)) {
+            user = userService.findOne(userId);
+        }
+//        User user = userService.getByLogin();
+
+//        if (ObjectUtils.isEmpty(user)) {
+//            return;
+//        }
+
         Date start = DateUtils.stringToDate(startAt);
         Date end = DateUtils.stringToDate(endAt);
         Page<Statements> statementsPage = payService.findAllStatements(userId, start, end, pageable);
         List<Statements> statements = statementsPage.getContent();
 
-        int row = statements.size();
-        Object[][] context = new Object[row][8];
-        context[0][0] = "编号";
-        context[0][1] = "客户";
-        context[0][2] = "费用说明";
-        context[0][3] = "费用类型";
-        context[0][4] = "支付状态";
-        context[0][5] = "金额";
-        context[0][6] = "创建时间";
-        context[0][7] = "支付时间";
-
-        for (int i = 1; i < row; i++) {
-            Statements s = statements.get(i);
-
-            context[i][0] = i;
-            context[i][1] = s.getUser().getName() + "(NO."+s.getUser().getHwcSn()+")";
-            context[i][2] = s.getComment();
-            context[i][3] = s.getType().getValue();
-            context[i][4] = s.getStatus().getValue();
-            context[i][5] = s.getTotal().toString();
-            context[i][6] = DateUtils.date2StringYMDHMS(s.getCreatedAt());
-            context[i][7] = DateUtils.date2StringYMDHMS(s.getPayAt());
-        }
-
-        log.info("{}", JSONMapper.toJSON(context));
-
-        Date date = new Date();
-        String s = DateUtils.date2String0(date);
+        Workbook workbook = payService.anaStatements(user, statements);
         response.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        String fileName = "HUFU_"+s+"_费用明细.xlsx";
+        String fileName = "HUFU-ADMIN-费用明细.xlsx";
         fileName = URLEncoder.encode(fileName, "utf-8");
         response.setHeader("Content-Disposition", MessageFormat.format("attachment; filename*=\"{0}\"", fileName));
-        ExcelWriter.getExcelInputSteam(context, response.getOutputStream());
+        workbook.write(response.getOutputStream());
     }
 
     @RequestMapping(value = "/{id}/recharge", method = RequestMethod.GET)
@@ -441,7 +426,7 @@ public class AdminUserController extends AbstractController {
     ) {
         User user = userService.findOne(id);
         model.addAttribute("user", user);
-        if (! model.asMap().containsKey("fele")) {
+        if (!model.asMap().containsKey("fele")) {
             model.addAttribute("fele", new HashMap<String, String>());
         }
         return "/admin/user/recharge";
@@ -465,7 +450,7 @@ public class AdminUserController extends AbstractController {
             formHelper.hasError();
         } catch (FormException e) {
             throwForm(redirectAttributes, e.getErrorField(), rechargeFormVo);
-            return "redirect:/admin/user/"+user.getId()+"/recharge";
+            return "redirect:/admin/user/" + user.getId() + "/recharge";
         }
 
         Statements statements = payService.createRecharge(user, rechargeFormVo.getTotal(), rechargeFormVo.getComment());

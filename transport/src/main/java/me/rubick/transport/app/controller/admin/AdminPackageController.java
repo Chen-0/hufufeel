@@ -125,6 +125,7 @@ public class AdminPackageController extends AbstractController {
         );
         model.addAttribute("statements", statements);
         model.addAttribute("ele", p);
+        model.addAttribute("sub", packageRepository.findAllByPidAndIsDelete(p.getId(), false));
         return "/admin/package/show";
     }
 
@@ -224,6 +225,10 @@ public class AdminPackageController extends AbstractController {
 
     ) {
         Package p = packageRepository.findOne(id);
+
+        if (! p.getStatus().equals(PackageStatusEnum.RECEIVED)) {
+            return "redirect:/admin/package/index";
+        }
         model.addAttribute("o", p);
         return "/admin/package/publish";
     }
@@ -234,7 +239,7 @@ public class AdminPackageController extends AbstractController {
             @PathVariable("id") long id,
             @RequestParam("qty[]") List<Integer> qty,
             @RequestParam("p[]") List<Long> pIds,
-            @RequestParam(required = false) BigDecimal total,
+            @RequestParam(value = "total_fee", required = false) BigDecimal total,
             @RequestParam(required = false, defaultValue = "") String location,
             RedirectAttributes redirectAttributes
 
@@ -345,6 +350,7 @@ public class AdminPackageController extends AbstractController {
         model.addAttribute("pb", packageBoxes);
         model.addAttribute("o", p);
         model.addAttribute("s", statements);
+        model.addAttribute("sub", packageRepository.findAllByPidAndIsDelete(p.getId(), false));
         return "/admin/package/inbound_reject";
     }
 
@@ -370,7 +376,7 @@ public class AdminPackageController extends AbstractController {
 
         int count = products.size();
         if (count != 0 && count == pIds.size() && qty.size() == count) {
-            packageService.inboundReject(id, products, qty);
+            packageService.inboundReject(p, products, qty);
 
             redirectAttributes.addFlashAttribute("success", "操作成功！");
         }

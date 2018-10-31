@@ -31,6 +31,7 @@ public class Package {
     private PackageTypeEnum type;
     private String searchNo = "";
     private boolean isDelete = false;
+    private long pid;
 
     private List<PackageProduct> packageProducts;
     private User user;
@@ -233,5 +234,13 @@ public class Package {
 
     public void setIsDelete(boolean delete) {
         isDelete = delete;
+    }
+
+    public long getPid() {
+        return pid;
+    }
+
+    public void setPid(long pid) {
+        this.pid = pid;
     }
 }

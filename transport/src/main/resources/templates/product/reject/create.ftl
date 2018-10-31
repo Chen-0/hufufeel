@@ -67,51 +67,51 @@
 <script src="https://cdn.bootcss.com/blueimp-file-upload/9.21.0/js/vendor/jquery.ui.widget.min.js"></script>
 <script src="https://cdn.bootcss.com/blueimp-file-upload/9.21.0/js/jquery.iframe-transport.min.js"></script>
 <script src="https://cdn.bootcss.com/blueimp-file-upload/9.21.0/js/jquery.fileupload.min.js"></script>
-<#--<script>-->
-    <#--$(function () {-->
-        <#--$('#deadline').datepicker({-->
-            <#--format: 'yyyy-mm-dd',-->
-            <#--autoclose: true-->
-        <#--});-->
+<script>
+    $(function () {
+        $('#deadline').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true
+        });
 
-        <#--$('#height, #width, #length').change(function () {-->
-            <#--calcSize();-->
-        <#--});-->
+        // $('#height, #width, #length').change(function () {
+        //     calcSize();
+        // });
+        //
+        // calcSize();
+        //
+        // function calcSize() {
+        //     var a = $('#height').val();
+        //     var b = $('#width').val();
+        //     var c = $('#length').val();
+        //
+        //     if (isEmpty(a) || isEmpty(b) || isEmpty(c)) {
+        //         ;
+        //     } else {
+        //         $('#size').val(accDiv(accMul(accMul(a, b), c), 1000000.0));
+        //     }
+        // }
 
-        <#--calcSize();-->
-
-        <#--function calcSize() {-->
-            <#--var a = $('#height').val();-->
-            <#--var b = $('#width').val();-->
-            <#--var c = $('#length').val();-->
-
-            <#--if (isEmpty(a) || isEmpty(b) || isEmpty(c)) {-->
-                <#--;-->
-            <#--} else {-->
-                <#--$('#size').val(accDiv(accMul(accMul(a, b), c), 1000000.0));-->
-            <#--}-->
-        <#--}-->
-
-        <#--$('#image').fileupload({-->
-            <#--url: '/product/image/upload',-->
-            <#--dataType: 'json',-->
-            <#--add: function (e, data) {-->
-                <#--$('#image').next().html('文件正在上传！');-->
-                <#--data.submit();-->
-            <#--},-->
-            <#--done: function (e, data) {-->
-                <#--var resp = data.result;-->
-                <#--var error = '文件上传失败，请刷新页面重试。';-->
-
-                <#--if (resp.success) {-->
-                    <#--$('#image').next().html('上传文件成功！ ' + resp.data.originalFilename);-->
-                    <#--$('#imageId').val(resp.data.id);-->
-                <#--}else {-->
-                    <#--$('#image').next().html(error);-->
-                <#--}-->
-            <#--}-->
-        <#--});-->
-    <#--});-->
-<#--</script>-->
+        // $('#image').fileupload({
+        //     url: '/product/image/upload',
+        //     dataType: 'json',
+        //     add: function (e, data) {
+        //         $('#image').next().html('文件正在上传！');
+        //         data.submit();
+        //     },
+        //     done: function (e, data) {
+        //         var resp = data.result;
+        //         var error = '文件上传失败，请刷新页面重试。';
+        //
+        //         if (resp.success) {
+        //             $('#image').next().html('上传文件成功！ ' + resp.data.originalFilename);
+        //             $('#imageId').val(resp.data.id);
+        //         }else {
+        //             $('#image').next().html(error);
+        //         }
+        //     }
+        // });
+    });
+</script>
 </body>
 </html>

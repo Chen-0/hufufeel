@@ -19,4 +19,6 @@ public interface PackageRepository extends JpaRepository<Package, Long>, JpaSpec
     long countByUserIdAndStatus(long userId, PackageStatusEnum packageStatus);
 
     public List<Package> findAllByIsDelete(Boolean d);
+
+    public List<Package> findAllByPidAndIsDelete(long pid, boolean d);
 }

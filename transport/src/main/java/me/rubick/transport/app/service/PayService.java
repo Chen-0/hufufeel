@@ -270,7 +270,7 @@ public class PayService {
         Statements statements = new Statements();
         statements.setUserId(p.getUserId());
         statements.setStatus(StatementStatusEnum.UNPAY);
-        statements.setType(StatementTypeEnum.RK);
+        statements.setType(StatementTypeEnum.SJ);
         statements.setTarget(String.valueOf(p.getId()));
         statements.setPayAt(null);
 
@@ -742,8 +742,10 @@ public class PayService {
         log.info("运单操作费：{}", ckFee);
         log.info("物料费：{}", wlFee);
 
-        sheet.getRow(2).getCell(1).setCellValue(user.getHwcSn());
-        sheet.getRow(2).getCell(4).setCellValue(user.getName());
+        if (! ObjectUtils.isEmpty(user)) {
+            sheet.getRow(2).getCell(1).setCellValue(user.getHwcSn());
+            sheet.getRow(2).getCell(4).setCellValue(user.getName());
+        }
 
         sheet.getRow(3).getCell(1).setCellValue(DateUtils.date2String0(new Date()) + HashUtils.generateNumberString(4));
 
