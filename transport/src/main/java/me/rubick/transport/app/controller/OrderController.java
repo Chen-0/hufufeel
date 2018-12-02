@@ -387,10 +387,10 @@ public class OrderController extends AbstractController {
                     orderExcelVo.setI(ExcelHelper.getValue(row, 8, false));
                     orderExcelVo.setJ(ExcelHelper.getValue(row, 9, false));
                     orderExcelVo.setK(ExcelHelper.getValue(row, 10, false));
-                    orderExcelVo.setL(ExcelHelper.getValue(row, 11, false));
+                    orderExcelVo.setL(ExcelHelper.getValue(row, 11, true));
                     orderExcelVo.setM(ExcelHelper.getValue(row, 12, false));
                     orderExcelVo.setN(ExcelHelper.getValue(row, 13, false));
-                    orderExcelVo.setO(ExcelHelper.getValue(row, 14, false));
+                    orderExcelVo.setO(ExcelHelper.getValue(row, 14, true));
                     orderExcelVo.setP(ExcelHelper.getValue(row, 15, true));
                     orderExcelVo.setQ(ExcelHelper.getValue(row, 16, true));
                     orderExcelVo.setR(ExcelHelper.getValue(row, 17, true));

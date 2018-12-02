@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -787,26 +788,60 @@ public class PayService {
 
     private void writeForWorksheet(List<Statements> statements, Workbook workbook) {
 
+        List<Long> orderIds = new ArrayList<>();
+
+        for (Statements s : statements) {
+            if (StringUtils.hasText(s.getTarget())) {
+                orderIds.add(Long.valueOf(s.getTarget()));
+            }
+        }
+
+        List<Order> orders = orderRepository.findByIdIn(orderIds);
+
+        Map<Long, Order> orderMap = new HashMap<>();
+
+        for (Order o: orders) {
+            orderMap.put(o.getId(), o);
+        }
+
         int row = statements.size();
-        Object[][] context = new Object[row+1][7];
+        Object[][] context = new Object[row+1][9];
         context[0][0] = "编号";
         context[0][1] = "费用说明";
         context[0][2] = "费用类型";
         context[0][3] = "支付状态";
         context[0][4] = "金额";
-        context[0][5] = "创建时间";
-        context[0][6] = "支付时间";
+        context[0][5] = "快递公司";
+        context[0][6] = "快递单号";
+        context[0][7] = "创建时间";
+        context[0][8] = "支付时间";
 
         for (int i = 0; i < row; i++) {
             Statements s = statements.get(i);
+
+            String express = "";
+            String expressNo = "";
+
+            if (StringUtils.hasText(s.getTarget())) {
+                Long oo = Long.valueOf(s.getTarget());
+                if(! ObjectUtils.isEmpty(oo) && orderMap.containsKey(oo)){
+                    Order ooo = orderMap.get(oo);
+                    express = ooo.getExpress();
+                    expressNo = ooo.getExpressNo();
+                }
+            }
 
             context[i+1][0] = i + 1;
             context[i+1][1] = s.getComment();
             context[i+1][2] = s.getType().getValue();
             context[i+1][3] = s.getStatus().getValue();
             context[i+1][4] = s.getTotal().toString();
-            context[i+1][5] = DateUtils.date2StringYMDHMS(s.getCreatedAt());
-            context[i+1][6] = DateUtils.date2StringYMDHMS(s.getPayAt());
+
+            context[i+1][5] = express;
+            context[i+1][6] = expressNo;
+
+            context[i+1][7] = DateUtils.date2StringYMDHMS(s.getCreatedAt());
+            context[i+1][8] = DateUtils.date2StringYMDHMS(s.getPayAt());
         }
 
         ExcelWriter.writeRows2Sheet(context, workbook.createSheet());
