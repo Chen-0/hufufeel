@@ -1,6 +1,7 @@
 package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
+import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.PackageStatusEnum;
 import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
@@ -139,6 +140,7 @@ public class StockService {
     }
 
     public boolean reduceStore(User user, Product product, Warehouse warehouse, int qty) {
+        log.info("{}, {}", JSONMapper.toJSON(product.getProductName()), qty);
         int raw = productWarehouseRepository.reduceStore(
                 user.getId(),
                 product.getId(),

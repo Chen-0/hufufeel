@@ -42,7 +42,7 @@
         <div class="col-lg-offset-2 col-lg-8">
             <div class="alert alert-warning" style="margin-top: 1rem;">
                 <strong>提示：</strong><br>
-                若无法打印 <a href="http://www.hufufeel.com/file/CLodop_Setup_for_Win32NT.exe">点击这里</a> 下载打印插件。 <br>
+                若无法打印 <a href="/file/CLodop_Setup_for_Win32NT.exe">点击这里</a> 下载打印插件。 <br>
                 请使用 360 极速浏览器 （模式设置为极速模式）、Firefox 火狐浏览器、Chrome 谷歌浏览器。
             </div>
         </div>
