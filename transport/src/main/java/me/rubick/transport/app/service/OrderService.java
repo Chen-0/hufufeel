@@ -404,6 +404,10 @@ public class OrderService {
             return;
         }
 
+        log.info("ORDER NO:{} is total:{}", order.getSn(), total);
+
+        total =  total.setScale(2, BigDecimal.ROUND_HALF_UP);
+
         List<Statements> statementsList = new ArrayList<>();
         Statements statements = payService.createExpressFee(order, total);
 
