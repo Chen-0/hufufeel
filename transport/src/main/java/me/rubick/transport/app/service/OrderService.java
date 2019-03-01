@@ -32,7 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-@Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = Exception.class)
+@Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
 @Slf4j
 public class OrderService {
 

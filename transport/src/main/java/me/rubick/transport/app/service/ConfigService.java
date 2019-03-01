@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional(isolation = Isolation.REPEATABLE_READ)
+@Transactional(isolation = Isolation.SERIALIZABLE)
 @Slf4j
 public class ConfigService {
 

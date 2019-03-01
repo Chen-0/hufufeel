@@ -13,6 +13,7 @@ import net.coobird.thumbnailator.util.ThumbnailatorUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileSystemUtils;
@@ -31,7 +32,7 @@ import java.util.Date;
 
 @Service
 @Slf4j
-@Transactional(rollbackFor = Exception.class)
+@Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
 public class DocumentService {
 
     private static String directory = "d:\\uploads";

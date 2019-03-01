@@ -41,7 +41,7 @@ import java.util.*;
 
 @Service
 @Slf4j
-@Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
+@Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
 public class PayService {
 
     @Resource

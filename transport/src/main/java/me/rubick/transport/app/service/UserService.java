@@ -40,7 +40,7 @@ import java.util.List;
  * Created by chenjiazhuo on 2017/9/14.
  */
 @Service
-@Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+@Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
 @Slf4j
 public class UserService {
 

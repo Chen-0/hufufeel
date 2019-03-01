@@ -29,7 +29,7 @@ import java.util.List;
 
 import static java.math.BigDecimal.ROUND_HALF_DOWN;
 
-@Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+@Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
 @Service
 public class ProductService {
 

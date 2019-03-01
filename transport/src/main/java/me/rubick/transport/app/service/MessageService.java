@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -21,7 +22,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-@Transactional
+@Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
 public class MessageService {
 
     @Resource
