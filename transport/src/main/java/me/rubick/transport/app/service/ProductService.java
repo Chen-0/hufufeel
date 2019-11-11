@@ -43,7 +43,11 @@ public class ProductService {
         User user = userService.getByLogin();
         product.setVol(product.getLength().multiply(product.getHeight().multiply(product.getWidth())).divide(new BigDecimal(1000000), 12, ROUND_HALF_DOWN));
         product.setStatus(ProductStatusEnum.TO_CHECK);
-        product.setUserId(user.getId());
+
+        if (ObjectUtils.isEmpty(product.getUserId()) || product.getUserId() == 0) {
+            product.setUserId(user.getId());
+        }
+
         product.setType(ProductTypeEnum.NORMAL);
         if (!product.getProductSku().startsWith(user.getHwcSn() + "-")) {
             product.setProductSku(user.getHwcSn() + "-" + product.getProductSku());

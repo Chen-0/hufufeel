@@ -280,6 +280,7 @@ public class AdminProductController extends AbstractController {
         for (ExcelRow row : excelRows) {
             User user = userRepository.findTopByHwcSn(row.getA());
 
+
             Product product = new Product();
             product.setUserId(user.getId());
             product.setImageId(1L);

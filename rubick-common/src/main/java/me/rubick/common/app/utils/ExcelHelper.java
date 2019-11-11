@@ -7,6 +7,7 @@ import me.rubick.common.app.exception.BusinessException;
 import me.rubick.common.app.exception.CommonException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -157,7 +158,8 @@ public class ExcelHelper<T> {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     cellValue = cell.getDateCellValue().toString();
                 } else {
-                    cellValue = new BigDecimal(cell.getNumericCellValue()).toString();
+                    //读取数字类型时，会读取很多位小数点，用以下解决方法
+                    cellValue = NumberToTextConverter.toText(cell.getNumericCellValue());
                 }
                 break;
 
