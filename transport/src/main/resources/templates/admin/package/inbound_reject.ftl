@@ -38,7 +38,7 @@
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>参考号</th>
+                                    <th>平台单号</th>
                                     <th>收件人</th>
                                     <th>客户</th>
                                     <th>仓库</th>

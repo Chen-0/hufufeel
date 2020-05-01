@@ -12,7 +12,7 @@
                 <td>${ele.sn}</td>
                 <td>交易号</td>
                 <td>${ele.tn}</td>
-                <td>参考号</td>
+                <td>平台单号</td>
                 <td>${ele.referenceNumber}</td>
             </tr>
             <tr>

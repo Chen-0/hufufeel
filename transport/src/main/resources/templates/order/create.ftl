@@ -151,7 +151,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="CKT-4" class="col-xs-1 control-label">参考号</label>
+                            <label for="CKT-4" class="col-xs-1 control-label">平台单号</label>
                         <#if error?exists && error.ckt4?exists>
                             <div class="col-xs-5 has-error">
                                 <input class="form-control" id="CKT-4" name="CKT-4" value="${sp.ckt4!}">

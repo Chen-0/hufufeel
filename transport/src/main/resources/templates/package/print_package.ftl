@@ -26,7 +26,7 @@
             <TD width="50%">客户 ：${ele.user.name}(NO.${ele.user.hwcSn})</TD>
         </TR>
         <TR>
-            <TD>参考号：${ele.referenceNumber!}</TD>
+            <TD>平台单号：${ele.referenceNumber!}</TD>
             <TD>预计总数：${ele.expectQuantity}</TD>
         </TR>
         </TBODY>

@@ -157,7 +157,7 @@
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="referenceNumber">参考号：</label>
+                                    <label for="referenceNumber">平台单号：</label>
                                     <input class="form-control" id="referenceNumber" name="referenceNumber">
                                 </div>
                             </div>

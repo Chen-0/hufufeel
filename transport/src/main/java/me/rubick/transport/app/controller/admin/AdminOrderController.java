@@ -105,7 +105,7 @@ public class AdminOrderController extends AbstractController {
         context[0][2] = "快递公司（可空）";
         context[0][3] = "快递单号";
         context[0][4] = "交易号";
-        context[0][5] = "参考号";
+        context[0][5] = "平台单号";
         context[0][6] = "派送方式";
         context[0][7] = "销售平台";
         context[0][8] = "仓库";

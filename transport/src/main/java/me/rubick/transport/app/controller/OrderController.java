@@ -453,7 +453,7 @@ public class OrderController extends AbstractController {
 
         context[0][0] = "发货单号";
         context[0][1] = "交易号";
-        context[0][2] = "参考号";
+        context[0][2] = "平台单号";
         context[0][3] = "派送方式";
         context[0][4] = "快递单号";
         context[0][5] = "销售平台";

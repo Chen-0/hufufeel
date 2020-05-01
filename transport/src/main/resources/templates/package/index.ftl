@@ -43,7 +43,7 @@
                         <thead>
                         <tr>
                             <th>入库单号</th>
-                            <th>参考号</th>
+                            <th>平台单号</th>
                             <#if TYPE == 1>
                                 <th>收件人</th>
                             </#if>

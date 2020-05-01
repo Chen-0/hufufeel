@@ -62,6 +62,7 @@
                         <tr>
                             <th>出库单号</th>
                             <th>快递单号</th>
+                            <th>平台单号</th>
                             <th>SKU数</th>
                             <th>总件数</th>
                             <th>实际总重量</th>
@@ -77,6 +78,7 @@
                         <tr>
                             <td>${e.sn}</td>
                             <td>${e.expressNo}</td>
+                            <td>${e.referenceNumber}</td>
                             <td>${e.skuQty}</td>
                             <td>${e.quantity}</td>
                             <td>
