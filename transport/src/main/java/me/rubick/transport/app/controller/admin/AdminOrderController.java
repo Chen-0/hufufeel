@@ -98,7 +98,7 @@ public class AdminOrderController extends AbstractController {
         List<Order> elements = orders.getContent();
         int row = elements.size();
 
-        Object[][] context = new Object[row + 1][21];
+        Object[][] context = new Object[row + 1][22];
 
         context[0][0] = "发货单号";
         context[0][1] = "运费（USD）";
@@ -121,6 +121,7 @@ public class AdminOrderController extends AbstractController {
         context[0][18] = "sku";
         context[0][19] = "商品名称";
         context[0][20] = "发货数量";
+        context[0][21] = "备注";
 
         int j = 1;
         for (int i = 0; i < row; i++) {
@@ -167,6 +168,7 @@ public class AdminOrderController extends AbstractController {
             context[j][18] = skuBuilder.toString();
             context[j][19] = nameBuilder.toString();
             context[j][20] = qtyBuilder.toString();
+            context[j][21] = o.getComment();
 
 
             j += 1;
