@@ -21,8 +21,8 @@ public class AlipayService {
 
     private String SERVICE = "create_direct_pay_by_user";
     private String PARTNER = "2088221276655152";
-    private String notify_url = "https://www.ushufu.com/Pay/notifyurl";
-    private String return_url = "https://www.ushufu.com/Pay/returnurl";
+    private String notify_url = "http://www.ushufu.com/Pay/notifyurl";
+    private String return_url = "http://www.ushufu.com/Pay/returnurl";
     private String seller_email = "305929336.lp@gmail.com";
     private String anti_phishing_key = "";
     private String _input_charset = "utf-8";
@@ -40,8 +40,8 @@ public class AlipayService {
 
         map.put("service", "create_direct_pay_by_user");
         map.put("partner", "2088221276655152");
-        map.put("notify_url", "https://www.ushufu.com/pay/alipay/notify");
-        map.put("return_url", "https://www.ushufu.com/pay/alipay/success");
+        map.put("notify_url", "http://www.ushufu.com/pay/alipay/notify");
+        map.put("return_url", "http://www.ushufu.com/pay/alipay/success");
         map.put("seller_email", "305929336.lp@gmail.com");
         map.put("anti_phishing_key", "1234567890");
         map.put("exter_invoke_ip", "127.0.0.1");

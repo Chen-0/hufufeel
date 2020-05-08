@@ -31,8 +31,8 @@ public class AlipaySubmit {
 
         map.put("service", "create_direct_pay_by_user");
         map.put("partner", "2088221276655152");
-        map.put("notify_url", "https://www.ushufu.com/Pay/notifyurl");
-        map.put("return_url", "https://www.ushufu.com/Pay/returnurl");
+        map.put("notify_url", "http://www.ushufu.com/Pay/notifyurl");
+        map.put("return_url", "http://www.ushufu.com/Pay/returnurl");
         map.put("seller_email", "305929336.lp@gmail.com");
         map.put("out_trade_no", UUID.randomUUID().toString());
         map.put("subject", "测试支付 - HUFU");
