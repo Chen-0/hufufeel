@@ -51,7 +51,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and().formLogin().loginPage("/login").loginProcessingUrl("/perform_login")
                 .usernameParameter("username").passwordParameter("password").and().logout().logoutSuccessUrl("/").and()
-                .rememberMe().rememberMeParameter("remember_me").key("F_enjsmyrh").rememberMeCookieName("F_werbuzemcihrn").rememberMeCookieDomain("hufufeel.com");;
+                .rememberMe().rememberMeParameter("remember_me").key("F_enjsmyrh").rememberMeCookieName("F_werbuzemcihrn").rememberMeCookieDomain("ushufu.com");;
     }
 
     @Override
