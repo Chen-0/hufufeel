@@ -50,7 +50,7 @@ public abstract class AbstractController {
         log.info("ERROR ---- {}", JSONMapper.toJSON(errorField));
         log.info("ERROR ---- {}", JSONMapper.toJSON(errorForm));
         log.info("==========================================");
-        redirectAttributes.addFlashAttribute("fele", errorForm);
         redirectAttributes.addFlashAttribute("ferror", errorField);
+        redirectAttributes.addFlashAttribute("fele", errorForm);
     }
 }

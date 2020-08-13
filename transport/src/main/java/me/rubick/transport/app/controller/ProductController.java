@@ -494,7 +494,7 @@ public class ProductController extends AbstractController {
             formHelper.hasError();
         } catch (FormException e) {
             throwForm(redirectAttributes, e.getErrorField(), e.getForm());
-            return "redirect:/admin/product/import";
+            return "redirect:/product/import";
         }
 
         for (ExcelRow row : excelRows) {

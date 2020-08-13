@@ -45,6 +45,14 @@
                             </div>
                         </div>
 
+                        <#if ferror?exists && ferror["file"]?exists>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-4">
+                            <p class="text-danger">${ferror["file"]}</p>
+                            </div>
+                        </div>
+                        </#if>
+
                         <button id="submit" type="submit" class="btn btn-primary">提交</button>
                     </div>
                 </div>
