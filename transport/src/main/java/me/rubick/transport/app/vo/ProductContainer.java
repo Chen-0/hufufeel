@@ -1,11 +1,7 @@
 package me.rubick.transport.app.vo;
 
-import org.springframework.util.ObjectUtils;
-
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ProductContainer implements Serializable {

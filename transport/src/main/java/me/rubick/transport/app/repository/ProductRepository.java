@@ -1,7 +1,7 @@
 package me.rubick.transport.app.repository;
 
-import me.rubick.transport.app.model.Product;
 import me.rubick.transport.app.constants.ProductStatusEnum;
+import me.rubick.transport.app.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

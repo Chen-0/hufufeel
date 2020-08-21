@@ -8,12 +8,18 @@ import me.rubick.common.app.exception.FormException;
 import me.rubick.common.app.exception.NotFoundException;
 import me.rubick.common.app.helper.FormHelper;
 import me.rubick.common.app.response.RestResponse;
-import me.rubick.common.app.utils.*;
+import me.rubick.common.app.utils.BeanMapperUtils;
+import me.rubick.common.app.utils.DateUtils;
+import me.rubick.common.app.utils.ExcelHelper;
+import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.ProductBatteryTypeEnum;
 import me.rubick.transport.app.constants.ProductBusinessTypeEnum;
 import me.rubick.transport.app.constants.ProductDangerTypeEnum;
 import me.rubick.transport.app.constants.ProductTypeEnum;
-import me.rubick.transport.app.model.*;
+import me.rubick.transport.app.model.Document;
+import me.rubick.transport.app.model.Product;
+import me.rubick.transport.app.model.User;
+import me.rubick.transport.app.model.Warehouse;
 import me.rubick.transport.app.repository.ProductRepository;
 import me.rubick.transport.app.repository.WarehouseRepository;
 import me.rubick.transport.app.service.ProductService;
@@ -28,20 +34,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.Resource;
-import javax.validation.Valid;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @Slf4j

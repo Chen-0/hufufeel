@@ -1,7 +1,6 @@
 package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.rubick.common.app.utils.TextUtils;
 import me.rubick.transport.app.model.Message;
 import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.repository.MessageRepository;
@@ -11,12 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 

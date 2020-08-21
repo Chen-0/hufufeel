@@ -1,9 +1,9 @@
 package me.rubick.transport.app.service;
 
 import me.rubick.common.app.exception.BusinessException;
+import me.rubick.transport.app.constants.ProductStatusEnum;
 import me.rubick.transport.app.constants.ProductTypeEnum;
 import me.rubick.transport.app.model.Product;
-import me.rubick.transport.app.constants.ProductStatusEnum;
 import me.rubick.transport.app.model.User;
 import me.rubick.transport.app.repository.ProductRepository;
 import org.springframework.data.domain.Page;
@@ -16,7 +16,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import javax.persistence.Transient;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;

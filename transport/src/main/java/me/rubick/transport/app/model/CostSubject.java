@@ -1,6 +1,5 @@
 package me.rubick.transport.app.model;
 
-import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 

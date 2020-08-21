@@ -1,7 +1,6 @@
 package me.rubick.transport.app.model;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "rubick_warehouse")

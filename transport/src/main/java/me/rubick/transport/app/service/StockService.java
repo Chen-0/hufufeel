@@ -3,8 +3,8 @@ package me.rubick.transport.app.service;
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.utils.JSONMapper;
 import me.rubick.transport.app.constants.PackageStatusEnum;
-import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.model.Package;
+import me.rubick.transport.app.model.*;
 import me.rubick.transport.app.repository.PackageRepository;
 import me.rubick.transport.app.repository.ProductWarehouseRepository;
 import org.springframework.data.domain.Page;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.*;

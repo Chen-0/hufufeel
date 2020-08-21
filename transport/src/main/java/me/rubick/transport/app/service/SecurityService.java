@@ -2,9 +2,6 @@ package me.rubick.transport.app.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.transport.app.model.User;
-import me.rubick.transport.app.vo.CostSnapshotVo;
-import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

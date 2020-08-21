@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.exception.HttpNoFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @ControllerAdvice
 @Slf4j

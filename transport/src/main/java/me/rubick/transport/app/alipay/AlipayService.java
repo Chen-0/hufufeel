@@ -3,15 +3,10 @@ package me.rubick.transport.app.alipay;
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.utils.JSONMapper;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import static java.math.RoundingMode.FLOOR;
 

@@ -2,8 +2,8 @@ package me.rubick.transport.app.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import me.rubick.common.app.utils.Steam;
-import me.rubick.transport.app.service.DocumentService;
 import me.rubick.transport.app.model.Document;
+import me.rubick.transport.app.service.DocumentService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,8 +12,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 @Controller
 @Slf4j

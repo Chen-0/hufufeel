@@ -2,13 +2,6 @@ package me.rubick.transport.app.vo;
 
 import lombok.Data;
 import org.dozer.Mapping;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.Range;
-
-import javax.validation.constraints.*;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 
 @Data
 public class ProductFormVo extends AbstractVo {

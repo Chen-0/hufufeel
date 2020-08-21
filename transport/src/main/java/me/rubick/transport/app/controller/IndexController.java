@@ -1,26 +1,15 @@
 package me.rubick.transport.app.controller;
 
-import me.rubick.common.app.response.RestResponse;
-import me.rubick.common.app.utils.BeanMapperUtils;
-import me.rubick.transport.app.model.Notice;
 import me.rubick.transport.app.repository.DocumentRepository;
 import me.rubick.transport.app.repository.NoticeRepository;
-import me.rubick.transport.app.vo.ProductFormVo;
-import me.rubick.transport.app.vo.admin.NoticeFormVo;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.ObjectUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 
 @Controller
 public class IndexController {

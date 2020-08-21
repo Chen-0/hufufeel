@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Set;
 
 public interface PackageProductRepository extends JpaRepository<PackageProduct, Long> {
 

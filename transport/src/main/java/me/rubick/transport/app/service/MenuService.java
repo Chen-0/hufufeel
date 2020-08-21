@@ -4,8 +4,6 @@ import me.rubick.transport.app.model.Menu;
 import me.rubick.transport.app.repository.MenuRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;

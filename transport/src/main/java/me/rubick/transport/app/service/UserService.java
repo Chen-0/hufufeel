@@ -15,8 +15,6 @@ import me.rubick.transport.app.repository.StatementsRepository;
 import me.rubick.transport.app.repository.UserRepository;
 import me.rubick.transport.app.vo.CostSubjectSnapshotVo;
 import me.rubick.transport.app.vo.UserCsVo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
