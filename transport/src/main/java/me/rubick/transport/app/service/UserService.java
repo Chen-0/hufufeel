@@ -218,7 +218,7 @@ public class UserService {
                 Arrays.asList(StatementTypeEnum.STORE)
         );
 
-        if (ObjectUtils.isEmpty(statements)) {
+        if (statements == null || statements.size() == 0) {
             user.setArrearage(false);
         } else {
             user.setArrearage(true);
