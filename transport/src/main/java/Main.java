@@ -16,7 +16,7 @@ public class Main {
             configuration.configure();
             ourSessionFactory = configuration.buildSessionFactory();
         } catch (Throwable ex) {
-            throw new ExceptionInInitializerError(ex);
+            throw new RuntimeException(ex);
         }
     }
 
